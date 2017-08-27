@@ -1,0 +1,45 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ channel.title }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { padding-bottom: 20px; padding-top: 9px; }
+    a, a:hover { color: #000; text-decoration: none; }
+    div.row { margin-right: 0; margin-left: 0; padding-right: 10px; padding-left: 10px; }
+    div.cat { background-color: rgb(241, 240, 245); font-weight: bold; }
+    div.item { padding-top: 9px; padding-bottom: 9px; border-bottom: 1px solid rgb(241, 240, 245); }
+    div.item:last-child { border-bottom-width: 0; }
+    div.img { float: left; margin-right: 11px; }
+    .comment p { margin-top: 6px; height: 40px; overflow: hidden;font-size: 16px }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    {% set mmdd_previous = '0000' %}
+    <div class="row cat">
+        &nbsp;
+    </div>
+    {% for article in articles %}
+    <div class="row item">
+        <a target="_blank" href="{{ article.article_url }}">
+            <div class="img">
+                <img src="{{ article.share_url }}" height="70px" width="70px">
+            </div>
+            <div class="comment">
+                <p>{{ article.article_desc|raw }}</p>
+            </div>
+        </a>
+    </div>
+    <div class="row cat">
+        &nbsp;
+    </div>
+    {% set mmdd_previous = article.mmdd %}
+    {% else %}
+    这个频道下还没有添加文章～～
+    {% endfor %}
+</div>
+{% endblock %}

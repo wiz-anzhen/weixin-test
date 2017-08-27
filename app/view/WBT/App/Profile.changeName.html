@@ -1,0 +1,55 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>设置姓名</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand">设置姓名</a>
+        </div>
+    </nav>
+    <div>
+        <input type="text" id="name" class="form-control input-lg" style="width:95%;margin:0 auto;" placeholder="请输入姓名" value="{% if wx_user.name %}{{ wx_user.name }}{% endif %}" /><br/>
+        <a id="submit_next" class="btn btn-success btn-lg btn-block" style="width:95%;margin:0 auto;">保存</a>
+    </div><br/>
+    <div id="submit_status" class="alert alert-danger" style="display: none;width:95%;margin:0 auto;"></div>
+</div>
+{% endblock %}
+
+
+{% block js_link %}
+<script>
+    $(function(){
+        $("#submit_next").click(function(){
+            var $name = $("#name").val();
+
+            var post_data = {'phone': '{{app_user.phone}}', 'name': $name};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/app_save_name';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSavePhone
+            });
+        });
+    });
+
+    function afterSavePhone(data) {
+        if(data.errno == 0)
+        {
+            $("#submit_status").html('保存成功').show();
+            location.replace(document.referrer);
+        }
+        else
+        {
+            $("#submit_status").html(data.error).show();
+        }
+    }
+</script>
+{% endblock %}
+

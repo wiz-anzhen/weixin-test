@@ -1,0 +1,110 @@
+mp:
+  comment: '高傅'
+  locale: zh_CN
+  namespace: MP
+
+  db:
+    type: mysql
+    adapter: PDO_MYSQL
+    engine: InnoDB
+    charset: utf8
+    connection:
+      host: 127.0.0.1
+      port: 3306
+      username: root
+      password: root
+      dbname: mp
+
+  entities:
+    super_admin: fcrm.super_admin
+    mp_admin: fcrm.mp_admin
+    mp_user: fcrm.mp_user
+    mp_fans_count: fcrm.mp_fans_count
+    mp_user_nav: fcrm.mp_user_nav
+    mp_article: fcrm.mp_article
+    mp_article_daily_traffic: fcrm.mp_article_daily_traffic
+    wx_user: fcrm.wx_user
+    app_user: fcrm.app_user
+    pc_user: fcrm.pc_user
+    wx_user_ext: fcrm.wx_user_ext
+    mp_user_config: fcrm.mp_user_config
+    wx_user_feedback: fcrm.wx_user_feedback
+    test: fcrm.test
+    test_test: fcrm.test_test
+    report: fcrm.report
+    like_article: fcrm.like_article
+    article_comment: fcrm.article_comment
+    wj_questionnaire: fcrm.wj_questionnaire
+    wj_question: fcrm.wj_question
+    wj_choice: fcrm.wj_choice
+    wj_user_answer: fcrm.wj_user_answer
+    top_directory: fcrm.top_directory
+    directory: fcrm.directory
+    directory_daily_traffic: fcrm.directory_daily_traffic
+    directory_wx_user_visit: fcrm.directory_wx_user_visit
+    wx_user_feedback: fcrm.wx_user_feedback
+    carousel: fcrm.carousel
+    album: fcrm.album
+    picture: fcrm.picture
+    channel: fcrm.channel
+    channel_article: fcrm.channel_article
+    article_tag_log: fcrm.article_tag_log
+    urgent_notice_read_record: fcrm.urgent_notice_read_record
+    app_notice_read_record: fcrm.app_notice_read_record
+    company_admin: fcrm.company_admin
+    community_admin: fcrm.community_admin
+    community_phone_book: fcrm.community_phone_book
+    customer_specialist_group: fcrm.customer_specialist_group
+    customer_specialist: fcrm.customer_specialist
+    owner_lessee: fcrm.owner_lessee
+    total_user: fcrm.total_user
+    beacon_setting: fcrm.beacon_setting
+    province: fcrm.province
+    city: fcrm.city
+    area: fcrm.area
+
+    wx_menu: weixin.wx_menu
+    wx_sub_menu: weixin.wx_sub_menu
+    mp_rule: weixin.mp_rule
+    mp_rule_news_item: weixin.mp_rule_news_item
+
+
+    community: house.community
+    community_config: house.community_config
+    house_member: house.house_member
+    bill_day: house.bill_day
+    bill: house.bill
+    bill_detail: house.bill_detail
+    community_report: house.community_report
+    cs_chat_record: house.cs_chat_record
+    chat_room_record: house.chat_room_record
+    group_send: house.group_send
+    group_send_item: house.group_send_item
+    address_level_info: house.address_level_info
+    user_notify: house.user_notify
+    push_message: house.push_message
+    test_procurement: house.test_procurement
+    restaurant: house.restaurant
+    part: house.part
+
+
+    store: shop.store
+    category: shop.category
+    product: shop.product
+    order: shop.order
+    order_detail: shop.order_detail
+    order_change_log: shop.order_change_log
+    cart: shop.cart
+    cart_detail: shop.cart_detail
+    wx_pay_record: shop.wx_pay_record
+    product_comment: shop.product_comment
+    procurement_order: shop.procurement_order
+    procurement_order_change_log: shop.procurement_order_change_log
+    procurement_order_change_detail: shop.procurement_order_change_detail
+    procurement_order_detail: shop.procurement_order_detail
+    procurement_cart: shop.procurement_cart
+    procurement_cart_detail: shop.procurement_cart_detail
+
+  data:
+    init:
+      - test_spm.sql

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>{{ mp_name }}</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <style>
+        .nav li{width: 50%;text-align: center;}
+    </style>
+</head>
+<body>
+<div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#noComment" data-toggle="tab">{% if not continue %}开始点菜{% else %}继续点菜{% endif %}</a></li>
+        <!--<li><a href="#isComment" data-toggle="tab">多人点菜</a></li>-->
+        <li><a href="/web/web/history?wx_user_id={{ wx_user_id }}&mp_user_id={{ mp_user_id }}">历史记录</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="noComment">
+            {% if is_submitted %}
+            <a class="btn btn-success btn-large span12" href="/web/web/create_order?wx_user_id={{ wx_user_id }}&mp_user_id={{ mp_user_id }}">店内点菜</a>
+            <br/>
+            <br/>
+            <a class="btn btn-success btn-large span12" href="/web/web/take_away?wx_user_id={{ wx_user_id }}&mp_user_id={{ mp_user_id }}">点外卖</a>
+            {% else %}
+            <a class="btn btn-success btn-large span12" href="/web/web/join_order?wx_user_id={{ wx_user_id }}&mp_user_id={{ mp_user_id }}&id_of_day={{ id_of_day }}">{% if not continue %}开始点菜{% else %}继续点菜{% endif %}</a>
+            {% endif %}
+
+            <div class="span12">
+                <h3 class="muted">提示：</h3>
+                <p class="muted">1.提交点菜并将点菜编号告知服务员后才有效。</p>
+                <p class="muted">2.最终的价格以店里打印的小票为准。</p>
+                <p class="muted">3.提交后如需修改请联系服务员。</p>
+                <p class="muted">4.如果多次提交点菜而不实际消费会被加入黑名单。</p>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="isComment">
+            <input type="text" class="span12" name="id_of_day" id="id_of_day" placeholder="输入好友的点菜编号">
+            <a class="btn btn-success btn-large span12" id="join" href="/web/web/join_order?wx_user_id={{ wx_user_id }}&mp_user_id={{ mp_user_id }}" onclick="return join();">和好友一起点菜</a>
+
+            <div class="span12">
+                <h3 class="muted">提示：</h3>
+                <p class="muted">1.提交点菜并将点菜编号告知服务员后才有效。</p>
+                <p class="muted">2.最终的价格以店里打印的小票为准。</p>
+                <p class="muted">3.提交后如需修改请联系服务员。</p>
+                <p class="muted">4.如果多次提交点菜而不实际消费会被加入黑名单。</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bootstrap/js/bootstrap-tab.js?v={{third_lib_version}}"></script>
+<script type="text/javascript">
+    function join() {
+        var $input = document.getElementById('id_of_day');
+        var $id = $input.value;
+        if (!$id) {
+            $input.style.color = '#A00';
+            $input.value = '请先输入点单号';
+            setTimeout(clear, 2000);
+            return false;
+        }
+
+        var $a = document.getElementById('join');
+        $a.href = $a.href + '&id_of_day=' + $id;
+
+        return true;
+    }
+
+    function clear() {
+        var $input = document.getElementById('id_of_day');
+        $input.style.color = '#555';
+        $input.value = '';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title> 热线电话 </title>
+{% endblock %}
+
+{% block css_link %}
+<style>
+    * { margin: 0; padding: 0 }
+    body { background: url('/images/background/16.jpg') repeat 0 0 }
+
+    ul.round {
+        margin-top: 100px;
+        margin-left: 10px;
+        margin-right: 10px;
+        text-align: left;
+        overflow: hidden;
+        border-radius: 5px;
+        border: solid #C2C2C2;
+        border-width: 1px 1px 0 1px;
+        box-shadow: 0 1px 1px #f6f6f6;
+        background-color: #f5f5f5;
+    }
+
+    ul li {
+        list-style-type: none;
+        line-height: 34px;
+        font-size: 20px;
+        padding: 11px 10px;
+        border: solid #C2C2C2;
+        border-width: 0 0 1px 0;
+        font-weight: 700;
+    }
+    ul li a, ul li a:hover {
+        text-decoration: none;
+        cursor: pointer;
+        color: #508E00;;
+    }
+    .glyphicon {
+        color: #508E00;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <ul class="round">
+        <li>{{ community_name }}</li>
+        <li class="phone">
+            <span class="glyphicon glyphicon-earphone"></span>&nbsp;&nbsp;<a href="tel:{{ phone }}">{{ phone }}</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block js_link %}
+
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}

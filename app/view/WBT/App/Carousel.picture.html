@@ -1,0 +1,36 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ album.title }}</title>
+{% endblock %}
+
+{% block css_link %}
+<link href="/libs/photo-swipe/photoswipe.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block header_js_link %}
+<script type="text/javascript" src="/libs/photo-swipe/lib/klass.min.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/photo-swipe/code.photoswipe-3.0.5.js?v={{third_lib_version}}"></script>
+<script type="text/javascript">
+    (function (window, PhotoSwipe) {
+        document.addEventListener('DOMContentLoaded', function () {
+            var options = {
+                        captionAndToolbarAutoHideDelay: 0,
+                        preventHide: true,
+                        getImageSource: function (obj) { return obj.url; },
+                        getImageCaption: function (obj) { return obj.caption; }
+                    },
+                    instance = PhotoSwipe.attach({{ showPics|raw }}, options);
+        instance.show(0);
+    }, false);
+    }(window, window.Code.PhotoSwipe));
+</script>
+{% endblock %}
+
+{% block content %}
+{{hideWeixinBottom|raw}}
+{% endblock %}
+
+
+
+

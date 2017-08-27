@@ -1,0 +1,276 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>登录</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: white; padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<body>
+
+<div class="panel panel-info" style="border:0 solid #ffffff">
+     <!--
+    <div class="panel-heading">
+        <h3 class="panel-title">登陆</h3>
+    </div>
+    -->
+    <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;">
+        <img src="{{head_pic}}" width="26%" height=""/>
+        <div>{{nick}}</div>
+    </div>
+
+    <div class="panel-body">
+        <div id="login_community">
+            <div class="input-group">
+                <span class="input-group-addon">请选择：</span>
+                <select class="form-control input-lg" id="community_id" name="community_id" onchange="select()">
+                    {% for community in community %}
+                    {% if community.community_id == current_community %}
+                    <option  value="{{community.community_id}}" selected="selected">{{community.name}}</option>
+                    {% else %}
+                    <option  value="{{community.community_id}}">{{community.name}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <br/>
+            <a id="login" class="btn btn-success btn-lg btn-block">登录</a>
+
+        </div>
+        <br/>
+
+
+        <!--认证其他小区业主-->
+        <div id="verify_other_owner" style="display: none;">
+            <input type="tel" id="phone" class="form-control input-lg" placeholder="请输入11位手机号" />
+            <br/>
+            <input type="button" id="submit_next"  class="btn btn-success btn-lg btn-block" value="获取验证码">
+            <input type="hidden" id="sendType" value="sms">
+            <br/>
+            <div id="submit_status" class="alert alert-danger" style="display: none;font-size: 16px;"></div>
+
+           <div id="code_div" style="display: none;">
+               <br/>
+               <input type="tel" id="code" class="form-control input-lg" placeholder="请填入4位验证码" />
+               <br/>
+                <a id="submit_code" class="btn btn-success btn-lg btn-block">安全验证</a>
+            </div>
+            <br/>
+        </div>
+
+        <div id="submit_code_status" class="alert alert-danger" style="display: none;"></div>
+        <div id="cancel"  style="color: grey;text-align: center;margin: 0 auto;padding:15px 0;">取消登录</div>
+        <input type="hidden" id="hide_phone" value="">
+        <input type="hidden" id="hide_community_id" value="">
+        <input type="hidden" id="verified" value="0">
+        <div style="display: none;height: 500px;color:white;background-color: #ffffff" id="scroll_add"></div>
+        <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+        <script>
+            $(function()
+            {
+                var pauseTime,pauseTimer;
+                //60秒限时发送
+                function authCodeRecoveryTimer(button)
+                {
+                    if (--pauseTime == 0)
+                    {
+                        clearInterval(pauseTimer);
+                        $("#submit_next").removeAttr('disabled').val("未收到验证码?点击获取语音验证码");
+                        $("#sendType").val("call");
+                    }
+                    else
+                    {
+                        $("#submit_next").val("发送成功，"+ pauseTime +"秒后可重新发送");
+                    }
+                }
+                //获取验证码
+                $("#submit_next").click(function()
+                {
+                    if ($("#verified").val() == 1) {
+                        $("#submit_status").html("您已通过验证!").show();
+                        return;
+                    }
+                    var phone = $("#phone").val();
+                    var communityId = $("#community_id").find("option:selected").val();
+                    if (phone.length != 11)
+                    {
+                        $("#submit_status").html("请输入11位手机号码").show();
+                        return;
+                    }
+                    if (communityId == "")
+                    {
+                        $("#submit_status").html("请选择小区").show();
+                        return;
+                    }
+                    $("#submit_next").attr('disabled', 'disabled').val("正在发送...");
+                    $("#submit_code_status").hide();
+                    var type = $("#sendType").val();
+                    var $data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'phone': phone,'community_id':communityId,'type':type};
+                    var $sendCodeUrl = location.protocol + '//' + location.host + '/api/wx_user/user_info/send_code';
+                    $.get($sendCodeUrl, $data, function(data) {
+                        if(data.errno == 0)
+                        {
+                            $("#hide_phone").val(phone);
+                            $("#hide_community_id").val(communityId);
+                            var $message = "系统已向您的手机号发送4位验证码，请注意查收，或点击上面按钮重新获取验证码。";
+                            $("#submit_status").html($message).show();
+                            $("#code_div").show();
+
+                            pauseTime = 30;
+                            $("#submit_next").attr('disabled', 'disabled').val("发送成功，"+ pauseTime +"秒后可重新发送");
+                            pauseTimer = setInterval(authCodeRecoveryTimer, 1000);
+                        }
+                        else
+                        {
+                            if(data.errno == 2)
+                            {
+                                $("#notify_house_owner").show();
+                                $("#submit_status").html('无法验证您的手机号，请重新输入').show();
+                                $("#submit_next").removeAttr('disabled').val("获取验证码");
+
+                            }
+                            else
+                            {
+                                $("#notify_house_owner").show();
+                                $("#submit_status").html(data.error).show();
+                                $("#submit_next").removeAttr('disabled').val("获取验证码");
+                            }
+
+                        }
+                    })
+                });
+                //向业主发送请求
+                $("#submit_notify_owner").click(
+                  function()
+                  {
+                      var lessee_phone = $("#phone").val();
+                      var owner_phone = $("#owner_phone").val();
+                      var lessee_name = $("#lessee_name").val();
+                      if (owner_phone.length != 11)
+                      {
+                          $("#submit_status").html("请输入11位手机号码").show();
+                          return;
+                      }
+                      var post_data = {'wx_user_id': '{{ wx_user_id }}','mp_user_id': '{{ mp_user_id }}', 'owner_phone': owner_phone,'lessee_name': lessee_name,'lessee_phone': lessee_phone};
+                      $("#submit_notify_owner").attr('disabled', 'disabled').text("正在发送...");
+                      var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/send_owner_template';
+                      $.ajax({
+                          type: 'post',
+                          url: site,
+                          data: post_data,
+                          datatype: 'json',
+                          async: true,
+                          success: function(data){
+                              if(data.errno == 0)
+                              {
+                                  $("#submit_status").html("请等待帮助者答复").show();
+                              }
+                              else
+                              {
+                                  $("#submit_status").html(data.error).show();
+                                  $("#submit_notify_owner").removeAttr('disabled').text("发送给帮助者");
+                              }
+
+                          }
+                      });
+                  }
+                );
+                //选择小区进行登录
+                $("#login").click(function()
+                {
+                    var $communityId = $("#community_id").find("option:selected").val();
+
+                    var $data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'community_id': $communityId};
+                    var $loginUrl = location.protocol + '//' + location.host + '/api/wx_user/user_info/login';
+                    $.get($loginUrl, $data, function($returnData) {
+                        if ($returnData.errno == 0)
+                        {
+                            location.href = "/wx_user/user_info/login_success?mp_user_id={{mp_user_id}}"+"&wx_user_id={{ wx_user_id }}";
+                        }
+                        else
+                        {
+                            $("#login").hide();
+                            $("#verify_other_owner").show();
+                            $("#submit_code_status").html($returnData.error).show();
+                        }
+                    });
+
+                });
+
+                //输入验证码进行安全验证
+                $("#submit_code").click(function(){
+                    if ($("#verified").val() == 1) {
+                        $("#submit_code_status").html("您已通过验证!").show();
+                        return;
+                    }
+                    var $phone = $("#hide_phone").val();
+                    var $communityId = $("#hide_community_id").val();
+                    var $code  = $("#code").val();
+                    if ($code.length != 4) {
+                        $("#submit_code_status").html("请输入4位验证码").show();
+                        return;
+                    }
+
+                    var $data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'phone': $phone,'community_id': $communityId, 'code': $code};
+                    var $verifyCodeUrl = location.protocol + '//' + location.host + '/api/wx_user/user_info/verify_code';
+                    $.get($verifyCodeUrl, $data, function($returnData) {
+                        if ($returnData.errno == 0)
+                        {
+                            var $message = "恭喜您,已通过验证!";
+                            $("#verified").val(1);
+                            location.href = "/wx_user/user_info/login_success?mp_user_id={{mp_user_id}}&text="+$message;
+                        } else
+                        {
+                            $("#submit_code_status").html($returnData.error).show();
+                        }
+                    });
+                });
+            });
+
+        $("#phone").click(function(){
+            $("#scroll_add").show();
+            $(window).scrollTop($("#submit_next").offset().top-100);
+        });
+        $("#code").click(function(){
+            $("#scroll_add").show();
+            $(window).scrollTop($("#code").offset().top-80);
+        });
+
+            function select()
+            {
+                $("#login").show();
+                $("#verify_other_owner").hide();
+                $("#submit_code_status").hide();
+                $("#submit_status").hide();
+            }
+
+            $("#cancel").click(function(){
+                WeixinJSBridge.invoke('closeWindow',{},function(res)
+                {
+                });
+            })
+    </script>
+    </div>
+</div>
+</body>
+{% endblock %}
+

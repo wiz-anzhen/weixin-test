@@ -1,0 +1,40 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_questionnaire' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/questionnaire/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">问卷调查</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/questionnaire/question?mp_user_id={{mp_user_id}}&wj_questionnaire_id={{wj_questionnaire_id}}&community_id={{community_id}}">题目</a>
+    <span class="divider">/</span>
+</li>
+<li>{{question_content}}</li>
+{% endblock %}
+
+{% block action %}
+{% if item_count < 10 %}
+{% if questionnaire_rw %}
+<button type="button" class="btn btn-success" title="新增选项" onclick="bluefinBH.ajaxDialog('/mp_admin/questionnaire_dialog/add_choice?mp_user_id={{ mp_user_id }}&wj_question_id={{wj_question_id}}&community_id={{community_id}}');">
+    新增选项
+</button>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}

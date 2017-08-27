@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes"/>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<div>
+   <table>
+       <tr>
+           {% for store in store_data %}
+           <td style="background-color: blue;padding:150px;" class="ce">{{store.title}}</td>
+           {% endfor %}
+       </tr>
+
+   </table>
+
+</div>
+
+<script type="text/javascript">
+    $(".ce").click(function(){alert("00")});
+</script>
+</body>
+
+</html>

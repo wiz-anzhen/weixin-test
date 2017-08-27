@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>退货</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <script src="/scripts/ajaxfileupload.js?v={{third_lib_version}}"></script>
+    <script language="javascript">
+        function upload(obj)
+        {
+            var id = $(obj).attr('id');
+            $("#img_progress").css("display","block");
+            $.ajaxFileUpload({
+                url:'/wx_user/upload_img/index?id='+id,//处理图片脚本
+                secureuri :false,
+                fileElementId :id,
+                dataType : 'json',
+                success : function (data, status){
+                    var imgURL = data.img_url;
+                    var imgId = data.id;
+                    $("#"+imgId).attr("src",imgURL);
+                    $("#img_progress").css("display","none");
+                    if(typeof(data.error) != 'undefined')
+                    {
+                        if(data.error != ''){
+                            alert(data.error);
+                        }
+                    }
+                },
+                error: function(data, status, e){
+                    alert(e);
+                }
+            });
+            return false;
+        }
+
+
+    </script>
+</head>
+<body>
+
+<div class="box" style="width: 100%;height:50px;position: relative;border-bottom:1px solid #ccc;">
+    <span style="position: absolute;left: 10px;top: 15px;padding:0 15px;" onclick="location.replace('/wx_user/procurement/return_order_detail?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&order_id={{order_id}}&store_title={{store_title}}');">返回</span>
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;padding:0 15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 60%">{{store_title}}</div>
+</div>
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+<div style="border-bottom:1px solid #ccc;">
+    <dl style="padding: 3%">
+        <dt>{{order_detail.title}}</dt>
+        <dd style="padding:2% 0;font-size: 12px;color:#ccc;">单价:{{order_detail.price}}{{order_detail.product_unit_new}}&nbsp;数量:{{order_detail.count}}{{order_detail.product_unit_name}}</dd>
+    </dl>
+</div>
+
+
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div class="box" style="width: 80%;padding: 3%; border-bottom:1px solid #ccc;">
+    <div style="padding: 3% 0;">退货数量</div>
+        <img src="/images/small_reduce.png" width="35px" id="reduce_count" style="float: left;" class=""/>
+
+        <input type="number" value="0.0" style="display: inline;font-size: 1.8em;text-align: center;background-color: #999;margin-right: 10px;margin-left: 13px;width: 50%;float: left;border: 0 solid;padding:1px;"  id="alter_count" onchange="alter(this)"/>
+
+        <img src="/images/small_increase.png" width="35px" id="add_count" style="float: left;"/>
+
+      <p style="color:#bbb;font-size: 12px;clear: both;padding-top: 10px;">您最多可提交的数量为{{order_detail.count}}</p>
+</div>
+
+
+<input type="hidden" value="{{order_data.order_self}}" id="order_self_hidden"/>
+{% if order_data.order_self == 'order_self' %}
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div  style="border-bottom:1px solid #ccc;">
+    <p style="padding: 3% ;">退货方式</p>
+    <div style="padding-bottom: 3% ;padding-left: 5% ;border-bottom:1px solid #ccc;-webkit-tap-highlight-color:rgba(255,255,255,0)" id="div_order_supply">
+        <input type="radio"   value="order_supply"   name="self_type" id="order_supply" checked="checked"/>
+        <label for="order_supply">
+          通过供应商退货
+        </label>
+        <div style="color: grey;font-size: 12px;padding-left: 5%;margin-top: 10px;">
+          退货需要供应商确认，供应商和餐厅都有退货记录
+        </div>
+    </div>
+    <div style="padding: 5%;-webkit-tap-highlight-color:rgba(255,255,255,0)" id="div_order_self">
+        <input type="radio"   value="order_self"   name="self_type" id="order_self"/>
+        <label for="order_self" >自退货，不通过供应商退货</label>
+        <div style="color: grey;font-size: 12px;padding-left: 5%;margin-top: 10px;">
+            不通过供应商退货，进餐厅有退货记录，供应商没有退货记录
+        </div>
+    </div>
+</div>
+{% endif %}
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div  style="border-bottom:1px solid #ccc;">
+    <p style="padding: 3% ;">问题描述</p>
+    <textarea rows="10" cols="30" placeholder="请您在此详细描述问题" style="width: 70%;height: 100px;color:#bbb;border: 1px solid #ccc;padding: 4%;margin-left: 3%;margin-bottom: 3%;" id="describe"></textarea>
+</div>
+
+
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div style="padding: 2%;border-bottom:1px solid #ccc;">
+    <p style="padding: 1%;margin-bottom: 5px;">上传图片</p>
+
+    <div style="padding: 1%;float: left;">
+    <input id="file_first" type="file" accept="image/*" size="10" name="file_first" style="-webkit-tap-highlight-color:rgba(255,255,255,0);background-color: red;height: 60px;width: 60px;position: absolute;top: 0;filter:alpha(opacity:0);opacity: 0;" onchange="upload(this)" >
+    <img src="/images/add_img.png" style="height: 60px;width: 60px;text-align: center;" id="first" class="refund_img"/>
+    </div>
+
+    <div style="padding: 1%;float: left;">
+        <input id="file_second" type="file" accept="image/*" size="10" name="file_second" style="-webkit-tap-highlight-color:rgba(255,255,255,0);background-color: red;height: 60px;width: 60px;position: absolute;top: 0;filter:alpha(opacity:0);opacity: 0;" onchange="upload(this)" >
+        <img src="/images/add_img.png" style="height: 60px;width: 60px;text-align: center;" id="second" class="refund_img"/>
+    </div>
+
+    <div style="padding: 1%;float: left;">
+        <input id="file_third" type="file" accept="image/*" size="10" name="file_third" style="-webkit-tap-highlight-color:rgba(255,255,255,0);background-color: red;height: 60px;width: 60px;position: absolute;top: 0;filter:alpha(opacity:0);opacity: 0;" onchange="upload(this)" >
+        <img src="/images/add_img.png" style="height: 60px;width: 60px;text-align: center;" id="third" class="refund_img"/>
+    </div>
+
+    <p style="padding: 1%;color:#bbb;font-size: 14px;margin-top: 5px;clear:both;">最多上传3张,每张不超过3M,支持JPG、BMG、PNG</p>
+</div>
+
+
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+<div id="determine_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">退货单确认</div>
+        <div style="padding: 8%;" id="text_refund_content"></div>
+
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_ok" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+ <div style="width:90%;padding:2% 0;margin:0 auto;font-size:1em;text-align:center; border:1px solid #000;border-radius:15px;margin-top: 30px;margin-bottom: 30px;" id="submit_refund">
+        提交退货单
+ </div>
+<div style="color:#ffffff;margin-top: 40px;clear:both;">000</div>
+<div id="img_progress" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 100%;margin:50% auto;padding-left:33%;padding-right:33%;">
+     <img src="/images/load.gif" style="text-align: center;width: 33%"/>
+</div>
+<div style="color:white;margin-top: 30px;clear:both;">&nbsp;&nbsp;</div>
+
+    <input type="hidden"  id="alter_product_unit" value="{{order_detail.product_unit_new}}"/>
+</body>
+<script type="text/javascript">
+
+    //修改框里的内容变化
+    $("#add_count").click(function ()
+    {
+        var alter_count =  $("#alter_count").val();
+        var product_unit  = $("#alter_product_unit").val();
+        //判断产品单位
+        var order_detail_count = "{{order_detail.count}}";
+        if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+        {
+            alter_count = parseFloat(alter_count)+0.1;
+            alter_count = alter_count.toFixed(1);
+            order_detail_count = parseFloat(order_detail_count).toFixed(1);
+        }
+        else
+        {
+            alter_count = parseFloat(alter_count)+1;
+            alter_count = alter_count.toFixed(0);
+            order_detail_count = parseFloat(order_detail_count).toFixed(0)
+        }
+        if(parseFloat(alter_count) > parseFloat(order_detail_count))
+        {
+            alert("您最多可提交的数量为{{order_detail.count}}");
+            $("#alter_count").val("0.0");
+        }
+        else
+        {
+            $("#alter_count").val(alter_count);
+        }
+
+    });
+
+    //修改框里的内容变化
+    $("#reduce_count").click(function ()
+    {
+        var alter_count =  $("#alter_count").val();
+        var product_unit  = $("#alter_product_unit").val();
+        //判断产品单位
+        if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+        {
+            alter_count = parseFloat(alter_count)-0.1;
+            alter_count = alter_count.toFixed(1);
+
+        }
+        else
+        {
+            alter_count = parseFloat(alter_count)-1;
+        }
+
+        if(parseFloat(alter_count) <= 0 )
+        {
+            alter_count = 0.0.toFixed(1);
+            alter_count = alter_count.toFixed(0);
+
+        }
+
+        $("#alter_count").val(alter_count);
+    });
+
+    function alter(obj)
+    {
+        var alter_value = $(obj).val();
+        //判断产品单位
+        var product_unit  = $("#alter_product_unit").val();
+        var order_detail_count = "{{order_detail.count}}";
+        if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+        {
+            alter_value = parseFloat(alter_value);
+            alter_value = alter_value.toFixed(1);
+            order_detail_count = parseFloat(order_detail_count).toFixed(1);
+        }
+        else
+        {
+            alter_value = parseFloat(alter_value);
+            alter_value = alter_value.toFixed(0);
+            order_detail_count = parseFloat(order_detail_count).toFixed(0);
+        }
+
+        if(parseFloat(alter_value) > parseFloat(order_detail_count))
+        {
+            alter_value = 0.0;
+            alert("您最多可提交的数量为{{order_detail.count}}");
+            $(obj).val("0.0");
+        }
+        $(obj).val(alter_value);
+    }
+
+    $("#submit_refund").click(function ()
+    {
+
+        var alter_count =  $("#alter_count").val();
+        var describe = $("#describe").val();
+        var  img_first = $("#first").attr("src");
+        var  img_second = $("#second").attr("src");
+        var  img_third = $("#third").attr("src");
+        var self_type = $("input[name='self_type']:checked").val();
+        var self_hidden = $("#order_self_hidden").val();
+        if(self_hidden == 'order_supply')
+        {
+            self_type = 'order_supply';
+        }
+        if(img_first == "/images/add_img.png")
+        {
+            img_first = "";
+        }
+        if(img_second == "/images/add_img.png")
+        {
+            img_second = "";
+        }
+        if(img_third == "/images/add_img.png")
+        {
+            img_third = "";
+        }
+        if(alter_count == 0 || alter_count == "")
+        {
+            alert("对不起，您还没有选择退货数量!")
+        }
+        else
+        {
+            $("#submit_refund").css("display","none");
+            $("#determine_content").css("display","block");
+            if(self_type == 'order_supply')
+            {
+                $("#text_refund_content").text("确认提交退货单，退货单将发送至供应商");
+            }
+            if(self_type == 'order_self' )
+            {
+                $("#text_refund_content").text("确认提交退货单，自退货无需供应商确认");
+            }
+
+        }
+
+
+    });
+    $("#cancel").click(function (){
+        $("#submit_refund").css("display","block");
+        $("#determine_content").css("display","none");
+    });
+
+    $("#determine_ok").click(function ()
+    {
+        var alter_count =  $("#alter_count").val();
+        var describe = $("#describe").val();
+        var  img_first = $("#first").attr("src");
+        var  img_second = $("#second").attr("src");
+        var  img_third = $("#third").attr("src");
+        if(img_first == "/images/add_img.png")
+        {
+            img_first = "";
+        }
+        if(img_second == "/images/add_img.png")
+        {
+            img_second = "";
+        }
+        if(img_third == "/images/add_img.png")
+        {
+            img_third = "";
+        }
+        var self_type = $("input[name='self_type']:checked").val();
+        var self_hidden = $("#order_self_hidden").val();
+        if(self_hidden == 'order_supply')
+        {
+            self_type = 'order_supply';
+        }
+        var site = location.protocol + '//' + location.host + '/api/wx_user/procurement/refund';
+        var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id':'{{ order_id }}','alter_count':alter_count,'type':'refund','describe':describe,'product_id':'{{ product_id }}','part_id':'{{ part_id }}','product_price':'{{order_detail.price}}','img_first':img_first,'img_second':img_second,'img_third':img_third,'self_type':self_type};
+            $.ajax({
+                url:site,
+                data:post_data,
+                type:'POST',
+                dataType:'json',
+                async: true,
+                success:function(r)
+                {
+                    location.href = '/wx_user/procurement/shop_success?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&type=refund&order_self='+self_type;
+                }
+            });
+
+
+    });
+    $(function ()
+    {
+        $(".refund_img").each(function ()
+        {
+            var top = $(this).offset().top;
+            var id = $(this).attr('id');
+                 id = 'file_'+id ;
+            $("#"+id).css("top",top);
+        })
+    });
+    $("#div_order_supply").click(function (){
+        $("#order_supply").prop("checked",true);
+    });
+    $("#div_order_self").click(function (){
+        $("#order_self").prop("checked",true);
+    });
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+<script>
+    var a=document.getElementsByTagName('a');
+    for(var i=0;i<a.length;i++){
+
+        a[i].addEventListener('touchstart',function(){},false);
+
+    }
+</script>
+</html>

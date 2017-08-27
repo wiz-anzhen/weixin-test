@@ -1,0 +1,199 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'wx_members' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>微信会员信息</li>
+{% endblock %}
+
+{% block content_login %}
+<div style="border:1px solid #ced7dc;border-radius: 5px;padding:10px 0 20px 20px;margin-top:10px;background-color:#F8F8FF;margin-bottom: 10px;">
+    <form class="form-inline" role="form" id="form" method="get" style="margin-bottom: 20px;">
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="vip_no">会员号</label>
+            <input type="text" class="form-control" style="width:120px" id="vip_no" name="vip_no" value="{{vip_no}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="tel">手&nbsp;&nbsp;机&nbsp;&nbsp;号</label>
+            <input type="text" class="form-control" style="width:150px" id="tel" name="tel"  value="{{tel}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="name">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</label>
+            <input type="text" class="form-control" style="width:75px" id="name" name="name" value="{{name}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="address">地址</label>
+            <input type="text" class="form-control" style="width:220px" id="address" name="address" value="{{address}}">
+            <input type="hidden" id="page" name="page" value="{{ page }}">
+        </div>
+        <br>
+        <br>
+        <div class="form-group" style="display:inline;">
+            <label>关注状态</label>
+            <select style="width:100px;" id="subscribe" name="subscribe">
+                <option  value="all" {% if subscribe == 'all' %}selected='selected'{% endif %}>全部</option>
+                <option  value="subscribe" {% if subscribe == 'subscribe' %}selected='selected'{% endif %}>已关注</option>
+                <option  value="un_subscribe" {% if subscribe == 'un_subscribe' %}selected='selected'{% endif %}>未关注</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>用户关注时间范围</label>
+            <input type="text" class="form-control" style="width:120px" id="time_verify_start" name="time_verify_start"  value="{{time_verify_start}}" placeholder="例如：20140506" >
+            <label>至</label>
+            <input type="text" class="form-control" style="width:120px" id="time_verify_end" name="time_verify_end"  value="{{time_verify_end}}" placeholder="例如：20140506" >
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>用户注册时间范围</label>
+            <input type="text" class="form-control" style="width:120px" id="time_register_start" name="time_register_start"  value="{{time_register_start}}" placeholder="例如：20140506" >
+            <label>至</label>
+            <input type="text" class="form-control" style="width:120px" id="time_register_end" name="time_register_end"  value="{{time_register_end}}" placeholder="例如：20140506" >
+        </div>
+        <br>
+        <br>
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>排序方式</label>
+            <select style="width:150px;" name="rank" id="rank">
+                <option  value="create_time_reduce" >关注时间逆序</option>
+                <option  value="create_time_increase" {% if rank == 'create_time_increase' %}selected='selected'{% endif %}>关注时间正序</option>
+                <option  value="register_time_increase" {% if rank == 'register_time_increase' %}selected='selected'{% endif %}>注册时间正序</option>
+                <option  value="register_time_reduce" {% if rank == 'register_time_reduce' %}selected='selected'{% endif %}>注册时间逆序</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-success" onclick="search();" style="display:inline;">搜索</button>
+        <button type="button" class="btn btn-default" onclick="clearData()" style="display:inline;">清空</button>
+        <a class="btn btn-success"
+           href="/api/fcrm/wx_user/download?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&time_register_start={{time_register_start}}&time_register_end={{time_register_end}}&time_verify_start={{time_verify_start}}&time_verify_end={{time_verify_end}}">导出Excel</a>
+    </form>
+</div>
+<span class="help-block "> 微信用户总数:{{ weixin_count }} </span>
+{{ table|raw }}
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+<script type="text/javascript">
+    function search()
+    {
+        if(($("#time_verify_start").val() != '') && ($("#time_verify_end").val() == ''))
+        {
+            alert("请填写完整的关注时间范围");
+            return;
+        }
+        if(($("#time_verify_start").val() == '') && ($("#time_verify_end").val() != ''))
+        {
+            alert("请填写完整的关注时间范围");return;
+        }
+
+        if($("#time_verify_start").val() != '')
+        {
+            if($("#time_verify_start").val().length != 8)
+            {
+                alert("关注起始时间格式不对应由8位数字组成：例如20140701");return;
+            }
+        }
+
+        if($("#time_verify_end").val() != '')
+        {
+            if($("#time_verify_end").val().length != 8)
+            {
+                alert("关注结束时间格式不对应由8位数字组成：例如20140701");return;
+            }
+        }
+
+        if(($("#time_register_start").val() != '') && ($("#time_register_end").val() == ''))
+        {
+            alert("请填写完整的注册时间范围");return;
+        }
+        if(($("#time_register_start").val() == '') && ($("#time_register_end").val() != ''))
+        {
+            alert("请填写完整的注册时间范围");return;
+        }
+
+        if($("#time_register_start").val() != '')
+        {
+            if($("#time_register_start").val().length != 8)
+            {
+                alert("注册起始时间格式不对应由8位数字组成：例如20140701");return;
+            }
+        }
+
+        if($("#time_register_end").val() != '')
+        {
+            if($("#time_register_end").val().length != 8)
+            {
+                alert("注册结束时间格式不对应由8位数字组成：例如20140701");return;
+            }
+        }
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&name="+$("#name").val()+"&tel="+$("#tel").val()+"&address="+$("#address").val()+"&vip_no="+$("#vip_no").val()+"&rank="+$("#rank").find("option:selected").val()+"&time_verify_start="+$("#time_verify_start").val()+"&time_verify_end="+$("#time_verify_end").val()+"&time_register_start="+$("#time_register_start").val()+"&time_register_end="+$("#time_register_end").val()+"&subscribe="+$("#subscribe").find("option:selected").val();
+        location.replace(wlh + getUrl);
+    }
+
+    function clearData()
+    {
+        $("input").val("");
+        var arr = window.location.href.split("&");
+        location.replace(arr[0]+"&"+arr[1]);
+    }
+
+</script>
+<script src="/libs/uploadify/jquery.uploadify.min.js"></script>
+
+<script type="text/javascript">
+    $("#form1Icon_UPLOAD").uploadify({
+        'swf'           : '/libs/uploadify/uploadify.swf',
+        //       'uploader'      : '/api/image/file/upload_by_flash',
+        'uploader'      : '/api/fcrm/house/file_upload?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}',
+        'fileSizeLimit' : '50MB',
+        'width'         : 68,
+// 'height'        : 28,
+        'debug'         : false,
+// 'buttonText'   : '选择图片',
+// 'buttonClass'   : '/images/button/select_img.png',
+        'buttonImage'   : '/libs/uploadify/select_file.png',
+//                'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+        'fileTypeExts'  : '*.xlsx',
+        'method'        : 'post',
+        'multi'         : false,
+        /*                'onSelectError' : function(file, errorCode, errorMsg)
+         {
+         if(errorCode == -110)
+         {
+         alert('图片大小超过限制,最大可以上传5M的图片。');
+         }
+         },
+         */
+        'onUploadSuccess' : function(file, data)
+        {
+            data = eval("(" + data + ")");
+            if(data.errno == 0)
+            {
+                location.reload();
+                alert("录入成功");
+            }
+            else
+            {
+                location.reload();
+                alert(data.error);
+
+            }
+        }
+
+    });
+</script>
+{% endblock %}

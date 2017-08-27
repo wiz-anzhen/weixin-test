@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>退货明细</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<header style="height:50px;text-align:center;background:#fff;">
+    <span style="height:50px;line-height:50px;font-size:1em;padding-left:3%;color: #000;float: left; " onclick="location.replace(document.referrer);">返回</span>
+    <span style="height:50px;line-height:50px;font-size:1.2em;">退货处理</span>
+    {% if procurement_order.status == 'refund' and order_detail.order_self != 'order_self' %}
+    <span id="determine_start" style="height:50px;line-height:50px;font-size:1em;padding-right:2%;color: red;font-weight: bolder;float: right; ">确认</span>
+    {% endif %}
+</header>
+<div style="height:10px;background:#e4e4e4;"></div>
+<div style="width: 90%;margin:0 auto;border-bottom: 1px solid #ccc;">
+    <p style="padding: 3%;">餐厅名称:{{order_detail.community_name}}</p>
+    <p style="padding: 3%;">退货单号:{{order_detail.order_id}}</p>
+    <p style="padding:3%;">下单时间:{{order_detail.order_time}}</p>
+    <p style="padding:3%;">退货时间:{{order_detail.return_time}}</p>
+    <p style="padding:3%;">档口:{{order_detail.part}}</p>
+    {% if  order_detail.order_self == 'order_self' %}
+    <p style="padding:3%;">退款方式:自退货</p>
+    {% endif %}
+</div>
+<div style="width: 90%;margin:0 auto;border-bottom: 1px solid #ccc;padding:10px 0;">
+    <p style="padding: 3%;font-size: 16px;">{{order_detail.title}}</p>
+    <p style="padding-left:3%;font-size: 12px;color:#ccc;">单价:{{order_detail.price}}{{order_detail.product_unit}}</p>
+    <p style="margin-top:-10%;padding-right:3%;color: #f00;float: right;">&times;{{order_detail.count}}</p>
+</div>
+<div style="width: 90%;height:55px;line-height:55px;margin:0 auto;border-bottom: 1px solid #ccc;">
+    <p style="padding-right: 3%;font-size:13px;float: right;">需退款:&nbsp;&yen;{{order_detail.total}}元</p>
+</div>
+<div style="width: 90%;margin:0 auto;border-bottom: 1px solid #ccc;">
+    <p style="padding:2%;">退货原因:</p>
+    <p style="padding:3%;">{{order_detail.refund_describe}}</p>
+</div>
+<div id="Thumbnail" style="width: 95%;margin:0 auto;padding: 3% 0 0 5%;">
+    <img src="{{order_detail.refund_img_first}}"  style="width: 50px;height: 50px;float:left;padding-left: 8px;"/>
+    <img src="{{order_detail.refund_img_second}}" style="width: 50px;height: 50px;float:left;padding-left: 8px;"/>
+    <img src="{{order_detail.refund_img_third}}"  style="width: 50px;height: 50px;float:left;padding-left: 8px;"/>
+    <p style="padding: 3% 0;color: #ccc;font-size: 0.5em;clear: both;">点击图片查看大图</p>
+</div>
+
+
+{% if template %}
+<div id="footer" style="width:100%;height:18px;padding:3% 0;border-top:1px solid #ccc;text-align:center;margin-top: 20px;display: none;">
+    <a href="/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" style="text-decoration:none;color:#000;outline:none;">
+        <div style="width:90%;padding:3% 0;margin:0 auto;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;">
+            返回首页
+        </div>
+    </a>
+</div>
+{% else %}
+<div id="footer" style="width:100%;height:18px;padding:3% 0;border-top:1px solid #ccc;text-align:center;margin-top: 20px;">
+    <a href="/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" style="text-decoration:none;color:#000;outline:none;">
+        <div style="width:90%;padding:3% 0;margin:0 auto;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;">
+            返回首页
+        </div>
+    </a>
+</div>
+{% endif %}
+<div id="determine_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">退货单确认 </div>
+        <div style="padding: 10%;text-align: center;">确认退货单,并发送通知退货员</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_ok" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+<div style="color: #ffffff;margin-top:30px;clear:both;">000</div>
+</body>
+<script type="text/javascript">
+    function getByClass (oParent,sClass){
+        var aEle=oParent.getElementsByTagName('*');
+        var aResult=[];
+        for (var i = 0; i < aEle.length; i++) {
+            if(aEle[i].className==sClass){
+                aResult.push(aEle[i]);
+            }
+        }
+        return aResult;
+    }
+    //var Thumbnail=document.getElementById('Thumbnail');
+    var footer=document.getElementById('footer');
+    var Thumbnail=Thumbnail.getElementsByTagName('img');
+    var abody=document.getElementsByTagName('body')[0];
+    var windowW=abody.offsetWidth;
+    var windowH=document.body.scrollHeight;
+    var num=0;
+    for(var i=0;i<Thumbnail.length;i++){
+        Thumbnail[i].index=i;
+        Thumbnail[i].onclick=function(){
+            if (num==0) {
+                num=1;
+                for (var i = 0; i < Thumbnail.length; i++) {
+                    Thumbnail[i].style.display="none";
+                    Thumbnail[i].style.paddingLeft=0;
+                };
+                this.style.display="block";
+
+                this.style.position="absolute";
+                this.style.bottom=0;
+                this.style.left=0;
+                this.style.width=windowW+'px';
+                this.style.height='';
+            }else{
+                num=0;
+                for (var i = 0; i < Thumbnail.length; i++) {
+                    Thumbnail[i].style.paddingLeft=10+'px';
+                    Thumbnail[i].style.display="block"
+                };
+                this.style.position="relative";
+                this.style.width=50+'px';
+                this.style.height=50+'px';
+
+            }
+        }
+    }
+    $("#determine_start").click(function (){
+
+        $("#determine_content").css("display","block");
+    });
+    $("#cancel").click(function (){
+
+        $("#determine_content").css("display","none");
+    });
+    $("#determine_ok").click(function ()
+    {
+        $("#determine_ok").css("display","none");
+        var site = location.protocol + '//' + location.host + '/api/wx_user/supply/send_supply';
+        var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id': '{{order_detail.order_id}}','type':'refund_finished'};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r)
+            {
+                if(r.errno == 0)
+                {
+                    location.href = "/wx_user/supply/return_submit?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&template={{template}}";
+
+                }
+            }
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>
+

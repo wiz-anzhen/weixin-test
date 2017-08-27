@@ -1,0 +1,123 @@
+{% set _fileUpload = component.getView.get('_fileUpload') %}
+{% set _richText = component.getView.get('_richText') %}
+{% set third_lib_version = component.getView.get('third_lib_version') %}
+
+
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" media="screen" href="/styles/bootstrap-datetimepicker.min.css">
+
+
+{% if _fileUpload %}
+<link rel="stylesheet" type="text/css" href="/libs/uploadify/uploadify.css?v={{ third_lib_version }}">
+
+    <style type="text/css">
+        .big_area {
+            width: 300px;
+            height: 120px;
+        }
+        .nav_tab
+        {
+            border-bottom: 1px solid #ddd;
+            margin-left: 0;
+            list-style: none;
+            padding-bottom:7px;
+
+            margin-top: 16px;
+        }
+        .nav_tab > li
+        {
+            margin-bottom:-1px;
+            padding-right: 12px;
+            padding-left: 12px;
+            margin-right: 2px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            line-height: 20px;
+            border: 1px solid transparent;
+            -webkit-border-radius: 4px 4px 0 0;
+            -moz-border-radius: 4px 4px 0 0;
+            border-radius: 4px 4px 0 0;
+            display: inline;
+            color:#555;
+            cursor:pointer;
+        }
+
+    </style>
+{% endif %}
+
+{% if _richText %}
+<link rel="stylesheet" type="text/css" href="/ueditor/themes/default/css/ueditor.css?v={{ third_lib_version }}">
+{% endif %}
+
+<form{{ component.renderAttributes|raw }}>
+    {% if component.showCloseBtn %}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}
+    <fieldset>
+{% if component.legend %}
+        <legend
+            {% if component.titleClass %} class="{{ component.titleClass }}"
+            {% endif %}>{{ component.legend|raw }}
+
+            {% if component.showButtonsAtHeaderAndFooter %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {% for child in component.buttons %}
+                {{ child|raw }}
+              {% endfor %}
+            {% endif %}
+        </legend>
+{% endif %}
+
+{% set continueInline = false %}
+{% for child in component.components %}
+{% set id = child.attributes.id %}
+{% if child.attributes.type == 'hidden' or child.attributes.type == 'custom' %}
+{{ child|raw }}
+{% else %}
+{% if not continueInline %}
+        <div class="control-group">
+{% if child.label %}
+            <label class="control-label" for="{{ id }}">{% if child.clientSide.required %}<span style="color: red;">*</span>{#{{ component.labelColon }}#}{% else %}{#{{ component.labelColon }}#} {% endif %}{{ child.label|raw }}
+                {% if child.clientSide.hint %}<img src="/libs/bluefin/question.png" id="{{ id }}_label" data-toggle="popover" data-placement="right" title="" data-content="{{ child.clientSide.hint|raw }}" data-html="true" data-trigger="" onmouseover="showTips(this.id);return false;" onmouseout="hideTips(this.id);return false;"/>
+                {% endif %}：
+            </label>
+{% endif %}
+            <div class="controls">
+{% endif %}
+{% if child.viewProperties.inline %}
+{% set continueInline = true %}
+{% endif %}
+{% if child.viewProperties.prepend %}
+                <div class="input-prepend{% if continueInline %} pull-left{% endif %}">
+                    <span class="add-on">{{ child.viewProperties.alt }}</span>
+                    {{ child|raw }}
+                </div>
+{% else %}
+{% if continueInline %}
+{% set nothing = child.addClass('pull-left') %}
+{% endif %}
+                {{ child|raw }}
+{% endif %}
+{% set inlineEnd = continueInline %}
+{% set continueInline = child.viewProperties.inline %}
+{% if continueInline %}
+                <div class="pull-left">&nbsp;&nbsp;</div>
+{% else %}
+                <span id="{{ id }}MsgInline" class="help-line"></span>
+{% if inlineEnd %}
+                <div class="clearfix"></div>
+{% endif %}
+                <span id="{{ id }}MsgBlock" style="color: red;" class="help-block">{{ child.clientSide.message|raw }}</span>
+            </div>
+        </div>
+{% endif %}
+{% endif %}
+{% endfor %}
+        <div class="control-group">
+            <div class="controls">
+{% for child in component.buttons %}
+                {{ child|raw }}
+{% endfor %}
+                <span id="{{ component.attributes.id }}Msg" class="help-block">{{ text('<br>Fields with "<span style="color:red;">*</span>" is required.', 'view')|raw }}</span>
+            </div>
+        </div>
+    </fieldset>
+</form>

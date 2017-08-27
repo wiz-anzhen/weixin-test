@@ -1,0 +1,274 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>功能目录</li>
+
+{% endblock %}
+
+{% block content_login %}
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+    <tr>
+        <th style="width: 35%">功能模块</th>
+        <th style="text-align: center">功能介绍</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if channel %}
+    <tr>
+        <td>
+        <a href="/mp_admin/channel/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">频道管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if directory %}
+    <tr>
+        <td>
+       <a href="/mp_admin/directory/list_top?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&community_name={{ community_name }}">目录管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if img_carousel %}
+    <tr>
+        <td>
+        <a href="/mp_admin/carousel/carousel?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">图片轮播</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if questionnaire %}
+    <tr>
+        <td>
+        <a  href="/mp_admin/questionnaire/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">问卷调查</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if article %}
+    <tr>
+        <td>
+        <a href="/mp_admin/mp_article/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">素材管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if house_member %}
+        {% if industry != 'procurement' %}
+        <tr>
+            <td>
+            <a href="/mp_admin/house/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">社区用户信息管理</a>
+            </td>
+            <td></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td>
+            <a href="/mp_admin/house/procurement?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">员工信息管理</a>
+            </td>
+            <td></td>
+        </tr>
+        {% endif %}
+    {% endif %}
+    {% if member %}
+    <tr>
+        <td>
+            <a href="/mp_admin/wx_user/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">微信会员信息管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if app_user %}
+    <tr>
+        <td>
+            <a href="/mp_admin/app_user/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">APP会员信息管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+
+    {% if bill %}
+    <tr>
+        <td>
+        <a href="/mp_admin/bill/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">缴费通知单管理</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if store %}
+        {% if industry != 'procurement' %}
+            <tr>
+                <td>
+                     <a href="/mp_admin/store/store?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">商城管理</a>
+                  </td>
+                <td></td>
+             </tr>
+        {% else %}
+         {% if community_type_all == 'procurement_total' %}
+            <tr>
+                <td>
+                <a href="/mp_admin/restaurant/restaurant?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">餐厅管理</a>
+               </td>
+               <td></td>
+             </tr>
+           {% else %}
+           {% if community_type_all == 'procurement_restaurant' %}
+             <tr>
+                <td>
+                   <a href="/mp_admin/part/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">档口管理</a>
+               </td>
+               <td></td>
+             </tr>
+           {% endif %}
+             <tr>
+                <td>
+                   <a href="/mp_admin/store/store_procurement?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">采购管理</a>
+                </td>
+                <td></td>
+            </tr>
+           {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if order %}
+        {% if restaurant %}
+           <tr>
+               <td>
+                <a href="/mp_admin/order/restaurant?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(餐饮)管理</a>
+              </td>
+              <td></td>
+           </tr>
+          <tr>
+              <td>
+                  <a href="/mp_admin/wx_pay_record/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">支付记录</a>
+             </td>
+             <td></td>
+          </tr>
+         {% elseif industry == 'procurement' %}
+             <tr>
+                <td>
+                    {% if community_type_all == 'procurement_total' %}
+                    <a href="/mp_admin/procurement_order/total?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(采购)管理</a>
+                    {% else %}
+                    <a href="/mp_admin/procurement_order/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(采购)管理</a>
+                    {% endif %}
+
+               </td>
+              <td></td>
+             </tr>
+        {% else %}
+          <tr>
+              <td>
+                  <a href="/mp_admin/order/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(商城)管理</a>
+              </td>
+             <td></td>
+          </tr>
+    <tr>
+              <td>
+                  <a href="/mp_admin/wx_pay_record/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">支付记录</a>
+             </td>
+              <td></td>
+          </tr>
+        {% endif %}
+
+
+    {% endif %}
+    {% if phone_book %}
+    <tr>
+        <td>
+         <a href="/mp_admin/community_phone_book/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">电话簿</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if customer_specialist %}
+    <tr>
+        <td>
+        <a href="/mp_admin/customer_specialist_group/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">客服专员</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if send_by_group %}
+    <tr>
+        <td>
+        <a href="/mp_admin/group_send/index?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（社区）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if send_by_group_mp %}
+    <tr>
+        <td>
+            <a href="/mp_admin/group_send_mp/send_mp?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（公众账号）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if user_notify %}
+    <tr>
+        <td>
+            <a href="/mp_admin/user_notify/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（社区）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if user_notify_mp %}
+    <tr>
+        <td>
+            <a href="/mp_admin/user_notify_mp/subscribe?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（公众账号）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if user_notify_app_c %}
+    <tr>
+        <td>
+            <a href="/mp_admin/user_notify_app_c/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（app社区）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if user_notify_app_mp %}
+    <tr>
+        <td>
+            <a href="/mp_admin/user_notify_app_mp/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（app公众账号）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if push_message_app_c %}
+    <tr>
+        <td>
+            <a href="/mp_admin/push_message_app_c/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">推送通知（app社区）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if push_message_app_mp %}
+    <tr>
+        <td>
+            <a href="/mp_admin/push_message_app_mp/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">推送通知（app公众账号）</a>
+        </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% if ble %}
+    <!--tr>
+        <td>
+            <a href="/mp_admin/ble/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">beacon硬件设备管理</a>
+        </td>
+        <td></td>
+    </tr-->
+    {% endif %}
+    </tbody>
+</table>
+{% endblock %}

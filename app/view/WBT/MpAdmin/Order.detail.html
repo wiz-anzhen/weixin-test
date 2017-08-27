@@ -1,0 +1,77 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_order' %}
+
+{% block css_link %}
+<style type="text/css">
+    li{list-style-type: none}
+    .title{font:normal bold 20px arial,sans-serif;margin-left:-30px}
+    .table-width{width:1100px;margin:auto}
+    .div{margin-bottom: 20px}
+</style>
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/order/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">订单管理</a>
+    <span class="divider">/</span>
+</li>
+<li>{{order_id}}</li>
+
+{% endblock %}
+
+{% block content_login %}
+<div class="div">
+    <ul>
+        <li class="title" style="font-size: 20px">收货人信息</li>
+        <li>姓名：{{name}}</li>
+        {% if community_type != 'none' %}
+        {% else %}
+        <li>地址：{{address}}</li>
+        <li>手机号码：{{tel}}</li>
+        {% endif %}
+    </ul>
+</div>
+
+{% if restaurant %}
+{% elseif community_type != 'none' %}
+{% else %}
+<div class="div">
+    <ul>
+        <li class="title" style="font-size: 20px">客服信息</li>
+        <li>客服组：{{cs_group_name}}</li>
+        <li>客服专员：{{cs_name}}</li>
+        <li>联系电话：{{cs_tel}}</li>
+    </ul>
+</div>
+{% endif %}
+
+<div class="div">
+    <li class="title" style="margin-bottom: 10px;margin-left:-5px;font-size: 20px">订单详情</li>
+    <div class="table-width">
+        {{ table_detail|raw }}
+    </div>
+    <ul style="float:right;">
+        <li>商品总数：<span style="color:red;">{{total_num}}</span></li>
+        <li>商品总价：<span style="color:red;">{{total_price}}元</span></li>
+    </ul>
+</div>
+<div style="clear:both">
+    <li class="title" style="margin-bottom: 10px;margin-left:-5px;font-size: 20px">订单历史记录</li>
+    <div class="table-width">
+        {{ table_change_log|raw }}
+    </div>
+</div>
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+<script type="text/javascript">
+</script>
+{% endblock %}

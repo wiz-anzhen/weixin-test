@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="餐饮行业CRM,餐饮CRM,SCRM,RCRM" />
+    <meta name="description" content="餐饮行业SCRM。canyin.weibotui.com" />
+    <title>SCRM 管理后台</title>
+    {% block bootstrap_css %}
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    {% endblock %}
+    <link type="text/css" href="/libs/bluefin/bootstrap-addons.css?v={{third_lib_version}}" rel="stylesheet">
+    <link href="/styles/main.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <!--[if IE 6]><link href="/styles/ie6.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen"><![endif]-->
+    <style>
+        html{overflow-y:scroll}
+    </style>
+    {% block css_link %}
+    <style type="text/css">
+        @media print {
+            .no_print {display:none}
+        }
+        li{list-style-type: none}
+        .div{margin-bottom: 10px}
+        td{width:500px;font:normal normal 8px arial,sans-serif;}
+    </style>
+    {% endblock %}
+    {% block header_js_link %}
+    {% endblock %}
+</head>
+
+<body onload="dp()">
+
+<div class="header no_print">
+    <div class="container">
+        <a class="pull-left logo" href="http://canyin.weibotui.com" title="餐饮行业SCRM"></a>
+    </div>
+</div>
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+{% block bootstrap_js %}
+<script src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+{% if pagination_js %}
+<script type="text/javascript">
+    $(function () {
+        if (!bluefinBH.isRegistered('_pagination')) {
+            bluefinBH.register('_pagination', true);
+            $('.pagination').each(function () {
+                var divp = $(this),
+                        req = divp.data('request');
+                divp.on('click', 'a[data-page]', function (e) {
+                    location.href = bluefinBH.buildUrl(req, {'*PAGING*': {'page': $(this).data('page')}});
+                });
+            });
+        }
+    });
+</script>
+{% endif %}
+{% block js_link %}
+<script type="text/javascript">
+    function dp()
+    {
+        function print(){
+            window.print();
+        }
+        function close(){
+            windowl.close();
+        }
+        setTimeout("print()",1000);
+        setTimeout("close()",2000);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="basic-block">
+        {% block content_login %}
+        <div style="text-align: center;font:normal bold 20px arial,sans-serif;">
+            <span>{{sale_list_name}}</span>
+        </div>
+        <div class="div">
+            <table>
+                <tr>
+                    <td>收货人：{{name}}</td>
+                    <td>地址：{{address}}</td>
+                </tr>
+                <tr>
+                    <td>手机号码：{{tel}}</td>
+                    <td>订单号：{{order_id}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="div">
+            <div style="text-align: center">{{ table|raw }}</div>
+            <table>
+                <tr>
+                    <td>打印时间：{{time_print}}</td>
+                </tr>
+                <tr>
+                    <td>商品总数：{{total_num}}</td>
+                    <td>商品总价：{{total_price}}元</td>
+                </tr>
+            </table>
+        </div>
+        <div style="clear:both">
+            <table>
+                <tr>
+                    <td>客服专员：{{cs_name}}</td>
+                    <td>联系电话：{{cs_tel}}</td>
+                </tr>
+                <tr>
+                    <td>提货人签字：</td>
+                    <td>收货人签字：</td>
+                    <td>日期：</td>
+                </tr>
+            </table>
+        </div>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+</body>
+</html>
+
+
+

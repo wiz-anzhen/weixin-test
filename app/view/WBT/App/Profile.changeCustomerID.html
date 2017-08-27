@@ -1,0 +1,105 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>设置客服专员</title>
+{% endblock %}
+
+{% block body %}
+<body onload="select()">
+<div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand">设置客服专员</a>
+        </div>
+    </nav>
+
+    <div class="input-group" style="width:95%;margin:0 auto;">
+        <span class="input-group-addon" style="font-size: larger">客服专员分组：</span>
+        <select class="form-control input-lg" id="cs_group" name="cs_group" onChange="select()">
+            {% for cs_group in cs_group %}
+            <option  value="{{cs_group.customer_specialist_group_id}}"{% if cs_group_id == cs_group.customer_specialist_group_id %} selected="selected"{% endif %}>{{cs_group.group_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br/>
+    <div class="input-group" style="width:95%;margin:0 auto;">
+        <span class="input-group-addon" style="font-size: larger">客服专员列表：</span>
+        <form name="form">
+            <select class="form-control input-lg" id="cs" name="cs" onChange="hide()">
+            </select>
+        </form>
+    </div>
+    <br/>
+
+    <a id="submit_next" class="btn btn-success btn-lg btn-block" style="width:95%;margin:0 auto;">保存</a>
+</div>
+<br/>
+<div id="submit_status" class="alert alert-danger" style="display: none;"></div>
+</div>
+
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+
+<script src="/libs/bootstrap3/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#submit_next").click(function () {
+            var $csId = $("#cs").find("option:selected").val();
+            var $csGroupId = $("#cs_group").find("option:selected").val();
+            var post_data = {'phone': '{{app_user.phone}}', 'cs_id': $csId,'cs_group_id': $csGroupId};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/save_cs_id';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSave
+            });
+        });
+    });
+
+    function hide() {
+        $("#submit_status").html('设置成功').hide();
+    }
+
+    function afterSave(data) {
+        $("#submit_status").html('设置成功').show();
+    }
+
+    function select()
+    {
+        $("#submit_status").html('设置成功').hide();
+        var $csGroupId = $("#cs_group").find("option:selected").val();
+        var post_data = {'phone': '{{app_user.phone}}', 'cs_group_id': $csGroupId};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/return_cs_id';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: returnCs
+        });
+    }
+    //返回客户专员列表数据，添加option内容
+    function returnCs(response)
+    {
+        document.getElementById("cs").options.length = 0;
+        var data = eval('('+response+')');
+        var temp = document.form.cs;
+        for (i = 0; i < data.length; i++) {
+            temp.options[i] = new Option(data[i].name, data[i].customer_specialist_id);
+            if (data[i].customer_specialist_id == '{{current_cs_id}}') {
+                temp.options[i].selected = true;
+            }
+        }
+    }
+</script>
+
+</body>
+{% endblock %}
+
+

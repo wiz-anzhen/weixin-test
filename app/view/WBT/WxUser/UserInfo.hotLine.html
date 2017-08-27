@@ -1,0 +1,72 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>服务热线</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241, 240, 245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<body style="margin: 15px 15px 40px;">
+<div id="main-div">
+    <h1 style="color: #000;font-size: 20px;font-weight: bold;">服务热线</h1>
+
+    <p style="text-align: center;"><br/></p>
+
+    <p><br/></p>
+
+    <p style="text-align: center;">
+        <span style="font-family: 微软雅黑, 'Microsoft YaHei'; font-size: 24px;">点击电话号码直接拨打</span>
+        <br/>
+    </p>
+
+    <p>
+        <span style="font-family: 微软雅黑, 'Microsoft YaHei';"><br/></span>
+    </p>
+
+    <p style="text-align: center;">
+        <span style="font-family: 微软雅黑, 'Microsoft YaHei'; font-size: 24px;">
+            <span style="font-family: 微软雅黑, 'Microsoft YaHei'; font-size: 36px;">
+                <a href="tel:{{hot_line}}">{{hot_line}}</a>
+            </span>
+            <br/>
+        </span>
+    </p>
+
+    <p><span style="font-family: 微软雅黑, 'Microsoft YaHei';"><br/></span></p>
+
+    <p style="text-align: center;">
+        <span style="font-family: 微软雅黑, 'Microsoft YaHei';">
+            <span style="font-family: 微软雅黑, 'Microsoft YaHei'; font-size: 24px;">我们的客户服务专员</span>
+        </span>
+    </p>
+
+    <p style="text-align: center;">
+        <span style="font-family: 微软雅黑, 'Microsoft YaHei';">
+            <span style="font-family: 微软雅黑, 'Microsoft YaHei'; font-size: 24px;">会为您服务！</span>
+            <br/>
+        </span>
+    </p>
+
+    <p style="text-align: center;"><br/></p>
+</div>
+</body>
+{% endblock %}

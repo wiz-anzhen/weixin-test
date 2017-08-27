@@ -1,0 +1,24 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set head_active = 'mp_rule' %}
+
+{% block sub_breadcrumbs %}
+<li class="active">规则</li>
+{% endblock %}
+
+{% block action %}
+<button type="button" class="btn btn-success" title="添加规则" onclick="bluefinBH.ajaxDialog('/mp_admin/mp_rule_dialog/add?mp_user_id={{ mp_user_id }}');">
+    添加规则
+</button>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

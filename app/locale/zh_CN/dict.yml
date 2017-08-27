@@ -1,0 +1,10 @@
+time: 时间
+history: 历史
+error: 错误
+parameter: 参数
+confirm: 确认
+':': ：
+eula: 用户服务协议
+email: 电子邮箱
+birthday: 生日的填写格式由8位数字组成。例如：19780524
+adminEmail: 多个管理员邮箱之间用逗号分隔

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>确认完成</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+</head>
+<body>
+<header style="height:75px;line-height:75px;margin-bottom:35%;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>订货单</h1>
+</header>
+<div class="main" style="width:100%;text-align:center;">
+    <p style="padding:2% 0;font-size:1.2em;"><img src="/images/procurement_ok.png"style="width: 50px;height: 50px;margin-top: -15%;margin-bottom: 6%"></p>
+    <p>已确认收到订货单</p>
+    <p style="padding:5% 0;font-size:1em;color:#ccc;">已发送通知给采购员</p>
+</div>
+{% if template %}
+{% else %}
+<div class="footer"style="width:100%;padding:5% 0;border-top:1px solid #ccc;text-align:center;position:fixed;bottom:25px;">
+    <a href="/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" style="text-decoration:none;color:#000;outline:none;">
+    <div style="width:90%;padding:5% 0;margin:0 auto;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;">
+       返回首页
+    </div>
+    </a>
+</div>
+{% endif %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'index' %}
+
+{% set mp_name = 'SCRM 管理后台' %}
+{% block sub_breadcrumbs %}
+<li class="active">公共账号</li>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

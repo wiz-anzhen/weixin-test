@@ -1,0 +1,333 @@
+{% extends "WBT/home.twig" %}
+
+{% block header %}
+<ul class="nav nav-pills pull-right" style="max-width: 700px;">
+    <div style="float:left">
+        <button id="request" type="button" class="btn btn-primary" style="display: none"  onclick="request()">
+            {% if receive_order_notify or receive_questionnaire_notify %} 开启桌面通知{% endif %}
+        </button>
+        {% if receive_order_notify or receive_questionnaire_notify %}
+            <audio id="myAudio">
+                <source src="/libs/files/order_notify_music.mp3" type="audio/mpeg">
+            </audio>
+            <button id="pause_notify" type="button" class="btn btn-primary" style="display:none"  onclick="document.getElementById('myAudio').pause()">
+                暂停提示音
+            </button>
+        {% endif %}
+    </div>
+
+    {% if  is_mp_admin %}
+        <li><a href="/mp_admin/super_admin_list/list">首页</a> </li>
+    {% endif %}
+
+    {% if  is_company_admin %}
+        <li><a href="/mp_admin/super_admin_list/list">首页</a> </li>
+        <li> <a href="/mp_admin/wx_menu/index?mp_user_id={{ mp_user_id }}">自定义菜单</a> </li>
+        <li> <a href="/mp_admin/super_admin/mp_user_profile?mp_user_id={{ mp_user_id }}">公众账号属性</a></li>
+    {% endif %}
+
+    {% if mp_user_id %}
+        <li>
+            <a href="/mp_admin/community/list?mp_user_id={{ mp_user_id }}">
+                {{ mp_name }}
+            </a>
+        </li>
+    {% endif %}
+
+    {% if  is_mp_admin %}
+        <li> <a href="/mp_admin/super_admin/mp_user_profile?mp_user_id={{ mp_user_id }}">公众账号属性</a></li>
+        <li> <a href="/mp_admin/wx_menu/index?mp_user_id={{ mp_user_id }}">自定义菜单</a> </li>
+    {% endif %}
+
+    {% if community_id %}
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:">
+            功能模块 <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+            {% if channel %}
+                <li class="{% if module == 'module_channel' %}active{% endif %}">
+                    <a href="/mp_admin/channel/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">频道管理</a>
+                </li>
+            {% endif %}
+            {% if directory %}
+                <li class="{% if module == 'module_directory' %}active{% endif %}">
+                    <a href="/mp_admin/directory/list_top?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&community_name={{ community_name }}">目录管理</a>
+                </li>
+            {% endif %}
+            {% if img_carousel %}
+                <li class="{% if module == 'module_carousel' %}active{% endif %}">
+                    <a href="/mp_admin/carousel/carousel?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">图片轮播</a>
+                </li>
+            {% endif %}
+            {% if questionnaire %}
+                <li class="{% if module == 'module_questionnaire' %}active{% endif %}">
+                    <a href="/mp_admin/questionnaire/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">问卷调查</a>
+                </li>
+            {% endif %}
+            {% if article %}
+                <li class="{% if module == 'module_article' %}active{% endif %}">
+                    <a href="/mp_admin/mp_article/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">素材管理</a>
+                </li>
+            {% endif %}
+            {% if house_member %}
+                <li class="{% if module == 'module_house_member' %}active{% endif %}">
+                    {% if industry != 'procurement' %}
+                        <a href="/mp_admin/house/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">社区用户信息管理</a>
+                    {% else %}
+                        <a href="/mp_admin/house/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">用户信息管理</a>
+                    {% endif %}
+
+                </li>
+            {% endif %}
+            {% if member %}
+                <li class="{% if module == 'wx_members' %}active{% endif %}">
+                    <a href="/mp_admin/wx_user/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">微信会员信息管理</a>
+                </li>
+            {% endif %}
+            {% if bill %}
+                <li class="{% if module == 'module_bill' %}active{% endif %}">
+                    <a href="/mp_admin/bill/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">缴费通知单管理</a>
+                </li>
+            {% endif %}
+            {% if store %}
+                <li class="{% if module == 'module_store' %}active{% endif %}">
+                    {% if industry != 'procurement' %}
+                        <a href="/mp_admin/store/store?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">商城管理</a>
+                    {% else %}
+                        {% if community_type_all == 'procurement_total' %}
+                            <a href="/mp_admin/restaurant/restaurant?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">餐厅管理</a>
+                        {% else %}
+                            <a href="/mp_admin/store/store_procurement?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">采购管理</a>
+                            <a href="/mp_admin/part/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">档口管理</a>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endif %}
+            {% if order %}
+            {% if restaurant %}
+                <li class="{% if module == 'module_order' %}active{% endif %}">
+                    <a href="/mp_admin/order/restaurant?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(餐饮)管理</a>
+                </li>
+                <li class="{% if module == 'module_wx_pay_record' %}active{% endif %}">
+                    <a href="/mp_admin/wx_pay_record/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">支付记录</a>
+                </li>
+                {% elseif industry == 'procurement' %}
+                    <li class="{% if module == 'module_order' %}active{% endif %}">
+                        {% if community_type_all == 'procurement_total' %}
+                            <a href="/mp_admin/procurement_order/total?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(采购)管理</a>
+                        {% else %}
+                            <a href="/mp_admin/procurement_order/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(采购)管理</a>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="{% if module == 'module_order' %}active{% endif %}">
+                        <a href="/mp_admin/order/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">订单(商城)管理</a>
+                    </li>
+                <li class="{% if module == 'module_wx_pay_record' %}active{% endif %}">
+                    <a href="/mp_admin/wx_pay_record/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">支付记录</a>
+                </li>
+                {% endif %}
+
+            {% endif %}
+            {% if phone_book %}
+                <li class="{% if module == 'module_community_phone_book' %}active{% endif %}">
+                    <a href="/mp_admin/community_phone_book/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">电话簿</a>
+                </li>
+            {% endif %}
+            {% if customer_specialist %}
+                <li class="{% if module == 'module_customer_specialist_group' %}active{% endif %}">
+                    <a href="/mp_admin/customer_specialist_group/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">客服专员</a>
+                </li>
+            {% endif %}
+            {% if send_by_group %}
+                <li class="{% if module == 'module_send_by_group' %}active{% endif %}">
+                    <a href="/mp_admin/group_send/index?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（社区）</a>
+                </li>
+            {% endif %}
+            {% if send_by_group_mp %}
+                <li class="{% if module == 'module_send_by_group_mp' %}active{% endif %}">
+                    <a href="/mp_admin/group_send_mp/send_mp?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（公众账号）</a>
+                </li>
+            {% endif %}
+            {% if user_notify %}
+                <li class="{% if module == 'module_user_notify' %}active{% endif %}">
+                    <a href="/mp_admin/user_notify/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（社区）</a>
+                </li>
+            {% endif %}
+            {% if user_notify_mp %}
+                <li class="{% if module == 'module_user_notify_mp' %}active{% endif %}">
+                    <a href="/mp_admin/user_notify_mp/subscribe?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（公众账号）</a>
+                </li>
+            {% endif %}
+            {% if user_notify_app_c %}
+                <li class="{% if module == 'module_user_notify_app_c' %}active{% endif %}">
+                    <a href="/mp_admin/user_notify_app_c/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（社区）</a>
+                </li>
+            {% endif %}
+            {% if user_notify_app_mp %}
+                <li class="{% if module == 'module_user_notify_app_mp' %}active{% endif %}">
+                    <a href="/mp_admin/user_notify_app_mp/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">发送模板消息（公众账号）</a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+    {% endif %}
+
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:">
+            管理员中心 <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu pull-right" role="menu">
+            {% if industry == 'procurement' %}
+            <li><a href="http://spm.weibotui.com/article/9f8dc5e03cccce5b54b2c21b690cc78f" target="_blank">帮助</a></li>
+            {% else %}
+                <li><a href="http://spm.weibotui.com/article/f65217fabd9cf351ee6e9e4745073201?mp_user_id=86903" target="_blank">帮助</a></li>
+            {% endif %}
+            <li class="divider"></li>
+            <li><a href="/profile/pwd">{{ username }}</a></li>
+            <li><a href="/profile/pwd">修改密码</a></li>
+            <li><a href="/auth/logout">退出</a></li>
+        </ul>
+    </li>
+</ul>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="basic-block">
+            <ul class="breadcrumb">
+
+                <li>{% if is_community_admin %}公众帐号{% else %}<a href="/">首页</a>{% endif %}<span class="divider">/</span></li>
+
+                {% block sub_breadcrumbs %}{% endblock %}
+            </ul>
+            <div style="padding-bottom: 5px;">
+                {% block action %}{% endblock %}
+            </div>
+            {% block content_login %}
+                {{ table|raw }}
+            {% endblock %}
+            {% block note %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block inform_link %}
+    {% if is_super_admin  or is_company_admin %}
+    {% else %}
+        {% if receive_questionnaire_notify  or receive_order_notify  %}
+            <script type="text/javascript">
+
+                if (("Notification" in window) && Notification.permission !== "granted") {
+                    document.getElementById("request").style.display="inline";//辨别用户所使用的浏览器
+                }
+
+                function request()
+                {
+                    Notification.requestPermission(function (permission)
+                    {
+                        // Whatever the user answers, we make sure we store the information
+                        if(!('permission' in Notification)) {
+                            Notification.permission = permission;
+                        }
+                    });
+                }
+
+                function notify(text,title,link)
+                {
+                    var notification = new Notification(title, {body:text,icon:"/images/logo_80.png"});
+                    notification.onclick = function ()
+                    {
+                        window.open(link);
+                    };
+                    //notification.show();
+                    notification.ondisplay = function() {
+                        setTimeout(function() {
+                            notification.close();//关闭通知
+                            notification.cancel();//删除这个通知对象
+                        },  200000);
+                    }
+
+                }
+                function show_notify()
+                {
+                    //查看新订单数量
+                    var post_data = {'username': '{{ username_all }}','community_id':'{{ community_id }}'};
+                    var site =  location.protocol + '//' + location.host + '/api/fcrm/community_admin/count_notify';
+                    $.ajax({
+                        type: 'post',
+                        url: site,
+                        data: post_data,
+                        datatype: 'json',
+                        async: true,
+                        success: returnCount
+                    });
+
+                    //发送通知
+                    function returnCount(response)
+                    {
+                        var data = eval('('+response+')');
+                        {% if receive_order_notify  %}
+                        if(parseInt(data['order_notify'])>0 )
+                        {
+                            //存储小区管理员通知时间
+                            var $data = {'username': '{{ username_all }}'};
+                            var $sendCodeUrl = location.protocol + '//' + location.host + '/api/fcrm/community_admin/save_notify_time';
+                            $.post($sendCodeUrl,$data,function($data) {
+                                if (!$data['errno'] == 0)
+                                {
+                                    alert($data['error']);
+                                }
+                            });
+                            var text_order = '您有'+data['order_notify']+'个新订单,赶快去查看新订单吧！';
+                            var title_order = " 订单通知";
+                            var link_order = "";
+                            if('{{ restaurant }}')
+                            {
+                                link_order = "http://spm.weibotui.com/mp_admin/order/restaurant?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}";
+                            }
+                            else
+                            {
+                                link_order = "http://spm.weibotui.com/mp_admin/order/list?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}";
+                            }
+
+                            notify(text_order,title_order,link_order);
+                            document.getElementById('myAudio').play();
+                            $("#pause_notify").show();
+                        }
+                        {% endif %}
+                        {% if receive_questionnaire_notify %}
+                        if(parseInt(data['answer_notify'])>0)
+                        {
+                            //存储小区管理员问卷id
+                            var $data_answer = {'username': '{{ username_all }}'};
+                            var $sendCodeUrl_answer = location.protocol + '//' + location.host + '/api/fcrm/community_admin/save_answer_id';
+                            $.post($sendCodeUrl_answer,$data_answer,function($data) {
+                                if (!$data['errno'] == 0)
+                                {
+                                    alert($data['error']);
+                                }
+                            });
+                            for (i=0;i<data['content'].length;i++)
+                            {
+                                var text_answer = data['content'][i]['title']+' ' +'有更新,赶快去查看吧！';
+                                var title_answer = " 问卷调查";
+                                var link_answer = "http://spm.weibotui.com/mp_admin/questionnaire/user_answer?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&wj_questionnaire_id="+data['content'][i]['wj_questionnaire_id'];
+                                notify(text_answer,title_answer,link_answer);
+
+                            }
+                        }
+                        {% endif %}
+                    }
+
+                }
+                setInterval("show_notify()",20000);
+            </script>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>筛选后</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+</head>
+<body>
+<header style="height:75px;text-align:center;background:#fff;">
+    <a href="/wx_user/test/b"style="height:75px;line-height:75px;font-size:1.2em;padding-left:2%;text-decoration: none;color:#000;float: left; ">返回</a>
+    <span style="height:75px;line-height:75px;font-size:1.2em;">查看订单</span>
+    <a href="javascript:;"style="height:75px;line-height:75px;font-size:1.2em;padding-right:2%;text-decoration: none;color:#000;float: right; ">筛选</a>
+</header>
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+<a href="/wx_user/procurement/manager_detail?mp_user_id={{order.mp_uer_id}}order_id={{order.order_id}}"></a>
+    <div style="width: 100%;border-bottom: 1px solid #ccc;overflow: hidden;">
+
+        <p style="padding:8% 3%;float: left"><img src="/images/procurement_house.png" style="width: 15px;height: 15px;padding-right: 5px;">{{order.bound_name}}</p>
+        <p style="padding:8% 3%;float: left">&gt;</p>
+        <p style="padding:8% 3%;color: orange;font-size:12px;float: right">{{order.status_name}}</p>
+
+    </div>
+    <div class="order" style="width: 100%;line-height:28px;font-size: 0.9em">
+        <div style="padding-left: 3%;">店名:&nbsp;{{order.restaurant_name}}</div>
+        <div style="padding-left: 3%;">时间:&nbsp;{{order.create_time}}</div>
+        <div style="padding-left: 3%;">订单号:{{order.order_id}}</div>
+        <div style="padding-left: 3%;color: #f00;">金额:{{order.total_price}}元</div>
+    </div>
+
+
+</body>
+<script type="text/javascript">
+    var Supplier=document.getElementById('Supplier');
+    Supplier.onclick=function(){
+        location.href="/wx_user/test/f";
+    }
+</script>
+</html>

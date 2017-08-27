@@ -1,0 +1,94 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>业主认证</title>
+{% endblock %}
+
+{% block content %}
+<div style="padding:20px 12px 12px 12px;">
+<div style="margin-bottom: 15px;">
+    <span style="font-size: 17px;">请求人姓名：</span>
+    <span style="color: red;margin-left: 10px;" id="lessee_name">{{lessee_name}}</span>
+    <br>
+    <span style="font-size: 17px;">请求人电话：</span>
+    <span style="color: red;margin-left: 10px;" id="lessee_phone">{{lessee_phone}}</span>
+</div>
+<div class="input-group" style="margin-bottom: 15px;">
+    <div style="font-size: 17px;margin-bottom: 6px;">请选择：</div>
+    <div style="margin-left: 20px;">
+        {% for key,address in house_address %}
+        <label for="{{key}}">{{address.community_name}}<br>{{address.house_address}}</label>&nbsp;&nbsp;&nbsp;
+        <input type="radio"  name="address" value="{{address.house_address}}" style="width:20px;height:20px;" id="{{key}}" {% if key == 0 %} checked="checked" {% endif %}/>
+        <br>
+        {% endfor %}
+    </div>
+
+</div>
+<div class="input-group" style="margin-bottom: 15px;">
+    <div style="font-size: 17px;margin-bottom: 6px;">请选择请求人身份：</div>
+    <div style="margin-left: 20px;">
+    {% for key,type in house_type %}
+    <label for="{{key}}">{{type}}：</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio"  name="type" value="{{key}}" style="width:20px;height:20px;" id="{{key}}" {% if key == 'owner' %} checked="checked" {% endif %}/>
+        <br>
+    {% endfor %}
+    </div>
+</div>
+
+<div style="margin-bottom: 35px;">
+    {% if owner_lessee %}
+    <a id="agree" class="btn btn-success btn-lg " style="width: 45%;float: left;">同意</a>
+    <a id="disagree" class="btn btn-success btn-lg " style="width: 45%;float:right;">拒绝</a>
+    {% endif %}
+</div>
+
+<div id="status" class="alert alert-danger" style="display: none;clear: both;margin-top: 80px;"></div>
+</div>
+{% endblock %}
+
+
+{% block js_link %}
+<script>
+    $(function(){
+        $("#agree").click(function(){
+            var address = $("input[name='address']:checked").val();
+            var type = $('input[name="type"]:checked').val();
+
+            var lessee_phone = $("#lessee_phone").text();
+            var lessee_name = $("#lessee_name").text();
+            var post_data = {'mp_user_id': '{{mp_user_id}}','address': address, 'type': type,'wx_user_id_lessee':'{{wx_user_id_lessee}}','wx_user_id_owner':'{{wx_user_id_owner}}','lessee_phone':lessee_phone,'lessee_name':lessee_name,'option':'agree'};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/send_lessee_template';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSendLessee
+            });
+        });
+
+        $("#disagree").click(function(){
+            var address = $('input[name="address"]:checked').val();
+            var type = $('input[name="type"]:checked').val();
+            var post_data = {'mp_user_id': '{{ mp_user_id }}','address': address, 'type': type,'wx_user_id_lessee':'{{wx_user_id_lessee}}','wx_user_id_owner':'{{wx_user_id_owner}}','option':'disagree'};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/send_lessee_template';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSendLessee
+            });
+        });
+    });
+
+    function afterSendLessee(data) {
+        $("#agree").attr('disabled', 'disabled')
+        $("#disagree").attr('disabled', 'disabled')
+        $("#status").html("我们已帮您回复").show();
+    }
+</script>
+{% endblock %}
+

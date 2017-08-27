@@ -1,0 +1,113 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ top_name }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241,240,245); padding-top: 50px; }
+    div a.list-group-item { font-weight: normal; border-color: transparent; width:130px;background-color: transparent;background-image: url("/images/transparent.png");padding:8px 12px;}
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 4px;margin-bottom: -13px; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 4px;margin-bottom: -13px; }
+
+    div a.list-group-item { color: #000; font-size: 15px; }
+
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<body>
+<img src="{{directory_background_img}}" id="background_img" width="100%" style="z-index: -9999;position:absolute;top:0;"/>
+<div style="margin-top: 60px;float:left">
+
+    <!-- 遍历目录-->
+    {% for directory in directories %}
+    <!-- 目录循环到新组中，首先设置此目录在该组中-->
+    <div class="list-group" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+        <!-- 目录为缴费通知单时特殊样式-->
+        {% if directory.common_type == "user_bill_list" %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}"  {% if directory.common_type != 'text'  %}   onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %}>
+        <span style="width:80px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;filter:alpha(opacity:100);opacity: 1;">{{ directory.title }}</span>
+        {% if directory.common_type != 'text' %}
+       <!-- <span class="glyphicon glyphicon-play pull-right"></span>-->
+        {% if bill_count %}
+                    <span class="badge" style="background-color: red;color:white;border-radius: 5px;font-size: 12px;width:20px;float:right;text-align:center;margin-top:3px">
+                        {{bill_count}}
+                     </span>
+        {% endif %}
+        {% else %}
+        <span class="badge" style="width:150px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+
+        <!-- 目录为客服专员认证时特殊样式-->
+        {% elseif directory.common_type == "user_cs_certify" %}
+        {% if cs %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}  onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %} >
+        <span style="width:80px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;filter:alpha(opacity:100);opacity: 1;">{{ directory.title }}</span>
+        {% if directory.common_type != 'text' %}
+        <!-- <span class="glyphicon glyphicon-play pull-right"></span>-->
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+        <!-- 正常目录样式-->
+        {% else %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}  onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %} >
+        <span style="width:80px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;filter:alpha(opacity:100);opacity: 1;">{{ directory.title }}</span>
+        {% if directory.common_type != 'text' %}
+        <!-- <span class="glyphicon glyphicon-play pull-right"></span>-->
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+</div>
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        //WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+
+<script type="text/javascript">
+    function  dailyTraffic(directory_id,mp_user_id,community_id,wx_user_id)
+    {
+        var post_data = {'directory_id': directory_id, 'mp_user_id': mp_user_id, 'community_id': community_id,'wx_user_id': wx_user_id};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/directory/daily_traffic';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: afterDailyTraffic
+        });
+    }
+
+    function afterDailyTraffic(data) {
+        if (data.errno != 0) {
+            alert(data.error);
+        }
+    }
+
+</script>
+
+</body>
+{% endblock %}

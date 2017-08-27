@@ -1,0 +1,394 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'wx_bottom_menu' %}
+
+{% block css_link %}
+<style type="text/css">
+    .table-border{border: 1px solid red;margin-top:10px}
+</style>
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>公众账号属性</li>
+{% endblock %}
+
+{% block action %}
+
+{% if is_super_admin or is_mp_admin%}
+<!--div style="margin-bottom:10px;font-size: 16px;">用户总数量:  {{wx_user_total}}</div>
+<div style="margin-bottom:10px;font-size: 16px;">关注总数量:  {{wx_user_total_subscribe}}&nbsp;&nbsp;&nbsp;&nbsp;取消关注数量:  {{wx_user_total_un_subscribe}}</div>
+<div style="margin-bottom:10px;font-size: 16px;">认证数量:  {{wx_user_total_verify}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;未认证数量:  {{wx_user_total_un_verify}}</div-->
+<table class="table table-bordered table-striped table-hover">
+
+    <tbody>
+    <tr>
+        <td style="width:30%">
+            用户总数量
+        </td>
+        <td style="width:70%">{{wx_user_total}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            关注总数量
+        </td>
+        <td style="width:70%">{{wx_user_total_subscribe}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            取消关注数量
+        </td>
+        <td style="width:70%">{{wx_user_total_un_subscribe}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            认证数量
+        </td>
+        <td style="width:70%">{{wx_user_total_verify}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            未认证数量
+        </td>
+        <td style="width:70%">{{wx_user_total_un_verify}}</td>
+    </tr>
+    </tbody>
+</table>
+{% if is_procurement %}
+<table class="table table-bordered table-striped table-hover">
+
+    <tbody>
+    <tr>
+        <td style="width:30%">
+            当前餐厅累计采购总额(元)
+        </td>
+        <td style="width:70%">{{procurementData.current_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前餐厅采购总额(元)<br/>(截至到{{hour}}点)
+        </td>
+        <td style="width:70%">{{procurementData.today_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            昨天餐厅采购总额(元)
+        </td>
+        <td style="width:70%">{{procurementData.yesterday_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前餐厅累计总数
+        </td>
+        <td style="width:70%">{{procurementData.restaurant_count}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前供应商累计总数
+        </td>
+        <td style="width:70%">{{procurementData.supply_count}}</td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+<div style="margin-bottom:10px;font-size: 16px;">
+    <a href="/mp_admin/company_admin/list?mp_user_id={{ mp_user_id }}">添加二级管理员</a>
+</div>
+
+<button type="button" class="btn btn-success" title="基本属性编辑"
+        onclick="bluefinBH.ajaxDialog('/mp_admin/mp_user_dialog/super_admin?mp_user_id={{ mp_user_id }}');">
+    基本属性编辑
+</button>
+
+<button type="button" id="import" class="btn" title="导入微信用户" style="background-color: #ffffff;color:black;">
+    导入微信用户
+</button>
+<div id="status" style="text-align: center;margin: 0 auto;background-color: #dff0d8;padding: 10px;width: 30%;border-radius: 4px;display: none;">
+    <div id="status_content" style="padding: 20px"></div>
+    <button type="button" id="verify" class="btn btn-success" style="display: none;" title="确认">
+        确认
+    </button>
+</div>
+{% endif %}
+{% if is_company_admin%}
+<!--div style="margin-bottom:10px;font-size: 16px;">用户总数量:  {{wx_user_total}}</div>
+<div style="margin-bottom:10px;font-size: 16px;">关注总数量:  {{wx_user_total_subscribe}}&nbsp;&nbsp;&nbsp;&nbsp;取消关注数量:  {{wx_user_total_un_subscribe}}</div>
+<div style="margin-bottom:10px;font-size: 16px;">认证数量:  {{wx_user_total_verify}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;未认证数量:  {{wx_user_total_un_verify}}</div-->
+<table class="table table-bordered table-striped table-hover">
+
+    <tbody>
+    <tr>
+        <td style="width:30%">
+            用户总数量
+        </td>
+        <td style="width:70%">{{wx_user_total}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            关注总数量
+        </td>
+        <td style="width:70%">{{wx_user_total_subscribe}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            取消关注数量
+        </td>
+        <td style="width:70%">{{wx_user_total_un_subscribe}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            认证数量
+        </td>
+        <td style="width:70%">{{wx_user_total_verify}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            未认证数量
+        </td>
+        <td style="width:70%">{{wx_user_total_un_verify}}</td>
+    </tr>
+    </tbody>
+</table>
+{% if is_procurement %}
+<table class="table table-bordered table-striped table-hover">
+
+    <tbody>
+    <tr>
+        <td style="width:30%">
+            当前餐厅累计采购总额(元)
+        </td>
+        <td style="width:70%">{{procurementData.current_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前餐厅采购总额(元)<br/>(截至到{{hour}}点)
+        </td>
+        <td style="width:70%">{{procurementData.today_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            昨天餐厅采购总额(元)
+        </td>
+        <td style="width:70%">{{procurementData.yesterday_total_price}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前餐厅累计总数
+        </td>
+        <td style="width:70%">{{procurementData.restaurant_count}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+            当前供应商累计总数
+        </td>
+        <td style="width:70%">{{procurementData.supply_count}}</td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content_login %}
+{% if is_super_admin or is_mp_admin%}
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+    <tr>
+        <th>项目</th>
+        <th>值</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="width:30%">公共账号名称</td>
+        <td style="width:70%">{{mp_name}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">备注</td>
+        <td style="width:70%">{{comment}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">分享文章图片</td>
+        <td style="width:70%">{{share_pic}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">APP_ID</td>
+        <td style="width:70%">{{app_id}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">APP_SECRET</td>
+        <td style="width:70%">{{app_secret}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">APP_PARTNERID</td>
+        <td style="width:70%">{{partner_id}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">APP_PARTNERKEY</td>
+        <td style="width:70%">{{partner_key}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">APP_PAY_SIGN_KEY</td>
+        <td style="width:70%">{{pay_sign_key}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">受理商ID</td>
+        <td style="width:70%">{{mchid}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">商户支付密钥Key</td>
+        <td style="width:70%">{{pay_key}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">jsapi跳转支付页面url</td>
+        <td style="width:70%">{{js_api_call_url}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">apiclient_cert证书路径</td>
+        <td style="width:70%">{{sslcert_path}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">apiclient_key证书路径</td>
+        <td style="width:70%">{{sslkey_path}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">异步通知url</td>
+        <td style="width:70%">{{notify_url}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">请求最短时间</td>
+        <td style="width:70%">{{curl_timeout}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">公众号属性</td>
+        <td style="width:70%">{{mp_user_type}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">公众号行业类型</td>
+        <td style="width:70%">{{industry}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">会员卡背景</td>
+        <td style="width:70%"><img src="{{card_background}}" width="20%"/></td>
+    </tr>
+    <tr>
+        <td style="width:30%">会员卡页目录ID</td>
+        <td style="width:70%">{{card_list_directory}}</td>
+    </tr>
+
+    <tr>
+        <td style="width:30%">服务开通日期</td>
+        <td style="width:70%">{{open_date}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">关注信息</td>
+        <td style="width:70%">{{followed_content|raw}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">个人设置页面显示客服专员</td>
+        <td style="width:70%">{{cs_visible}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">API_URL</td>
+        <td style="width:70%">{{host}}/wxapi/{{api_id}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">API_TOKEN</td>
+        <td style="width:70%">{{token}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">出库销售单标题</td>
+        <td style="width:70%">{{sale_list_name}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">是否有效</td>
+        <td style="width:70%">{{valid}}</td>
+    </tr>
+    <tr>
+        <td style="width:30%">是否E-MAIL发送报表</td>
+        <td style="width:70%">{{send_report}}</td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+{% if is_super_admin or is_mp_admin or is_company_admin %}
+<button type="button" class="btn btn-success" title="添加属性编辑"
+        onclick="bluefinBH.ajaxDialog('/mp_admin/super_admin_dialog/mp_user_config_add?mp_user_id={{ mp_user_id }}');">
+    添加属性
+</button>
+{% endif %}
+{{ table|raw }}
+{% if has_delete_power %}
+<button type="button" class="btn btn-danger" onclick="deleteMpUser('{{mp_user_id}}')">
+    删除公众号
+</button>
+<script type="text/javascript">
+    function deleteMpUser($mpUserId) {
+        if(confirm('警告：确定要删除吗？') === false) {
+            return;
+        }
+        var $url = '/api/fcrm/super_admin/remove_mp_user?mp_user_id={{ mp_user_id }}';
+        $.get($url, function($data) {
+            if ($data['errno'] != 0) {
+                alert($data['error']);
+            } else {
+                alert('删除成功');
+                window.location.href="/mp_admin/super_admin_list/list";
+            }
+        });
+    }
+
+</script>
+{% endif %}
+{% endblock %}
+
+{% block js_link %}
+        <script>
+            $(function () {
+                $("#import").click(function () {
+                    $("#status").show();
+                    $("#status_content").html('正在导入，请等待').show();
+                    var post_data = {'mp_user_id': '{{mp_user_id}}','times':'0'};
+                    var site = location.protocol + '//' + location.host + '/api/fcrm/mp_user/down';
+                    $.ajax({
+                        type: 'post',
+                        url: site,
+                        data: post_data,
+                        datatype: 'json',
+                        async: true,
+                        success: afterSavePhone
+                    });
+                });
+            });
+
+            function afterSavePhone(data) {
+                if (data.errno == 0) {
+                    $("#status_content").html('导入成功').show();
+                    $("#verify").show();
+                }
+                else if(data.errno == 1) {
+                    $("#status").html(data.error).show();
+                }
+                else if(data.times != 0)
+                {
+                    var post_data = {'mp_user_id': '{{mp_user_id}}','times':data.times};
+                    var site = location.protocol + '//' + location.host + '/api/fcrm/mp_user/down';
+                    $.ajax({
+                        type: 'post',
+                        url: site,
+                        data: post_data,
+                        datatype: 'json',
+                        async: true,
+                        success: afterSavePhone
+                    });
+                }
+            }
+
+            $("#verify").click(function () {
+                $("#status").hide();
+                location.reload();
+            })
+        </script>
+{% endblock %}

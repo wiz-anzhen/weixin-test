@@ -1,0 +1,89 @@
+app:
+  timezone: Asia/Shanghai
+  requestOrder: CPRG
+  serverUrlRewritable: true
+  phpInternalEncoding: UTF-8
+  sessionNamespace: app
+
+gateway:
+  exceptionView: WBT/Error.message.html
+
+cache:
+  @include:
+    - <?php echo APP_ETC; ?>/cache/l1cache.<?php echo ENV; ?>.yml
+
+static_file_version:
+  third_lib: 20150317004
+  our_lib: 20150317004
+
+uncertified_email_prefix: kingcores-uncertified-email-
+
+session:
+  saveHandler: custom
+  class: \Bluefin\Util\SessionHandler
+  options:
+    persistence: session
+
+log:
+  @include:
+    - <?php echo APP_ETC; ?>/log/log.<?php echo ENV; ?>.yml
+
+locale:
+  requestName: lang
+  supportedLocales: [ zh_CN ]
+  useSession: false
+  useCache: false
+  defaultLocale: zh_CN
+
+routing:
+  root:
+    route: /
+    namespace: WBT
+    action: home.index
+
+  wxapi:
+    route: /wxapi/:apiid
+    namespace: WBT
+    action: "wx_api.api.id"
+
+  article:
+    route: /article/:article_id
+    namespace: WBT
+    action: "article.article.id"
+
+  json:
+    route: /api/:category/:service/:method/*
+    namespace: Bluefin
+    action: service.invoke
+    service: "{{route.category}}.{{route.service}}.{{route.method}}"
+    view:
+      renderer: json
+      dataSource: result
+
+  c:
+    route: /:controller
+    namespace: WBT
+    action: "{{route.controller}}.index"
+
+  c-a:
+    route: /:controller/:action
+    namespace: WBT
+    action: "{{route.controller}}.{{route.action}}"
+
+  m-c-a:
+    route: /:module/:controller/:action
+    namespace: WBT
+    action: "{{route.module}}.{{route.controller}}.{{route.action}}"
+
+db:
+  @include:
+    - <?php echo APP_ETC; ?>/db/weibotui.<?php echo ENV; ?>.yml
+    - <?php echo APP_ETC; ?>/db/mp.<?php echo ENV; ?>.yml
+
+auth:
+  @include:
+    - <?php echo APP_ETC; ?>/auth/weibotui.<?php echo ENV; ?>.yml
+
+util:
+  @include:
+    - <?php echo APP_ETC; ?>/util.<?php echo ENV; ?>.yml

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*顶部导航*/
+        .nav_detail{position:fixed;z-index:999999;top:0;left:0;right:0;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+        /*导航返回按键*/
+        .back{width:132px;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;}
+        .bottom .comment{width: 52%;margin:auto;text-align: center;height:144px;color: #ffffff;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+
+        .main{width: 96%;margin:auto;font-size: 36px;color: #838383;}
+        .main .title{width: 100%;font-size: 42px;height: 90px;line-height: 90px;border-bottom: 3px solid #838383;color:#000000;}
+        .main .product{width: 96%;height: 120px;padding-top: 48px;padding-bottom: 48px;font-size: 36px;color: #838383;}
+        .main .product .img{float:left;width: 120px;height: 120px;margin-left: 24px;}
+        .main .product .img img{width:100%;height: 100%;}
+        .main .product .desc{float: left;margin-left: 60px;width: 75%;}
+        .main .star{width: 96%;height: 114px;line-height: 114px;}
+        .main .star .t,.gray{float: left;}
+        .main .star .t{margin-left:24px;margin-right: 16px;}
+        .main .star .gray{width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;}
+        .main .comment{width: 96%;margin-left: 24px;margin-top:48px;}
+        .main .comment .textarea{width: 92%;background-color: #f3f3f3;height:60px;padding: 24px;font-size: 42px;color: #bfbfbf;border:solid 1px #bfbfbf; border-radius:20px; resize:none;}
+        .main .dashed{height:0;width: 100%;border-top: 1px dashed #838383;margin-top: 48px;}
+    </style>
+</head>
+<body>
+<div class="nav_detail"><div class="back" onclick="window.history.go(-1)"></div>发表评价</div>
+<div class="top-kong"></div>
+{% for pc in productData %}
+<div class="main">
+    {% if loop.index<2 %}
+    <div class="title">评价商品</div>
+    {% endif %}
+    <div class="product">
+        <div class="img"><img src="{{pc.img_url}}" ></div>
+        <div class="desc">{{pc.title}}</div>
+    </div>
+    <div class="star">
+        <div class="t">综合满意度</div>
+        <div class="gray" id="{{pc.product_id}}_1" onclick="check1(this);"></div>
+        <div class="gray" id="{{pc.product_id}}_2" onclick="check2(this);"></div>
+        <div class="gray" id="{{pc.product_id}}_3" onclick="check3(this);"></div>
+        <div class="gray" id="{{pc.product_id}}_4" onclick="check4(this);"></div>
+        <div class="gray" id="{{pc.product_id}}_5" onclick="check5(this);"></div>
+        <input type="hidden" name="{{pc.product_id}}" tag="tags_{{ loop.index }}" value="5">
+        <input type="hidden" name="cishu" value="{{ cishu }}">
+        <input type="hidden" name="pid_{{ loop.index }}" value="{{ pc.product_id }}">
+    </div>
+    <div class="comment"><textarea class="textarea" tag="tagt_{{ loop.index }}" onfocus="javascript:this.style.height='100px';javascript:this.style.color='#a4a4a4';$(this).text(''); $('.bottom').css('display','none');" onblur="javascript:this.style.height='60px';$('.bottom').attr('style','display:block;position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;');">写点评价吧，对其他业主帮助很大哟！</textarea></div>
+    <div class="dashed"></div>
+</div>
+{% endfor %}
+<div class="bottom">
+    <div class="comment" id="comment">发表评价</div>
+</div>
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+<input type="hidden" name="phone" value="{{phone}}">
+<input type="hidden" name="community_id" value="{{community_id}}">
+<input type="hidden" name="order_id" value="{{order_id}}">
+<input type="hidden" name="max_pcid" value="{{max_pcid}}">
+<input type="hidden" name="store_id" value="{{store_id}}">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    function check1(ob)
+    {
+            var id = $(ob).attr('id');
+            var arr = id.split("_");
+            var tou = arr[0];
+        var yi = tou + "_1";
+            var er = tou + "_2";
+            var san = tou + "_3";
+            var si = tou + "_4";
+            var wu = tou + "_5";
+        $("#"+yi).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+er).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+san).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+si).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+wu).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("[name='"+tou+"']").val(1);
+
+    }
+    function check2(ob)
+    {
+        var id = $(ob).attr('id');
+        var arr = id.split("_");
+        var tou = arr[0];
+        var yi = tou + "_1";
+        var er = tou + "_2";
+        var san = tou + "_3";
+        var si = tou + "_4";
+        var wu = tou + "_5";
+        $("#"+yi).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+er).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+san).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+si).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+wu).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("[name='"+tou+"']").val(2);
+    }
+    function check3(ob)
+    {
+        var id = $(ob).attr('id');
+        var arr = id.split("_");
+        var tou = arr[0];
+        var yi = tou + "_1";
+        var er = tou + "_2";
+        var san = tou + "_3";
+        var si = tou + "_4";
+        var wu = tou + "_5";
+        $("#"+yi).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+er).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+san).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+si).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("#"+wu).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("[name='"+tou+"']").val(3);
+    }
+    function check4(ob)
+    {
+        var id = $(ob).attr('id');
+        var arr = id.split("_");
+        var tou = arr[0];
+        var yi = tou + "_1";
+        var er = tou + "_2";
+        var san = tou + "_3";
+        var si = tou + "_4";
+        var wu = tou + "_5";
+        $("#"+yi).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+er).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+san).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+si).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+wu).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-gray.png) no-repeat center;");
+        $("[name='"+tou+"']").val(4);
+    }
+    function check5(ob)
+    {
+        var id = $(ob).attr('id');
+        var arr = id.split("_");
+        var tou = arr[0];
+        var yi = tou + "_1";
+        var er = tou + "_2";
+        var san = tou + "_3";
+        var si = tou + "_4";
+        var wu = tou + "_5";
+        $("#"+yi).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+er).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+san).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+si).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("#"+wu).attr("style","float:left;width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;");
+        $("[name='"+tou+"']").val(5);
+    }
+    $("#comment").click(function(){
+        var textarea = $(".textarea").text();
+        var cishu = $("[name='cishu']").val();
+        var star = 0;var textarea = '0';var pid = 0;
+        for(var i=1;i<=cishu;i++)
+        {
+            //获取评论星级
+            var tags = 'tags_' + i;
+            star = star + "_" + $("[tag='"+tags+"']").val();//拼接的星级内容
+            //获取评论内容
+            var tagt = 'tagt_' + i;//写点评价吧，对其他业主帮助很大哟！
+            var text = $("[tag='"+tagt+"']").val();
+            if(text == '写点评价吧，对其他业主帮助很大哟！')
+            {
+                text = '';
+            }
+            textarea = textarea + "_" + text;//拼接的评论内容
+            //获取商品ID
+            var namen = 'pid_'+i;
+            pid = pid + "_" + $("[name='"+namen+"']").val();//拼接product_id
+        }
+            var mpUserID = $("[name='mp_user_id']").val();
+            var phone = $("[name='phone']").val();
+            var communityID = $("[name='community_id']").val();
+            var orderID = $("[name='order_id']").val();
+            var maxPCID = $("[name='max_pcid']").val();
+            var storeID = $("[name='store_id']").val();
+
+            var site = location.protocol + '//' + location.host + '/api/wx_user/app_order/add_comment';
+            var post_data = {'stars': star,'textareas':textarea,'pids':pid,'mp_user_id':mpUserID,'phone':phone,'community_id':communityID,'order_id':orderID,'max_pcid':maxPCID};
+            $.ajax({
+                url:site,
+                data:post_data,
+                type:'POST',
+                dataType:'json',
+                async: true,
+                success:function(r){
+                //    alert(r.errno);
+                    if(r.errno == 0)
+                    {
+                        location.href="/app/order/comments?mp_user_id="+mpUserID+"&phone="+phone+"&store_id="+storeID+"&community_id="+communityID;
+                    }
+                }
+            });
+
+    })
+    $(function () {
+        //判断是否宽屏
+
+        // $.mobile.hScroller = false;
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1")
+        }
+    })
+
+</script>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*头部导航*/
+        .nav_shopping{position:fixed;z-index:9999;top:0px;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 164px;width: 100%;}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;}
+        .bottom ul{list-style: none;}
+        .bottom ul li{float:left;}
+        .bottom ul .home{width: 14.4%;text-align: center;border:0px solid green;height:144px;margin-left: 24px;text-align: center;background: url(/images/shop/home_before.png) no-repeat center;}
+        .bottom ul .add_go{width: 52%;text-align: center;border:0px solid green;height:144px;color: #ffffff;margin-left: 60px;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+
+        /*导航返回按键*/
+        .back{width:13.2%;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+
+        /*购物详情*/
+        .shopping-empty .conn{font-size: 44px;line-height:44px;color: #ff6632;width: 680px;height: 100px;text-align:center;margin: 346px auto;}
+
+
+    </style>
+</head>
+<body>
+<div class="nav_shopping"><div class="back" onclick="window.history.go(-1)"></div>购物车</div>
+<div class="top-kong"></div>
+<div class="shopping-empty">
+    <div class="conn">还没有选商品哦</div>
+</div>
+
+<div class="bottom">
+    <ul>
+        <li class="home" onclick="location.href='/app/mall/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&store_id={{store_id}}&phone={{phone}}'"></li>
+        <li class="add_go" onclick="location.href='/app/mall/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&store_id={{store_id}}&phone={{phone}}'">去购物</li>
+    </ul>
+</div>
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        //判断是否宽屏
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1")
+
+        }
+    })
+</script>
+</html>

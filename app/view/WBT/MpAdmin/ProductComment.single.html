@@ -1,0 +1,34 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_store' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active">
+    <a href="/mp_admin/store/store?mp_user_id={{mp_user_id}}&community_id={{community_id}}">商城</a>
+    <span class="divider">/</span></li>
+<li class="active">
+    <a href="/mp_admin/store/category?store_id={{store.store_id}}&mp_user_id={{mp_user_id}}&community_id={{community_id}}">{{store.title}}</a>
+    <span class="divider">/</span></li>
+<li class="active">
+    <a href="/mp_admin/store/product?store_id={{store.store_id}}&category_id={{category .category_id}}&mp_user_id={{mp_user_id}}&community_id={{community_id}}">{{category.title}}</a>
+    <span class="divider">/</span></li>
+<li>查看评论</li>
+{% endblock %}
+
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

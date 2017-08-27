@@ -1,0 +1,15 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set head_active = 'menu' %}
+
+{% block sub_breadcrumbs %}
+    <li class="active">菜单</li>
+{% endblock %}
+
+{% block action %}
+<button type="button" class="btn btn-success" title="添加菜" onclick="bluefinBH.ajaxDialog('/form/menu/add_one?mp_user_id={{ mp_user_id }}');">
+    添加菜
+</button>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

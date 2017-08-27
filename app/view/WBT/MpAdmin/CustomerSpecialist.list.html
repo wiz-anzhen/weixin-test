@@ -1,0 +1,37 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_customer_specialist_group' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/customer_specialist_group/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">客服专员分组</a>
+    <span class="divider">/</span>
+</li>
+<li>
+    {{group_name}}
+</li>
+{% endblock %}
+
+{% block action %}
+{% if customer_specialist_rw %}
+<button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/customer_specialist_dialog/add?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&customer_specialist_group_id={{customer_specialist_group_id}}');">
+    添加客服专员
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}

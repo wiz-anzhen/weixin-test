@@ -1,0 +1,34 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'wx_bottom_menu' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li><a href="/mp_admin/wx_menu/index?mp_user_id={{mp_user_id}}">微信底部菜单</a><span class="divider">/</span></li>
+<li class="active">{{wx_menu_name}}</li>
+{% endblock %}
+
+{% block action %}
+{% if item_count < 10 %}
+<button type="button" class="btn btn-success" title="添加子菜单" onclick="bluefinBH.ajaxDialog('/mp_admin/wx_sub_menu_dialog/add?mp_user_id={{ mp_user_id }}&wx_menu_id={{wx_menu_id}}');">
+    添加子菜单
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+
+{% block note %}
+<span class="label label-important">备注</span>每个菜单的子菜单数量必须为1-5个，子菜单数量为1时表示没有子菜单
+{% endblock %}

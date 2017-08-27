@@ -1,0 +1,80 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>验证手机号</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241, 240, 245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<body>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">系统已向您的手机发送三位验证码，请验证</h3>
+    </div>
+    <div class="panel-body">
+        <div>
+            <input type="tel" id="code" class="form-control input-lg" placeholder="请输入3位验证码" />
+            <input type="hidden" id="try_times" value="0"/>
+            <br/>
+
+            <a id="submit_next" class="btn btn-success btn-lg btn-block">验证</a>
+        </div>
+        <br/>
+        <div id="submit_status" class="alert alert-danger" style="display: none;"></div>
+        <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+        <script>
+            $(function(){
+                $("#submit_next").click(function(){
+                    var code = $("#code").val();
+                    if (code.length != 3)
+                    {
+                        $("#submit_status").html("请输入3位验证码").show();
+                        return;
+                    }
+
+                    var get_data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'phone':'{{phone}}', 'code': code};
+                    var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/check_phone_code';
+                    $.get(site, get_data, function(data){
+                        if(data.errno == 0)
+                        {
+                            var url = location.protocol  + '//' + location.host + "/wx_user/user_info/success?wx_user_id={{wx_user_id}}&mp_user_id={{mp_user_id}}&phone={{phone}}";
+                            window.location.href = url;
+                        }
+                        else
+                        {
+                            $("#submit_status").html(data.error).show();
+                            var $tryTimes = parseInt( $("#try_times").val() );
+                            $("#try_times").val($tryTimes + 1);
+                            if ( $tryTimes == 3 )
+                            {
+                                $("#submit_status").html($("#submit_status").html() + '<br/>您已连续三次输错验证码，请返回重新发送验证码。');
+                                $("#code").attr('disabled', 'disabled');
+                            }
+                        }
+                    })
+                });
+            });
+        </script>
+    </div>
+</div>
+</body>
+{% endblock %}

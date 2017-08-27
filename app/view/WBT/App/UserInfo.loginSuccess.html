@@ -1,0 +1,124 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>
+    {% if text %}
+       {{text}}
+    {% else %}
+       欢迎回来！
+    {% endif %}
+
+</title>
+{% endblock %}
+
+{% block content %}
+<div id="whole" >
+    <div>
+        <div style="text-align: center;margin-top: 50px;margin-bottom: 20px;">
+            <img src="{{head_pic}}" width="26%" height=""/>
+        </div>
+        {% if text %}
+        <div style="text-align: center;margin-top: 50px;margin-bottom: 20px;font-size: 18px;">
+            {{text}}
+        </div>
+        {% else %}
+        <div style="text-align: center;margin-top: 50px;margin-bottom: 20px;font-size: 24px;">
+            欢迎回来！
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div id="submit_next" style="text-align: center;margin-top: 50px;margin-bottom: 20px;font-size: 12px;">
+
+    </div>
+
+    <div style="position: fixed;bottom: 0;text-align: center;width: 100%">
+        <div style="text-align: center;margin:0 auto;padding:20px;">
+            金果创新（北京）科技有限公司
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    window.onload = count_down;
+    var pauseTime,pauseTimer;
+
+    $(function(){
+        $("#whole").css("height",document.documentElement.clientHeight)
+    });
+
+    function authCodeRecoveryTimer(button)
+    {
+        if (--pauseTime == 0)
+        {
+            WeixinJSBridge.invoke('closeWindow',{},function(res)
+            {
+            });
+        }
+
+
+    }
+
+    function count_down()
+    {
+        pauseTime = 5;
+        //$("#submit_next").text(pauseTime +"秒后自动回到微信页面");
+        pauseTimer = setInterval(authCodeRecoveryTimer, 1000);
+    }
+
+</script>
+<script>
+    var     startX,//触摸时的坐标
+            startY,
+            x, //滑动的距离
+            y,
+            aboveY=0; //设一个全局变量记录上一次内部块滑动的位置
+            aboveX=0; //设一个全局变量记录上一次内部块滑动的位置
+
+    var inner=document.getElementById("inner");
+
+    function touchSatrt(e){//触摸
+        e.preventDefault();
+        var touch=e.touches[0];
+        startY = touch.pageY;   //刚触摸时的坐标
+        startX = touch.pageX;   //刚触摸时的坐标
+        WeixinJSBridge.invoke('closeWindow',{},function(res)
+        {
+        });
+    }
+
+    function touchMove(e){//滑动
+        e.preventDefault();
+        var  touch = e.touches[0];
+        y = touch.pageY - startY;//滑动的距离
+        x = touch.pageX - startX;//滑动的距离
+        //inner.style.webkitTransform = 'translate(' + 0+ 'px, ' + y + 'px)';  //也可以用css3的方式
+
+        inner.style.top=aboveY+y+"px"; //这一句中的
+        inner.style.left=aboveX+x+"px";
+        WeixinJSBridge.invoke('closeWindow',{},function(res)
+        {
+        });
+    }
+
+    function touchEnd(e){//手指离开屏幕
+        e.preventDefault();
+        aboveY=parseInt(inner.style.top);//touch结束后记录内部滑块滑动的位置 在全局变量中体现 一定要用parseInt()将其转化为整数字;
+        aboveX=parseInt(inner.style.left);//touch结束后记录内部滑块滑动的位置 在全局变量中体现 一定要用parseInt()将其转化为整数字;
+        WeixinJSBridge.invoke('closeWindow',{},function(res)
+        {
+        });
+    }
+
+    document.getElementById("whole").addEventListener('touchstart', touchSatrt,false);
+    document.getElementById("whole").addEventListener('touchmove', touchMove,false);
+    document.getElementById("whole").addEventListener('touchend', touchEnd,false);
+</script>
+{% endblock %}

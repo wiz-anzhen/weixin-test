@@ -1,0 +1,23 @@
+{% extends 'WBT/Web/home.html' %}
+
+{% block main_container %}
+<ul class="food_list">
+    {% for catalog in catalogs %}
+    <li id="catalog_{{ catalog.restaurant_menu_catalog_id }}" class="catalog">
+        <a href="/web/web/menu?mp_user_id={{ mp_user_id }}&order_id={{ order_id }}&wx_user_id={{ wx_user_id }}&restaurant_menu_catalog_id={{ catalog.restaurant_menu_catalog_id }}">
+            <div class="info">
+                <h3 class="name">{{ catalog.catalog_name }}</h3>
+                <span class="l">{% if catalog.comment is null %}{{ 暂无评论 }}{% else %}{{ catalog.comment }}{% endif %}</span>
+            </div>
+            <img class="in" width="10" height="17" src="/web-rcrm/in.png" alt="">
+        </a>
+    </li>
+    {% else %}
+    <li id="none_catalog" class="catalog">
+        <div class="info">
+            <h3 class="name">没找到菜单分类</h3>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

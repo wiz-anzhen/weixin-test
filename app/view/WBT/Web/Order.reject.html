@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>拒绝订单</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    {% if cannot_edit %}
+    <p style="font-size: 55px;">{{ order_status }}</p>
+    {% else %}
+    <form method="post" action="/web/order/submit_reject?order_id={{ order_id }}&wx_user_id={{wx_user_id}}">
+        {{ nav_bar|raw }}
+        <textarea rows="5" id="content" name="content" style="width:96%;" placeholder="请在此填写拒绝理由"></textarea>
+        <br/><br/>
+        <input type="submit" id="submit-btn" class="btn btn-success btn-large" style="width: 100%" value="提交"/>
+        <br/><br/>
+        <span class="alert alert-success feedback-status" style="display: none;width:85%;"></span>
+    </form>
+    {% endif %}
+</div>
+</body>
+</html>

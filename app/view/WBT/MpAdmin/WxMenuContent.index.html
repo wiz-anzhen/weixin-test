@@ -1,0 +1,36 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'wx_bottom_menu' %}
+{% set mp_name_link = 'wx_menu' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li><a href="/mp_admin/wx_menu/index?mp_user_id={{mp_user_id}}">微信底部菜单</a><span class="divider">/</span></li>
+<li><a href="/mp_admin/wx_sub_menu/index?mp_user_id={{mp_user_id}}&wx_menu_id={{wx_menu_id}}">{{wx_menu_name}}</a><span class="divider">/</span></li>
+<li class="active">{{wx_sub_menu_name}}</li>
+{% endblock %}
+
+{% block action %}
+{% if item_count < 10 %}
+<button type="button" class="btn btn-success" title="添加图文消息" onclick="bluefinBH.ajaxDialog('/mp_admin/wx_menu_dialog/add_news?mp_user_id={{ mp_user_id }}&wx_sub_menu_id={{ wx_sub_menu_id }}');">
+    添加图文消息
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+
+{% block note %}
+    <span class="label label-important">备注</span>图文消息不超过10个
+{% endblock %}

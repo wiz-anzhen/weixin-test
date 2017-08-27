@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>月度图表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style:none;}
+
+        .histogram-bg-line ul{overflow:hidden;}
+        .histogram-bg-line li{float:left;width:20%;overflow:hidden;}
+
+        .histogram-content li{float:left;height:100%;width:14.1%;text-align:left;position:relative;border-right:1px solid #e0e0e0;border-bottom: 2px solid #ff8d3a;font-size: 8px;box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;z-index: 99;}
+
+        .histogram-x{width:99%;position:absolute;left:1px;top:-6%;z-index: 9999; }
+        .wrap li{margin-top: 40px;}
+
+        .histogram-bg-line li div,.histogram-x li{height:60px;z-index: 9999;}
+
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+
+<div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+    <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</div>
+    <div onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color:#000;float: right;width: 20%; ">首页</div>
+    <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 60%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">月度图表</div >
+</div>
+<div style="background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div style="padding: 6% 3%">
+    <p style="float: left;padding:5px 2px;text-align: center;">月份</p>
+    <div style="border:1px solid red;border-radius: 4px;float: right;padding:4px 4px;margin-left: 20px;text-align: center;background-color: red;color:white;" onclick="refreshOrder(this)">确认</div>
+
+    <input type="month" id="order_month" style="width:50%;height: 30px;border: 1px solid #ccc;background: #eee;float: right;"     value="{{month}}" />
+
+</div>
+<div style="width: 100%;height: 45px;line-height: 45px;margin-top: 5%;background: #8fc31f">
+    <p style="padding-left:3%;color: #fff;float: left;">总支出</p>
+    <p style="color: #ffffff;padding-right: 3%;float: right;">{{boss_total_price}}</p>
+</div>
+
+{% if count != "none" %}
+<div style="width: 100%;background:#eee;clear: both;" >
+    <div style="text-align: center;padding: 20px;">阅读供应商采购支出百分比</div>
+</div>
+<div style="padding-top:20px;padding-bottom: 20px;background:#eee;z-index: -999;">
+<div style="position:relative;margin-left:20%;margin-bottom:25px;width:80%;">
+
+    <div class="histogram-bg-line" style="border: solid #ff8d3a;border-width:0 0 0 2px;border-right-color:#eee;overflow:hidden;width:99%;">
+        {% for key,supply in supply_data %}
+        <ul>
+            <li><div></div></li>
+        </ul>
+        {% endfor %}
+    </div>
+
+    <!--柱状条-->
+    <div class="histogram-x">
+        <ul class="wrap" style="width: 99%;z-index: 9999;">
+            {% for key,supply in supply_data %}
+            <li style="width: {{supply.supply_percentage_position}}%;height:20px;background: #5b9bd5;">
+                <span style="width:23%;font-size:10px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position:absolute;left:-23%;margin-top:2px;">{{supply.supply_name}}</span>
+                <span style="width:33%;font-size:10px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;color:orange;z-index: 9998;text-align: right;">
+                    <span style="margin-left: 101%;z-index: 9999;">{{supply.supply_percentage}}%&nbsp;{{supply.supply_total_price}}</span>
+                </span>
+
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <div class="histogram-content" style="position:absolute;left:0;top:0;width:99%;height:100%;">
+        <ul style="height:100%;">
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">0%</span>
+            </li>
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_first}}%</span>
+            </li>
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_second}}%</span>
+            </li>
+
+
+
+            {% if percent_fourth %}
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_third}}%</span>
+            </li>
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_fourth}}%</span>
+            </li>
+            {% else %}
+            <li style="border-right:0 solid #e0e0e0;">
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_third}}%</span>
+            </li>
+            {% endif %}
+
+            {% if percent_fifth %}
+            <li>
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_fifth}}%</span>
+            </li>
+            {% else %}
+
+            {% endif %}
+
+            {% if percent_sixth %}
+            <li style="border-right:0 solid #e0e0e0;">
+                <span style="position: absolute;bottom: -24px;left:-5px;">{{percent_sixth}}%</span>
+            </li>
+            {% else %}
+
+            {% endif %}
+
+        </ul>
+    </div>
+
+</div>
+</div>
+{% endif %}
+
+{% if count == "none" %}
+<div style="text-align: center;background:#eee;width: 100%;padding:60px 0 ;">
+    <p>所选择的月份，还未结算；</p>
+    <p>请点击月份重新选择。</p>
+</div>
+{% endif %}
+</body>
+<script type="text/javascript">
+
+    function refreshOrder(obj)
+    {
+        var month =  $("#order_month").val();
+        location.href = '/wx_user/procurement/manager_graph?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&month='+month;
+    }
+
+</script>
+</html>

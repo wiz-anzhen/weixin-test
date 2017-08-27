@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <meta name="format-detection" content="telephone=no">
+    <title>微信支付</title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        /*头部导航*/
+        .nav_shopping{position:fixed;z-index:9999;top:0px;height:132px;width:100%;background-color: #ff6633;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+        /*链接返回按键*/
+        .line{height:2px;background-color:#b2b2b2;line-height:2px;clear:both;display:block;margin-left: 24px; margin-right: 24px}
+        .nav_shopping a:link{width:13.2%;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/order_before.png") no-repeat;text-decoration: none}
+        .nav_shopping a:active{width:13.2%;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/order_after.png") no-repeat;text-decoration: none}
+
+        .message_span{font-size: 40px;}
+        #pay_after a:link{background-color: #b4d174;color:#ffffff;}
+        #pay_after a:visited{background-color: #b4d174;color:white;}
+        #pay_after a:active{background-color: #a2c054;color:#ffffff;}
+
+
+        .success_after{font-size: 3em;line-height: 132px;width: 360px;display: inline-block;color:white;text-decoration: none;border-radius: 8px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+
+        #wxPay a:link{background-color: #ff6633;text-decoration: none;color:#ffffff;height: 144px;line-height:144px;width:864px;text-align:
+            center;display: table-cell;vertical-align:middle;overflow: hidden;border: none;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+        #wxPay a:active{background-color:#d73c08 ;text-decoration: none;color:#ffffff;height: 144px;line-height:144px;width:864px;text-align:
+            center;display: table-cell;vertical-align:middle;overflow: hidden;border: none;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+    </style>
+    <script language="javascript">
+        function callPay()
+        {
+             WeixinJSBridge.invoke('getBrandWCPayRequest',{{ biz_package|raw }},
+             function(res){
+             WeixinJSBridge.log(res.err_msg);
+             //alert(res.err_code+":::"+res.err_desc+res.err_msg);
+             if(res.err_msg=="get_brand_wcpay_request:ok")
+             {
+             document.getElementById("pay_after").style.display = "block";
+             }
+                 else
+             {
+                 alert("支付失败")
+             }
+             });
+        }
+    </script>
+</head>
+<body>
+
+<div class="nav_shopping">
+    <span id="order_success_message">缴费通知单</span>
+</div>
+<div class="top-kong"></div>
+<div id="pay_before" style="display: block">
+    <div style="margin-top: 48px;margin-left: 24px;margin-bottom:28px;line-height: 42px;font-size: 3em">
+        支付信息
+    </div>
+    <div class="line"></div>
+
+    <div style="margin-top: 36px;font-size: 3em;margin-bottom: 36px ;">
+        <div style="margin-left:72px;margin-bottom: 28px;line-height: 36px">姓名：<span class="message_span">{{house_name}}</span></div>
+        <div style="margin-left:72px;margin-bottom: 28px;">地址：<span class="message_span">{{house_address}}</span></div>
+        <div style="margin-left:72px;margin-bottom: 28px;line-height: 36px">时间：<span class="message_span">{{bill_day}}</span></div>
+        <div style="margin-left:72px;line-height: 36px">需支付：<span style="color:red;">￥{{total_fee}}</span></div>
+    </div>
+    <div class="line"></div>
+    <div style ="margin-top: 72px; margin-right: auto;
+margin-left: auto;font-size: 3em;height: 144px;line-height:144px;width:800px;color:#ffffff;text-align:
+center;vertical-align:middle;overflow: hidden;border-radius: 8px;border: none;-webkit-tap-highlight-color:rgba(255,255,255,0)" id="wxPay" onclick="callPay()">
+        <a href="javascript:void(0)">
+            立即支付
+        </a>
+    </div>
+</div>
+
+<div id="pay_after" style="display: none">
+    <div>
+        <img  src="/images/shop/order_success.png" style="margin-top:108px;margin-bottom: 48px;margin-right: auto;margin-left: auto;display:table-cell;vertical-align:middle;text-align:center;"/>
+    </div>
+    <div style="color:#676767;line-height: 48px;margin-bottom: 36px;font-size: 3em;text-align: center">支付成功</div>
+    <div style="color:#b3b3b3;line-height: 42px;margin-bottom: 108px;font-size: 38px;text-align: center">感谢您的支持
+    </div>
+</div>
+
+</body>
+
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        //判断是否宽屏
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=0.35, maximum-scale=1")
+        }
+    });
+
+</script>
+<script>
+    var a=document.getElementsByTagName('a');
+    for(var i=0;i<a.length;i++){
+        a[i].addEventListener('touchstart',function(){},false);
+    }
+</script>
+</html>

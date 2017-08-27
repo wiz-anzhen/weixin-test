@@ -1,0 +1,219 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ top_name }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241,240,245); }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block header_js_link %}
+<script src="/libs/bluefin/bootstrap-carousel.js?v={{third_lib_version}}"></script>
+<script src="/libs/bluefin/bootstrap-transition.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block content %}
+<div style="text-align: center;width: 100%;">
+    <div id="myCarousel" class="carousel slide">
+        <ol class="carousel-indicators" style="margin-bottom: -10px;">
+            <li data-target="#myCarousel" data-slide-to="0" class="active" style="width:8px;height:8px;"></li>
+            <li data-target="#myCarousel" data-slide-to="1" style="width:8px;height:8px;"></li>
+            <li data-target="#myCarousel" data-slide-to="2" style="width:8px;height:8px;"></li>
+        </ol>
+        <!-- Carousel items -->
+        <div class="carousel-inner" id="carousel-inner" style="width: 100%;">
+            <div class="active item"><a href="javascript:"  target="_blank" ><img src="{{directory_top_img}}" width="100%" height="" ></a></div>
+            <div class="item"><a href="javascript:" target="_blank" ><img src="{{directory_top_img_second}}" width="100%" height="" ></a></div>
+            <div class="item"><a href="javascript:"  target="_blank"><img src="{{directory_top_img_third}}" width="100%" height="" ></a></div>
+        </div>
+        <!-- Carousel nav -->
+        <a class="carousel-control left" href="#myCarousel" style="opacity:.1" data-slide="prev"></a>
+        <a class="carousel-control right" href="#myCarousel" style="opacity:.1" data-slide="next"></a>
+    </div>
+</div>
+<div>
+    {% set in_group = false %}
+    <!-- 遍历目录-->
+    {% for directory in directories %}
+    <!-- 目录循环到新组中，首先设置此目录在该组中-->
+    {% if not in_group %}
+    {% if directory.head_desc %}
+    <p class="text-left" style="font-weight: bold;margin-top: 5px;">{{ directory.head_desc }}</p>
+    {% endif %}
+    <div class="list-group">
+        {% set in_group = true %}
+        {% endif %}
+
+        <!-- 目录为缴费通知单时特殊样式-->
+        {% if directory.common_type == "user_bill_list" %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}"  {% if directory.common_type != 'text'  %}   onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %}>
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% if bill_count %}
+                    <span class="badge" style="background-color: red;color:white;border-radius: 5px;font-size: 12px;width:20px;float:right;text-align:center;margin-top:3px">
+                        {{bill_count}}
+                     </span>
+        {% endif %}
+        {% else %}
+        <span class="badge" style="width:150px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+
+        <!-- 目录为客服专员认证时特殊样式-->
+        {% elseif directory.common_type == "user_cs_certify" %}
+        {% if cs %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}  onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %} >
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+        <!-- 正常目录样式-->
+        {% else %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}  onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" {% endif %} >
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+        <!-- 如果包含分组标志或是循环至最后一行显示组尾内容-->
+        {% if (directory.group_end == 1) or (loop.last) %}
+    </div>
+    <!-- 如果包含组尾内容则显示-->
+    {% if directory.tail_desc %}
+    <p class="text-center">{{ directory.tail_desc|raw }}</p>
+    {% endif %}
+    <!-- 如果包含分组标志或是循环至最后一行，默认不再该组中-->
+    {% set in_group = false %}
+    {% endif %}
+
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        //WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+<script type="text/javascript">
+    function  dailyTraffic(directory_id,mp_user_id,community_id,wx_user_id)
+    {
+        var post_data = {'directory_id': directory_id, 'mp_user_id': mp_user_id, 'community_id': community_id,'wx_user_id': wx_user_id};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/directory/daily_traffic';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: afterDailyTraffic
+        });
+    }
+
+    function afterDailyTraffic(data) {
+        if (data.errno != 0) {
+            alert(data.error);
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    window.onload = function(){
+        $('.carousel').carousel({
+            interval: 4000
+        });
+
+        $('.carousel').carousel('cycle');
+    };
+
+</script>
+<script>
+    var     startX,//触摸时的坐标
+            startY,
+            x, //滑动的距离
+            y,
+            aboveY=0; //设一个全局变量记录上一次内部块滑动的位置
+             aboveX=0; //设一个全局变量记录上一次内部块滑动的位置
+
+    var inner=document.getElementById("inner");
+
+    function touchSatrt(e){//触摸
+        e.preventDefault();
+        var touch=e.touches[0];
+        startY = touch.pageY;   //刚触摸时的坐标
+        startX = touch.pageX;   //刚触摸时的坐标
+    }
+
+    function touchMove(e){//滑动
+        e.preventDefault();
+        var  touch = e.touches[0];
+        y = touch.pageY - startY;//滑动的距离
+        x = touch.pageX - startX;//滑动的距离
+        //inner.style.webkitTransform = 'translate(' + 0+ 'px, ' + y + 'px)';  //也可以用css3的方式
+
+        if(x > 0 && x > 10)
+        {
+            $('.carousel').carousel('prev');
+        }
+
+        if(x < 0 && x < -10)
+        {
+            $('.carousel').carousel('next');
+        }
+
+        inner.style.top=aboveY+y+"px"; //这一句中的
+        inner.style.left=aboveX+x+"px";
+    }
+
+    function touchEnd(e){//手指离开屏幕
+        e.preventDefault();
+        aboveY=parseInt(inner.style.top);//touch结束后记录内部滑块滑动的位置 在全局变量中体现 一定要用parseInt()将其转化为整数字;
+        aboveX=parseInt(inner.style.left);//touch结束后记录内部滑块滑动的位置 在全局变量中体现 一定要用parseInt()将其转化为整数字;
+    }
+    document.getElementById("carousel-inner").addEventListener('touchstart', touchSatrt,false);
+    document.getElementById("carousel-inner").addEventListener('touchmove', touchMove,false);
+    document.getElementById("carousel-inner").addEventListener('touchend', touchEnd,false);
+</script>
+{% endblock %}

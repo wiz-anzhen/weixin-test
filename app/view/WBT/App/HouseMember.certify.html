@@ -1,0 +1,174 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>用户认证</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .format-bottom
+    {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<body onload="getAddress()">
+<div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand">用户认证</a>
+        </div>
+    </nav>
+    <form class="form-inline" role="form" style="width:95%;margin:0 auto;">
+        <div class="form-group ">
+            <div class="input-group format-bottom">
+                <div class="input-group-addon "><div style="width:75px">会员号：</div></div>
+                <input class="form-control"  placeholder="会员号" id="member_number">
+            </div>
+            <div class="input-group format-bottom">
+                <div class="input-group-addon "><div style="width:75px">用户姓名：</div></div>
+                <input class="form-control"  placeholder="用户姓名" id="house_member_name">
+            </div>
+            <div class="input-group format-bottom">
+                <div class="input-group-addon "><div style="width:75px">用户类型：</div></div>
+                <select class="form-control" id="house_member_type" name="house_member_type" >
+                    <option  value="">请选择</option>
+                    {% for type in member_type %}
+                    <option  value="{{type.1}}">{{type.0}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group format-bottom">
+                <div class="input-group-addon"><div style="width:75px">手机号：</div></div>
+                <input class="form-control"  placeholder="手机号" id="house_member_phone">
+            </div>
+            <div class="input-group format-bottom" >
+                <div class="input-group-addon"><div style="width:75px">用户住址：</div></div>
+                <select class="form-control" id="address_level_1"  onChange="getAddress()">
+                    <option  value="">请选择</option>
+                    {% for address_level in address_level_1 %}
+                    <option  value="{{address_level.address_level_info_id}}">{{address_level.add_info}}</option>
+                    {% endfor %}
+                </select>
+                {% for level in level %}
+                <select class="form-control"  style="margin-top: 10px;" id="{{level}}"  onChange="getLevelAddress('{{level}}')">
+                    <option  value="">请选择</option>
+                </select>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+<div style="width:95%;margin:0 auto;padding-bottom: 20px;">
+    <a id="certify" class="btn btn-success " style="width:45%;float: left">认证</a>
+    <a id="check_certify" class="btn btn-success " style="width:45%;float:right" href="/wx_user/house_member/check?mp_user_id={{mp_user_id}}&wx_user_id={{wx_user_id}}">查看已认证的用户</a>
+</div>
+<div id="certify_status" class="alert alert-danger" style="display: none;margin-top: 60px;"></div>
+
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+
+<script src="/libs/bootstrap3/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#certify").click(function ()
+        {
+            var memberNumber = $("#member_number").val();
+            var name = $("#house_member_name").val();
+            var type = $("#house_member_type").find("option:selected").val();
+            var phone = $("#house_member_phone").val();
+            var address = $("#address_level_1").find("option:selected").val();
+            for(var i = 2;i <= "{{ max_level }}" ; i++)
+            {
+                var address_process = ","+$("#"+i).find("option:selected").val();
+                address += address_process;
+            }
+            if (name == "")
+            {
+                $("#certify_status").html("请输入姓名").show();
+                return;
+            }
+            if (phone.length != 11)
+            {
+                $("#certify_status").html("请输入11位手机号码").show();
+                return;
+            }
+
+            var post_data = {'wx_user_id': "{{wx_user_id}}",'memberNumber': memberNumber,'name': name, 'type': type,'phone': phone,'address': address};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/house_member/certify';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSave
+            });
+        });
+    });
+
+    function afterSave(data)
+    {
+        if(data.errno == 0)
+        {
+            $("#certify_status").html("认证成功").show();
+        }
+        else
+        {
+            $("#certify_status").html(data.error).show();
+        }
+
+    }
+
+    function getAddress()
+    {
+        var $addressLevelInfoID= $("#address_level_1").find("option:selected").val();
+        var post_data = { 'address_level_info_id': $addressLevelInfoID};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/house_member/return_id';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: returnInfo
+        });
+    }
+    //返回相应level数据，添加option内容
+    function returnInfo(response)
+    {
+        var data = eval('('+response+')');
+        document.getElementById(data[0].level).options.length = 0;
+        $("#"+data[0].level).append("<option  value=''>请选择</option>");
+        for (i = 0; i < data.length; i++)
+        {
+            var levelId = data[i].level;
+            $("#"+levelId).append("<option  value='"+data[i]['address_level_info_id']+"'>"+data[i]['add_info']+"</option>");
+        }
+    }
+
+    function getLevelAddress(level)
+    {
+        var $addressLevelInfoID= $("#"+level).find("option:selected").val();
+        var post_data = { 'address_level_info_id': $addressLevelInfoID};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/house_member/return_id';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: returnInfo
+        });
+    }
+</script>
+
+</body>
+{% endblock %}
+
+
+

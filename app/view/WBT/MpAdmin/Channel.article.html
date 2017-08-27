@@ -1,0 +1,24 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_channel' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li><a href="/mp_admin/channel/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">频道</a><span
+        class="divider">/</span></li>
+<li class="active">{{title}}</li>
+{% endblock %}
+
+{% block action %}
+{% if channel_rw %}
+<button  class="btn btn-success"  onclick="bluefinBH.ajaxDialog('/mp_admin/channel_dialog/add_article?mp_user_id={{ mp_user_id }}&channel_id={{channel_id}}&community_id={{community_id}}');">
+    添加文章
+</button>
+{% endif %}
+{% endblock %}
+{% set pagination_js = TRUE %}

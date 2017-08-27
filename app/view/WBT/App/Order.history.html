@@ -1,0 +1,77 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>我的购物单</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { padding-bottom: 20px; padding-top: 9px; }
+    a, a:hover { color: #000; text-decoration: none; }
+
+    div.item { margin-right: 0; margin-left: 0; padding: 4px 10px 2px; border-top: 1px solid rgb(202, 202, 202); }
+    div.item:last-child { border-bottom: 1px solid rgb(202, 202, 202); }
+    div.img { float: left; margin: 4px 10px 4px 0; }
+    div.img img { border-radius: 6px; overflow: hidden; }
+    .content div { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .content .name { height: 25px; font-size: 18px; }
+    .content span { float: left;  color:black; }
+    .content .comment { margin-top: 3px; height: 24px; font-size: 17px; color: rgb(121, 121, 121); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <table class="table table-bordered">
+        <thead>
+        <tr><th>我的购物单</th></tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>
+                <div class="panel panel-default">
+                    <div class="panel-heading">订单详情</div>
+                    <div class="panel-body">
+                        <span>日期：{{order.create_time}}</span>
+                        <br/>
+                        <span>编号：{{order.order_id}}</span>
+                        <br/>
+                        <span>电话：{{order.tel}}</span>
+                        <br/>
+                        <span>地址：{{order.address}}</span>
+                        <br/>
+                        <span>状态：{{order.status}}</span>
+                    </div>
+                    <table class="table table-bordered">
+                        <tbody>
+                        {% for detail in order_details[order.order_id] %}
+                        <tr>
+                            <td>{{products[detail.product_id].title}}</td>
+                            <td width="15%">{{detail.count}}</td>
+                            <td width="30%">{{products[detail.product_id].price}} 元</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3">详情为空～</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td>您还没有下过订单～</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block js_link %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+                WeixinJSBridge.call('hideToolbar');}
+    );
+</script>
+{% endblock %}

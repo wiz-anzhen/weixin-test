@@ -1,0 +1,143 @@
+{% extends 'WBT/WxUser/Store.hometest.html' %}
+
+{% block main_container %}
+<div>
+    <input type="text" id="search" placeholder="搜索..." oninput="search()"/>
+    <a id="clear_search" onclick="clearSearch();">x</a>
+</div>
+
+<ul class="food_list">
+    {% for category in categories %}
+        <li id="catalog_{{ category.category_id }}" class="catalog" onclick="clicked(this)">
+            <a>
+                <div class="info">
+                    <h3 class="name">{{ category.title }}</h3>
+                    <span class="l"></span>
+                </div>
+                <img class="in" width="16" height="16" src="/scripts/store/in_s.png" alt="">
+            </a>
+        </li>
+        {% if category.description is not empty %}
+            <li class="catalog_{{ category.category_id }} comment">
+                {{ category.description }}
+            </li>
+        {% endif %}
+
+        {% for product in products[category.category_id] %}
+            <li id="food_{{ product.product_id }}"
+                rel="{{ product.product_id }}" class="food catalog_{{ category.category_id }}"
+                pinyin="xxx">
+                <a class="fancybox" href="http://test.mp.weibotui.com/article/ac652403ee60fc4a4e7c1660de9a5825">
+                    {% if show_img %}
+                        <img src="{% if product.img_url %}{{ product.img_url }}{% else %}/images/default_product.png{% endif %}" alt="图片" style="float: left; height: 52px; width: 52px; margin: 6px 6px 0 0;"/>
+                    {% endif %}
+                    <div class="info">
+                        <h3 class="name">{{ product.title }}</h3>
+                        <span class="l">
+                            ￥<span class="price">{{ product.price }}</span>
+                        </span>
+                        {% if product.description is not empty %}
+                            <span class="l l_comment">{{ product.description|raw }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                <a class="add">+</a>
+                <span class="num">0</span>
+                {% if not show_img %}
+                    <a class="reduce">-</a>
+                {% endif %}
+            </li>
+        {% else %}
+            <li class="food catalog_{{ category.category_id }}">
+                <div class="info">
+                    <h3 class="name">该分类暂无信息</h3>
+                </div>
+            </li>
+        {% endfor %}
+    {% else %}
+    <li id="none_catalog" class="catalog">
+        <div class="info">
+            <h3 class="name">没有可显示的内容</h3>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block js_placeholder %}
+{{ parent() }}
+<script type="text/javascript">
+    var $products = {{ all_products|raw }};
+</script>
+<script type="text/javascript">
+    var adds = document.getElementsByClassName('add');
+    for (var i = 0; i < adds.length; i++) {
+        adds[i].onclick = addFood;
+    }
+
+    var reduces = document.getElementsByClassName('reduce');
+    for (i = 0; i < reduces.length; i++) {
+        reduces[i].onclick = deleteFood;
+    }
+
+    function clicked($this) {
+        var $toDisplayId = $this.getAttribute('id');
+        $('li.' + $toDisplayId).each(function () {
+            $(this).toggle();
+        });
+        var $img = $this.getElementsByTagName('img')[0];
+        if ($img.src.indexOf('in_s.png') == -1)
+            $img.src = '/scripts/store/in_s.png';
+        else
+            $img.src = '/scripts/store/in_d.png';
+    }
+
+    function search() {
+        var $keyword = $("#search").val();
+        if (!$keyword) {
+            $(".food_list li[class~=catalog]").show();
+            $(".food_list li[class~=food]").hide();
+            $(".food_list li[class~=comment]").hide();
+        } else {
+            $(".food_list li[class~=catalog]").hide();
+            $(".food_list li[class~=comment]").hide();
+            $(".food_list li[class~=food]").hide();
+
+            for (var $i in $products)
+                if ($products[$i]['title'].indexOf($keyword) != -1) {
+                    $(".food_list li").each(function () {
+                        if ($(this).attr('id') == 'food_' + $products[$i]['product_id'])
+                            $(this).show();
+                    });
+                }
+        }
+    }
+
+    function clearSearch() {
+        $("#search").val('');
+        $(".food_list li").each(function(){
+            var $id = $(this).attr('id');
+            if (!$id) $(this).hide();
+            else if ($id.indexOf('catalog_') >= 0) $(this).show();
+            else $(this).hide();
+        });
+    }
+
+    {% if categories|length == 1 %}
+        $(function() {
+            var $categoryId = "{{ categories[0].category_id }}";
+            var $li = document.getElementById('catalog_' + $categoryId);
+            clicked($li);
+        });
+    {% endif %}
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+                $("a.fancybox").each(function(){
+                    $(this).fancybox({
+
+                    });
+                });
+            });
+</script>
+{% endblock %}

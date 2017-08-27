@@ -1,0 +1,71 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_community' %}
+{% block content %}
+<div class="container">
+    <div class="basic-block">
+        <ul class="breadcrumb">
+            <li>{% if is_community_admin %}公众帐号{% else %}<a href="/">首页</a>{% endif %}<span class="divider">/</span></li>
+            <li class="active">{{mp_name}}</li>
+        </ul>
+        {% if is_community_admin %}{% else %}
+        <div style="padding-bottom: 5px;">
+            <button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/community_dialog/community_add?mp_user_id={{ mp_user_id }}');">
+                添加社区
+            </button>
+        </div>
+        {% endif %}
+        {% block content_login %}
+        {{ table|raw }}
+        {% endblock %}
+        {% block note %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+    .show_change{
+        padding-left:20px;
+        padding-right:20px;
+        padding-top:10px;
+        padding-bottom:10px;
+        width:200px;
+        height:auto;
+        position:absolute;
+        overflow:hidden;
+        background-color: #ffffff;
+    }
+    .hide_change{
+        width:50px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        color:#08c;
+    }
+    .hide_comment{
+        width:50px;
+        height: 30px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        color:#08c;
+    }
+
+    .hide_beizhu{
+        width:50px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        color:#08c;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}

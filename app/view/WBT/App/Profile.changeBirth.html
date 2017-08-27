@@ -1,0 +1,95 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>更改生日</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand">更改生日</a>
+        </div>
+    </nav>
+
+    <div class="input-group" style="width:95%;margin:0 auto;">
+        <span class="input-group-addon" style="font-size: larger">年：</span>
+        <select class="form-control input-lg" id="year" name="year">
+            {% for year_list in year_list %}
+            <option  value="{{year_list}}"{% if year_list == year %} selected="selected"{% endif %}>{{year_list}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br/>
+    <div class="input-group" style="width:95%;margin:0 auto;">
+        <span class="input-group-addon" style="font-size: larger">月：</span>
+        <select class="form-control input-lg" id="month" name="month">
+            {% for month_list in month_list %}
+            <option value="{{month_list}}"{% if month_list == month %} selected="selected"{% endif %}>{{month_list}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br/>
+    <div class="input-group" style="width:95%;margin:0 auto;">
+        <span class="input-group-addon" style="font-size: larger">日：</span>
+        <select class="form-control input-lg" id="day" name="day">
+            {% for day_list in day_list %}
+            <option value="{{day_list}}"{% if day_list == day %} selected="selected"{% endif %}>{{day_list}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br/>
+    <a id="submit_next" class="btn btn-success btn-lg btn-block" style="width:95%;margin:0 auto;">保存</a>
+</div>
+<br/>
+<div id="submit_status" class="alert alert-danger" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+
+    $(function () {
+        $("#submit_next").click(function () {
+            var $year = $("#year").find("option:selected").val();
+            var $month = $("#month").find("option:selected").val();
+            var $day = $("#day").find("option:selected").val();
+            if(parseInt($day)<10)
+            {
+                $day = "0"+$day
+            }
+            if(parseInt($month)<10)
+            {
+                $month = "0"+$month
+            }
+            var $birth = $year+$month+$day;
+
+            var post_data = {'phone': '{{app_user.phone}}', 'birth': $birth};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/save_birth';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSavePhone
+            });
+        });
+    });
+
+    function afterSavePhone(data) {
+        if (data.errno == 0) {
+            $("#submit_status").html('更改成功').show();
+            location.replace(document.referrer);
+        }
+        else {
+            $("#submit_status").html(data.error).show();
+        }
+    }
+
+</script>
+{% endblock %}

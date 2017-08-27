@@ -1,0 +1,27 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set head_active = 'user_nav' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/super_admin/mp_user_profile?mp_user_id={{mp_user_id}}">{{mp_name}}</a><span class="divider">/</span></li>
+<li>微信主导航</li>
+{% endblock %}
+
+{% block action %}
+{% if item_count < 10 %}
+<button type="button" class="btn btn-success" title="添加导航" onclick="bluefinBH.ajaxDialog('/form/user_nav/add?mp_user_id={{ mp_user_id }}');">
+    添加导航
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

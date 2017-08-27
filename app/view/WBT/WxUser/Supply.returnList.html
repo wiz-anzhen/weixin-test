@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>退货列表</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+
+<div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+    <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/supply/return_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</div>
+    <div onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color:#000;float: right;width: 20%; ">首页</div>
+    <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 60%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">{{store_name}}</div >
+</div>
+<div style="height:18px;background:#e4e4e4;"></div>
+
+{% if count == 'none' %}
+
+<div style="text-align: center;">
+    <div style="text-align: center;margin:30% auto;padding:30px;font-size: 1.2em;">对不起，还没有新订单</div>
+</div>
+<a onclick="location.replace(document.referrer);" style="-webkit-tap-highlight-color:rgba(255,255,255,0);text-decoration:none;color:#000;outline:none;">
+    <div style="width:79%;padding:4% 0;margin:0 10%;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;position: fixed;bottom: 30px;">
+        返回
+    </div>
+</a>
+{% endif %}
+
+{% for list in return_list %}
+<div style="width:100%;padding-top:3%; margin:0 auto;border-bottom:1px solid #ccc;clear: both;">
+    <div id="div1" style="padding:2% 3%;font-weight:bolder;">
+        <p  class="orderId">退货单号:{{list.order_id}}</p>
+        <p style="padding-top: 3%;">退货时间:{{list.create_time}}</p>
+        <p style="padding-top: 3%;">档口:{{list.part_title}}</p>
+        {% if list.status=='refund' %}
+        <div style="color:orange;font-size:14px;padding: 3% 0;">
+            退货状态:等待供应商确认
+        </div>
+        {% else %}
+        <div style="color:#000000;font-size:14px;padding: 3% 0;">
+            退货状态:退货完成
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+<div style="width: 100%;height: 60px;border-bottom: 1px solid #ccc;clear:both;padding:2% 0;">
+    <dl style="float:left;padding:3%;">
+        <dt>{{list.detail_title}}</dt>
+        <dd style="padding-top:5%;font-size: 12px;color:#aaa;">单价{{list.detail_price}}{{list.product_unit}}</dd>
+    </dl>
+    <div style="padding: 5% 3%;color:#f00;float: right">&times;{{list.detail_count}}</div>
+</div>
+<div style="width: 100%;height: 35px;border-bottom: 1px solid #ccc;">
+    <div style="height: 35px;line-height: 35px;padding-right:3%;float: right">需退款&nbsp;&yen;{{list.detail_total}}元</div>
+</div>
+<div id="message" style="width: 100%;height:50px;">
+
+    {% if list.status=='refund_finished' %}
+    <div  style="padding:1%;margin: 4% 3%;color:#fff;float: right;outline: none;border-radius: 5px;border: 0 solid white; background: #ccc; width: 18%;text-align: center;font-size: 0.8em;" class="{{list.order_id}}" >
+        确认
+    </div>
+    {% else %}
+    <div  style="padding:1%;margin: 4% 3%;color:#fff;float: right;outline: none;border-radius: 5px;border: 0 solid white;background: red;width: 18%;text-align: center;font-size: 0.8em;" class="{{list.order_id}}" onclick="get(this)">
+        确认
+    </div>
+    {% endif %}
+
+
+    <div  style="padding:1%;margin: 4% 3%;float: right;color:#ccc;background: #fff;border: 1px solid #ccc;text-align: center;border-radius: 4px;width: 18%;font-size: 0.8em;" class="{{list.order_id}}" onclick="detail(this)">
+        查看详情
+    </div>
+</div>
+
+<div style="height:18px;background:#e4e4e4;"></div>
+{% endfor %}
+<div id="determine_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">退货确认 </div>
+        <div style="padding: 10%;text-align: center;">确认退货,并发送通知给餐厅</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_ok" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="" id="alter_id"/>
+</body>
+<script type="text/javascript">
+
+    function get(obj)
+    {
+        var id = $(obj).attr('class');
+        $("#alter_id").val(id);
+        $("#determine_content").css("display","block");
+
+    }
+
+    $("#cancel").click(function (){
+
+        $("#determine_content").css("display","none");
+    });
+
+    $("#determine_ok").click(function ()
+    {
+        var id = $("#alter_id").val();
+        //location.href="/wx_user/supply/return_submit?order_id="+id+"&mp_user_id={{mp_user_id}}";
+        var site = location.protocol + '//' + location.host + '/api/wx_user/supply/send_supply';
+        var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id': id ,'type':'refund_finished'};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r)
+            {
+                if(r.errno == 0)
+                {
+                    location.href = "/wx_user/supply/return_submit?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}";
+
+                }
+            }
+        });
+
+    });
+
+    function detail(obj)
+    {
+        var id = $(obj).attr('class');
+        location.href="/wx_user/supply/return_detail?order_id="+id+"&mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}";
+    }
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>订单提交成功</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    <form method="post" action="/web/web/check_verify_phone_code?mp_user_id={{ mp_user_id }}&order_id={{ order_id }}&wx_user_id={{ wx_user_id }}">
+        {{ nav_bar|raw }}
+        <p style="font-size: 18px;">
+        订单已提交成功，正在等待审核，审核通过后系统会向你发送通知短信，如果5分钟后仍未收到短信，可拨打电话<a href="tel:{{ phone_no }}">{{ phone_no }}</a>询问。
+        </p>
+    </form>
+    <br/><br/>
+</div>
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script>
+    {% if recheck %}
+        $(".feedback-status").addClass('alert-error').html("验证码错误，系统已重新发送，请核对后重试一次！").show();
+    {% endif %}
+    $(function(){
+        $("#submit-btn").click(function(){
+            var $code = $("#verify_phone_code").val();
+            if($code.length != 3) {
+                $(".feedback-status").addClass('alert-error').html("验证码是三位！").show();
+                return false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

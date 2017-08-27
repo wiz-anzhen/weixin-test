@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>外卖地址</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    {{ nav_bar|raw }}
+    <input type="text" id="nick" name="nick" style="width: 96%; height: 30px; font-size: 18px" placeholder="请在此填写称呼，例如 张先生" value="{{nick}}"/>
+    <input type="text" id="phone" name="phone" style="width: 96%; height: 30px; font-size: 18px" placeholder="请在此填写11位手机号" value="{{phone}}"/>
+    <textarea rows="3" id="address" name="address" style="width:96%; font-size: 18px" placeholder="请在此填写送餐地址">{{ address }}</textarea>
+    <br/><br/>
+    <input type="submit" id="submit-btn" class="btn btn-success btn-large" style="width: 100%" value="下一步"/>
+    <br/><br/>
+    <span class="alert alert-success feedback-status" style="display: none;width:85%;"></span>
+    <br/><br/>
+</div>
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script>
+    $(function(){
+        $("#submit-btn").click(function(){
+            var nick = $("#nick").val();
+            if(nick == '')
+            {
+                $(".feedback-status").addClass('alert-error').html("请填写称呼").show();
+                return false;
+            }
+
+            var phone = $("#phone").val();
+            if (phone.length < 11)
+            {
+                $(".feedback-status").addClass('alert-error').html("请填写11位手机号").show();
+                return false;
+            }
+
+            var address = $("#address").val();
+            if(address.length < 5)
+            {
+                $(".feedback-status").addClass('alert-error').html("地址字数是不是太少了？").show();
+                return false;
+            }
+
+            url =  location.protocol  + '//' + location.host
+                    + '/web/web/save_take_away_address?mp_user_id={{ mp_user_id }}&order_id={{ order_id }}&wx_user_id={{ wx_user_id }}&nick=' + encodeURIComponent(nick) + '&phone=' + encodeURIComponent(phone) + '&address=' + encodeURIComponent(address);
+            window.location.href = url;
+        });
+
+        /*
+         <form method="post" action="/web/web/save_take_away_address?mp_user_id={{ mp_user_id }}&order_id={{ order_id }}&wx_user_id={{ wx_user_id }}">
+        */
+    });
+</script>
+</body>
+</html>

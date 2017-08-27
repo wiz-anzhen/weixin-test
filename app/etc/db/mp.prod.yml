@@ -1,0 +1,9 @@
+mp:
+  class: \MP\Model\MpDatabase
+  config:
+    host: 127.0.0.1
+    port: 3306
+    username: root
+    password: root
+    dbname: mp
+    charset: utf8

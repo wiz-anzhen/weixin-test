@@ -1,0 +1,170 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_bill' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/bill/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">缴费通知单管理</a>
+    <span class="divider">/</span>
+</li>
+<li>{{bill_day}}</li>
+
+{% endblock %}
+
+{% block action %}
+{% if bill_rw %}
+<div style="float:left;margin-bottom: 10px;">
+    <button type="button" class="btn btn-success"  onclick="bluefinBH.ajaxDialog('/mp_admin/bill_dialog/add_bill?mp_user_id={{ mp_user_id}}&community_id={{community_id}}&bill_day={{bill_day}}');">
+        添加缴费通知单
+    </button>
+</div>
+<div id="form1Icon_UPLOAD" style="float:left"></div>
+<div  style="float:left;margin-left:40px;"><a href="/download/bill.xlsx">点击下载批量录入Excel示例文件</a></div>
+<div style="clear:both;margin-bottom: 20px;padding-top:10px">
+    <span  style="font-size: 16px;background-color: white;text-align:center" >
+        金额总计：{{sum}}
+    </span>
+    <span  style="font-size: 16px;background-color: white;text-align:center;margin-left:20px" >
+        已读：{{read_over}}
+    </span>
+    <span  style="font-size: 16px;background-color: white;text-align:center;margin-left:20px" >
+        未读：{{read_no}}
+    </span>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content_login %}
+<div style="border:1px solid #ced7dc;border-radius: 5px;padding:10px 0 20px 20px;margin-top:10px;margin-bottom: 20px;
+background-color:#F8F8FF;">
+    <form class="form-inline" role="form" id="form" method="get" style="margin-bottom: 20px;">
+
+        <div class="form-group" style="display:none;">
+            <input type="hidden" id="page" name="page" value="{{ page }}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-left: 7px">
+            <label for="name">业主姓名</label>
+            <input type="text" class="form-control" style="width:85px" id="name" name="name" value="{{name}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-left: 7px">
+            <label for="house_address">房产地址</label>
+            <input type="text" class="form-control" style="width:240px" id="house_address" name="house_address"value="{{house_address}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-left: 7px">
+            <span>账单日期</span>
+            <select class="form-control input-lg" style="width:120px;" id="bill_day" name="bill_day">
+                {% for day in all_day %}
+                <option  value="{{day}}" {% if select_day  %}{% if day == select_day %} selected="selected" {% endif %} {% else %} {% if day == bill_day %} selected="selected" {% endif %}{% endif %}>{{day}}</option>
+                {% endfor %}
+                <option  value="all" {% if select_day == 'all' %} selected="selected" {% endif %}>全部</option>
+            </select>
+        </div>
+
+        <button type="button" style="margin-left: 30px" class="btn btn-success" onclick="search();" style="display:inline;">搜索</button>
+        <button type="button" class="btn btn-default" onclick="clearData()" style="display:inline;">清空</button>
+
+    </form>
+</div>
+{{ table|raw }}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+    .show_change{
+        width:auto;
+        height:auto;
+        position:absolute;
+        overflow:hidden;
+    }
+    .hide_change{
+        width:60px;
+        height:20px;
+        overflow:hidden;
+    }
+
+</style>
+<link rel="stylesheet" type="text/css" href="/libs/uploadify/uploadify.css?v={{ third_lib_version }}">
+{% endblock %}
+
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+<script src="/libs/uploadify/jquery.uploadify.min.js?v={{third_lib_version}}" type="text/javascript"></script>
+<script type="text/javascript">
+    $("#form1Icon_UPLOAD").uploadify({
+        'swf'           : '/libs/uploadify/uploadify.swf',
+        //       'uploader'      : '/api/image/file/upload_by_flash',
+        'uploader'      : '/api/fcrm/bill_file_upload/file_upload?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&bill_day={{ bill_day }}',
+        'fileSizeLimit' : '50MB',
+        'width'         : 68,
+// 'height'        : 28,
+        'debug'         : false,
+// 'buttonText'   : '选择图片',
+// 'buttonClass'   : '/images/button/select_img.png',
+        'buttonImage'   : '/libs/uploadify/select_file.png',
+//                'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+        'fileTypeExts'  : '*.xlsx',
+        'method'        : 'post',
+        'multi'         : false,
+        /*                'onSelectError' : function(file, errorCode, errorMsg)
+         {
+         if(errorCode == -110)
+         {
+         alert('图片大小超过限制,最大可以上传5M的图片。');
+         }
+         },
+         */
+        'onUploadSuccess' : function(file , data)
+        {
+
+            data = eval("(" + data + ")");
+
+            if(data.errno == 0)
+            {
+                alert("批量导入成功");
+                location.reload();
+            }
+            else
+            {
+                alert(data.error);
+                location.reload();
+            }
+        }
+
+    });
+</script>
+<script type="text/javascript">
+    function search() {
+        if(($("#bill_day").val() == 'all') && ($("#name").val() == '')&& ($("#house_address").val() == ''))
+        {
+            alert("请填写业主姓名和住址");
+            return false;
+        }
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1]+"&"+arr[2];
+        var getUrl = "&name="+$("#name").val()+"&house_address="+$("#house_address").val()+"&select_day="+$("[name='bill_day']").find("option:selected").val();
+        location.replace(wlh + getUrl);
+    }
+
+    function clearData(){
+        $("input").val("");
+        var arr = window.location.href.split("&");
+        location.replace(arr[0]+"&"+arr[1]+"&"+arr[2]);
+    }
+</script>
+
+{% endblock %}

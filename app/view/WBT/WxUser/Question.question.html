@@ -1,0 +1,181 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{questionnaire.title}}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { font-size: 19px; }
+    ol { padding-left: 22px; }
+    div.form-group label { vertical-align: top; }
+    ol li { border-top: solid 1px #eee; }
+    ol li:first-child { border-top-width: 0; }
+    div.checkbox label, div.radio label { display: block; }
+    div.basic-info label, div.basic-info .form-control { display: inline-block; }
+    div.radio label, div.checkbox label { margin-bottom: 9px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{questionnaire.title}}</h3>
+    </div>
+    <div class="panel-body">
+        <form role="form" accept-charset="UTF-8" action="/wx_user/question/submit_answer?mp_user_id={{mp_user_id}}&wx_user_id={{wx_user_id}}&wj_questionnaire_id={{questionnaire.wj_questionnaire_id}}&community_id={{community_id}}" method="post">
+            <div class="well well-sm">
+                <p>{{questionnaire.head_desc}}</p>
+            </div>
+            <ol>
+                {% set no = 0 %}
+                {% for question in questions %}
+                {% set no = no + 1 %}
+                <li>
+                    {% if question.question_type == 'input_single' %}
+                    {# 单行填空 #}
+                    <div class="form-group has-success">
+                        <label for="question_{{question.wj_question_id}}">{{question.content}}</label>
+                        <input type="text" class="form-control" question_type="input" serial_no="{{no}}" id="question_{{question.wj_question_id}}" name="question[{{question.wj_question_id}}]" placeholder="{{question.placeholder}}" value="">
+                    </div>
+                    {% elseif question.question_type == 'input_multiple' %}
+                    {# 多行填空 #}
+                    <div class="form-group has-success">
+                        <label for="question_{{question.wj_question_id}}">{{question.content}}</label>
+                        <textarea class="form-control" question_type="input" serial_no="{{no}}" id="question_{{question.wj_question_id}}" name="question[{{question.wj_question_id}}]" placeholder="{{question.placeholder}}" rows="5"></textarea>
+                    </div>
+                    {% elseif question.question_type == 'choice_single' %}
+                    {# 单选 #}
+                    <div class="form-group">
+                        <label question_type="choice" serial_no="{{no}}">{{question.content}}</label>
+                        <div class="radio">
+                            {% for choice in question.choices %}
+                            <label>
+                                <input type="radio" serial_no="{{no}}" id="question_{{question.wj_question_id}}_{{choice.wj_choice_id}}" name="question[{{question.wj_question_id}}]" value="{{choice.wj_choice_id}}">
+                                {{choice.content}}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% elseif question.question_type == 'choice_multiple' %}
+                    {# 多选 #}
+                    <div class="form-group">
+                        <label question_type="choice" serial_no="{{no}}">{{question.content}}（可多选）</label>
+                        <div class="checkbox">
+                            {% for choice in question.choices %}
+                            <label>
+                                <input type="checkbox" serial_no="{{no}}" id="question_{{question.wj_question_id}}_{{choice.wj_choice_id}}" name="question[{{question.wj_question_id}}][]" value="{{choice.wj_choice_id}}">
+                                {{choice.content}}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+            <div class="well well-sm">{{questionnaire.tail_desc}}</div>
+            {% if questionnaire.customer_profile in [ 'required', 'optional' ] %}
+            <div class="well well-lg">
+                {% if questionnaire.customer_profile == 'required' %}
+                <p>请填写您的个人信息：</p>
+                {% else %}
+                <p>以下是选填项目</p>
+                {% endif %}
+                <div class="input-group">
+                    <span class="input-group-addon"><label for="basic_name">姓　　名：</label></span>
+                    <input type="text" class="form-control" id="basic_name" name="basic[name]" placeholder="如：张先生" value="{% if wx_user.nick %}{{wx_user.nick}}{% endif %}">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><label for="basic_tel">手　　机：</label></span>
+                    <input type="tel" class="form-control" id="basic_tel" name="basic[tel]" placeholder="如：13800000000" value="{% if wx_user.phone %}{{wx_user.phone}}{% endif %}">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><label for="basic_email">电子邮件：</label></span>
+                    <input type="email" class="form-control" id="basic_email" name="basic[email]" placeholder="如：name@server.com" value="{% if wx_user.email %}{{wx_user.email}}{% endif %}">
+                </div>
+            </div>
+            {% endif %}
+            <div id="error_info" class="form-group" style="display: none;">
+                <div class="alert alert-warning">错误提示</div>
+            </div>
+            <button type="submit" id="submit" class="btn btn-primary btn-lg btn-block">提交</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $("#submit").click(function () {
+        var $retFlag = false;
+        /*if (!$retFlag) {
+         // 填空题
+         $("[question_type='input']").each(function () {
+         var $value = $(this).val();
+         if ($value.length == 0) {
+         showError("第 " + $(this).attr('serial_no') + " 题还没有作答！");
+         $retFlag = true;
+         return false;
+         }
+         return true;
+         });
+         }*/
+
+        if (!$retFlag) {
+            // 选择题
+            $("label[question_type='choice']").each(function () {
+                var $serialNo = $(this).attr('serial_no');
+                var $inputs = $("input[serial_no='" + $serialNo + "']:checked");
+                if ($inputs.length == 0) {
+                    showError("第 " + $(this).attr('serial_no') + " 题还没有作答！");
+                    $retFlag = true;
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        var $customerProfile = '{{ questionnaire.customer_profile }}';
+
+        if (!$retFlag && $customerProfile == 'required') {
+            if ($("#basic_name").val().length == 0) {
+                showError('【个人信息：姓　　名】未填写！');
+                return false;
+            }
+            if ($("#basic_tel").val().length == 0) {
+                showError('【个人信息：手　　机】未填写！');
+                return false;
+            }
+            /*if ($("#basic_birth").val().length == 0) {
+             showError('【个人信息：出生日期】未填写！');
+             return false;
+             }
+             if ($("#basic_email").val().length == 0) {
+             showError('【个人信息：电子邮件】未填写！');
+             return false;
+             }*/
+        }
+
+        return !$retFlag;
+    });
+
+    function showError($message) {
+        // var $errorInfo = $("#error_info");
+        // $errorInfo.find('div').html($message);
+        // $errorInfo.slideDown(400).delay(1200).slideUp(400);
+        alert($message);
+    }
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+//        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_channel' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>频道管理</li>
+{% endblock %}
+
+{% block action %}
+{% if channel_rw %}
+<button type="button" class="btn btn-success" title="添加频道" onclick="bluefinBH.ajaxDialog('/mp_admin/channel_dialog/add?mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">
+    添加频道
+</button>
+{% endif %}
+{% endblock %}
+
+{% set pagination_js = TRUE %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit"/>
+    <title>118采购助手</title>
+    <style type="text/css">
+        html,body,div,ul,li,ol,img,span,p,h1,h2,h3{ margin:0; padding:0;}
+        ul,ol{ list-style:none;}
+        a{text-decoration: none;}
+        a:link{text-decoration: none;color:#ffffff;}
+        a:visited{text-decoration: none;color:#ffffff;}
+        a:active{text-decoration: none;color:#ffffff;}
+    </style>
+</head>
+<body>
+<div style="text-align: center;">
+    <div style="text-align: center;margin:30% auto;padding:30px;font-size: 1.2em;">对不起，您没有权限访问该页面</div>
+</div>
+<a onclick="location.replace(document.referrer);" style="-webkit-tap-highlight-color:rgba(255,255,255,0);text-decoration:none;color:#000;outline:none;">
+    <div style="width:79%;padding:4% 0;margin:0 10%;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;position: fixed;bottom: 30px;">
+        返回首页
+    </div>
+</a>
+<script>
+
+    var a=document.getElementsByTagName('a');
+
+    for(var i=0;i<a.length;i++){
+
+        a[i].addEventListener('touchstart',function(){},false);
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "WBT/home.twig" %}
+
+{% block css_link %}
+    <link href="/styles/auth.css?v={{our_lib_version}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="offset2 span8">
+            <div class="login-unit">
+{% if _eventMessage %}
+                <div id="eventMessage" class="alert {{ _eventAlertClass }}"><button type="button" class="close" data-dismiss="alert">×</button>
+                 <strong>{{ _eventMessage|raw }}</strong>
+                </div>
+{% endif %}
+                {{ form|raw }}
+                <a href="{{ my_url('auth/index') }}">已经有微博推账号？点击这里登录。</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>新邻居演示页</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { padding-bottom: 20px; padding-top: 9px; }
+    a, a:hover { color: #000; text-decoration: none; }
+
+    div.item { margin-right: 0; margin-left: 0; padding: 4px 10px 2px; border-top: 1px solid rgb(202, 202, 202); }
+    div.item:last-child { border-bottom: 1px solid rgb(202, 202, 202); }
+    div.img { float: left; margin: 4px 10px 4px 0; }
+    div.img img { border-radius: 6px; overflow: hidden; }
+    .content div { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .content .name { height: 25px; font-size: 18px; }
+    .content span { float: right; font-size: 18px; color: #8dfc00; }
+    .content .comment { margin-top: 3px; height: 24px; font-size: 17px; color: rgb(121, 121, 121); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    {% for user in users %}
+    <div class="row item">
+        <a target="_blank" href="javascript:">
+            <div class="img">
+                <img src="/images/test/{{ user.pic }}" height="55px" width="55px">
+            </div>
+            <div class="content">
+                <div class="name">
+                    <span>+ 关注</span>
+                    {{ user.title }}
+                </div>
+                <div class="comment">{{ user.text }}</div>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    没有可以显示的邻居哦～～
+    {% endfor %}
+</div>
+{% endblock %}
+

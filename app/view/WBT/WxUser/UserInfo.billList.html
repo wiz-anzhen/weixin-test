@@ -1,0 +1,113 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>缴费通知单</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    div.row { height: 70px; margin-top: 9px; margin-bottom: 9px; }
+    img { height: 70px; width: 70px; }
+    hr { margin-top: 1px; margin-bottom: 1px; }
+    h4 { display: none; font-weight: bolder; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    p { margin-bottom: 13px; overflow: hidden; }
+    div.col-xs-3 { padding-right: 0; }
+    div.col-xs-6 { font-size: small; height: 70px; overflow: hidden; text-overflow: ellipsis; padding-right: 4px; }
+    a { color: #000; }
+    div.top { color: rgb(128, 127, 132); }
+    div.top, div.today, div.yesterday, div.day { font-weight: bolder; font-size: 28px; }
+    div.day, div.month { float: left; height: 70px; }
+    div.month { padding-top: 16px; margin-right: -10px; font-weight: bold; }
+    div.body { padding: 30px 10px 0; }
+    div.separator { height: 8px; }
+    div.haha { margin-left: -6px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    {% for bill in bill_list %}
+    {% if (not loop.first) %}
+    <div class="separator"></div>
+    {% endif %}
+    <div class="row">
+        <a href="/wx_user/user_info/bill?mp_user_id={{mp_user_id}}&bill_id={{bill.bill_id}}">
+            <div class="col-xs-3">
+                {% if bill.bill_day == mmdd_today %}
+                <div class="today">今天</div>
+                {% elseif bill.bill_day == mmdd_yesterday %}
+                <div class="yesterday">昨天</div>
+                {% else %}
+                <div class="day_monty">
+                    <div class="day">{{ bill.day }}</div>
+                    <div class="month">
+                        {%if bill.month == '01'%}
+                        一月
+                        {%elseif bill.month == '02' %}
+                        二月
+                        {%elseif bill.month == '03' %}
+                        三月
+                        {%elseif bill.month== '04' %}
+                        四月
+                        {%elseif bill.month == '05' %}
+                        五月
+                        {%elseif bill.month== '06' %}
+                        六月
+                        {%elseif bill.month== '07' %}
+                        七月
+                        {%elseif bill.month== '08' %}
+                        八月
+                        {%elseif bill.month== '09' %}
+                        九月
+                        {%elseif bill.month== '10' %}
+                        十月
+                        {%elseif bill.month == '11' %}
+                        十一月
+                        {%elseif bill.month== '12' %}
+                        十二月
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-xs-3 haha">
+                {%if bill.month == '01'%}
+                <img src="/img/month/01.png"/>
+                {%elseif bill.month == '02' %}
+                <img src="/img/month/02.png"/>
+                {%elseif bill.month == '03' %}
+                <img src="/img/month/03.png"/>
+                {%elseif bill.month== '04' %}
+                <img src="/img/month/04.png"/>
+                {%elseif bill.month == '05' %}
+                <img src="/img/month/05.png"/>
+                {%elseif bill.month== '06' %}
+                <img src="/img/month/06.png"/>
+                {%elseif bill.month== '07' %}
+                <img src="/img/month/07.png"/>
+                {%elseif bill.month== '08' %}
+                <img src="/img/month/08.png"/>
+                {%elseif bill.month== '09' %}
+                <img src="/img/month/09.png"/>
+                {%elseif bill.month== '10' %}
+                <img src="/img/month/10.png"/>
+                {%elseif bill.month == '11' %}
+                <img src="/img/month/11.png"/>
+                {%elseif bill.month== '12' %}
+                <img src="/img/month/12.png"/>
+                {% endif %}
+            </div>
+            <div class="col-xs-6">
+                <p>缴费通知单</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% if bill_list is empty %}
+<div style="text-align: center;font-size: 24px;margin-top: 100px">
+    无缴费通知单
+</div>
+{% endif %}
+</div>
+{% endblock %}

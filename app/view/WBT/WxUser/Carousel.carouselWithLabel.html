@@ -1,0 +1,53 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ carousel.title }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style>
+    .row { margin: 30px 0 0 0; padding: 0; }
+    .row:first-child { margin-top: 0; }
+    .a { margin: 10px; }
+    .col-xs-4 { padding: 5px; }
+    div.col-xs-4 a { display: table-cell; vertical-align: middle; }
+    span { display: block; text-align: center; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for album in albums %}
+    {% if (loop.index + 2) is divisibleby(3) %}
+    <div class="row">
+        {% endif %}
+        <div class="col-xs-4">
+            <a class="thumbnail" href="/wx_user/carousel/picture?album_id={{ album.album_id }}" target="_blank">
+                <img src="{{ album.cover_img }}" alt="{{ album.title }}"/>
+            </a>
+            <span>{{ album.title }}</span>
+        </div>
+        {% if (loop.index is divisibleby(3)) or (loop.last) %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-warning">
+        警告！该轮播列表为空。
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var $style = document.createElement("style");
+        var $height = $(".col-xs-4")[0].clientWidth;
+        $style.appendChild(document.createTextNode(".col-xs-4 { height: " + $height + "px; }"));
+        $style.appendChild(document.createTextNode("div.col-xs-4 a { width: "  + ($height-10) + "px; height: " + ($height-10) + "px; }"));
+        $style.appendChild(document.createTextNode(".thumbnail img { max-width: "  + ($height-18) + "px; max-height: " + ($height-18) + "px; }"));
+        document.head.appendChild($style);
+    });
+</script>
+{% endblock %}
+

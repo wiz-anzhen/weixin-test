@@ -1,0 +1,139 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>添加住户</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241,240,245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item, div.input-group label, div.input-group .form-control { color: #000; font-size: 17px; }
+    span.glyphicon { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div class="input-group" style="margin-bottom: 20px;">
+        <span class="input-group-addon">
+            <label for="house">请选择地址：</label>
+        </span>
+        <select class="form-control" id="house" name="house" onchange="houseChanged();">
+            {% for house in my_houses %}
+            <option value="{{house.house_member_id}}"{% if house.house_member_id == current_house_id %} selected="selected"{% endif %}>{{house.house_address}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if not added_members|length == 0 %}
+    <p class="text-left">已添加的人</p>
+    <div class="list-group">
+        {% for house_member in added_members %}
+        <a class="list-group-item" href="javascript:">
+            {{house_member.name}}({{house_member.phone1}})
+            <span class="glyphicon glyphicon-remove pull-right" onclick="removeTenant({{house_member.house_member_id}});"></span>
+            <span class="badge">{% if house_member.wx_user_id  %}已认证{% else %}未认证{% endif %}</span>
+
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if added_members|length < 5 %}
+    <div class="well well-lg">
+        {% set num = {0: '五', 1: '四', 2: '三', 3: '二', 4: '一'} %}
+        <p>还可以添加{{num[added_members|length]}}个人</p>
+        <div class="input-group">
+            <span class="input-group-addon"><label for="name">真实姓名：</label></span>
+            <input type="text" class="form-control" id="name" name="name" placeholder="如：张先生" value="">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon"><label for="phone">手　　机：</label></span>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="如：13800000000" value="">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon"><label for="relation">关　　系：</label></span>
+            <select class="form-control" id="relation" name="relation">
+                <option value="friends" selected="selected">亲戚朋友</option>
+                <option value="lessee">租户</option>
+            </select>
+        </div>
+        <button type="submit" id="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" onclick="addMember();">添加</button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+<script type="text/javascript">
+
+
+    function houseChanged() {
+        var $houseMemberId = $("#house").val();
+        window.location.href = location.protocol + '//' + location.host + "/wx_user/zhongao/user?mp_user_id={{mp_user_id}}&wx_user_id={{wx_user_id}}&house_member_id=" + $houseMemberId;
+    }
+
+    function addMember() {
+        var $name = $("#name").val();
+        var $phone = $("#phone").val();
+        var $relation = $("#relation").val();
+
+        var $data = {
+            "wx_user_id": "{{wx_user_id}}",
+            "house_member_id": $("#house").val(),
+            "name": $name,
+            "phone1": $phone,
+            "member_type": $relation
+        };
+        var $url = location.protocol + '//' + location.host + "/api/wx_user/zhongao/add_member";
+        $.post($url, $data, function($data) {
+            if ($data['errno'] == 0) {
+                location.reload();
+            } else {
+                alert($data['error']);
+            }
+        });
+    }
+
+    function removeTenant( $houseMemberId ) {
+        if(!confirm('确定要删除吗？')) {
+            return;
+        }
+
+        var $data = {
+            "wx_user_id": "{{wx_user_id}}",
+            "house_member_id": $houseMemberId
+        };
+        var $url = location.protocol  + '//' + location.host + "/api/wx_user/zhongao/remove_member";
+        $.post($url, $data, function($data) {
+            if ($data['errno'] == 0) {
+                alert('删除成功');
+                location.reload();
+            } else {
+                alert($data['error']);
+            }
+        });
+    }
+</script>
+{% endblock %}

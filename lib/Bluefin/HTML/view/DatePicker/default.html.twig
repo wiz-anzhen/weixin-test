@@ -1,0 +1,30 @@
+<div{{ component.renderAttributes|raw }}>
+{% if compoennt.hasTime %}
+    <div class="input-append pull-left">
+        <input class="date-picker" type="text" name="{{ component.attributes.name }}{% if component.hasTime %}_D{% endif %}" style="width:80px;" value="{{ component.date }}"><span class="add-on"><i class="icon-calendar"></i></span>
+    </div>
+{% endif %}
+    {#
+{% if component.hasTime %}
+    <div class="input-append bootstrap-timepicker-component pull-left">
+        <input class="time-picker" type="text" name="{{ component.attributes.name }}{% if component.hasDate %}_T{% endif %}" style="width:65px;" value="{{ component.time }}"><span class="add-on"><i class="icon-time"></i></span>
+    </div>
+{% endif %}
+    #}
+    {% if component.hasDate %}
+        <input type="hidden" name="{{ component.attributes.name }}" value="2010" class="inputHidden_datetimepicker{{ component.attributes.name }}"/>
+        <div class="well" style="background-color: #ffffff;border:0;min-height: 20px;padding: 0px;margin-bottom: 0px;-webkit-border-radius: 0px;-moz-border-radius: 0px;border-radius: 0px;-webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.00);-moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.00);box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.00);">
+            <div id="datetimepicker{{ component.attributes.name }}" class="input-append date">
+                <input data-format="yyyy-MM-dd" type="text" style="width:80px;" class="input_datetimepicker{{ component.attributes.name }}" value="{{ component.date }}" />
+
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar" tag="datetime"></i>
+                </span>
+            </div>
+
+        </div>
+    {% endif %}
+    <div class="clearfix"></div>
+</div>
+
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>

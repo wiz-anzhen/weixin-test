@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit"/>
+    <title>订单列表</title>
+    <style type="text/css">
+        html,body,div,ul,li,ol,img,span,p,h1,h2,h3{ margin:0; padding:0;}
+        *{-webkit-tap-highlight-color:rgba(255,255,255,0);}
+        ul,ol{ list-style:none;}
+        a{text-decoration: none;}
+        a:link{text-decoration: none;color:#ffffff;}
+        a:visited{text-decoration: none;color:#ffffff;}
+        a:active{text-decoration: none;color:#ffffff;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body onload="readCookie()">
+
+<div class="box" style="width: 100%;height:50px;position: relative;border-bottom:1px solid #ccc;">
+    <span style="position: absolute;left: 10px;top: 15px;padding:0 15px;" onclick="location.replace('/wx_user/procurement/supply_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&store_id={{store_id}}');">返回</span>
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;padding:0 15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 60%">{{store_title}}</div>
+</div>
+{% if count == 'none' %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div style="text-align: center;">
+    <div style="text-align: center;margin:30% auto;padding:30px;font-size: 1.2em;">对不起，还没有新订单</div>
+</div>
+<a onclick="location.replace(document.referrer);" style="-webkit-tap-highlight-color:rgba(255,255,255,0);text-decoration:none;color:#000;outline:none;">
+    <div style="width:79%;padding:4% 0;margin:0 10%;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;position: fixed;bottom: 30px;">
+        返回
+    </div>
+</a>
+{% endif %}
+
+{% for order in order_data %}
+
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+
+<a href="/wx_user/procurement/supply_order_detail?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&order_id={{order.order_id}}&store_title={{store_title}}" style="color:#000;font-size:1em;">
+    <div class="main" style="width:100%;padding-top:5%; padding-bottom:18%; margin:0 auto;border-bottom:1px solid #ccc;">
+
+        <div  style="padding-left:5%;font-weight:bolder;float:left;">
+            <p style="color:#363636;font-size:1.2em;">{{ order.create_time }}</p>
+            <p style="color:#bbb;font-size:0.8em;margin-top: 4px;">订单号:{{order.order_id}}</p>
+        </div>
+
+        <div  style="padding-right:3%;padding-top:3%;float:right;">
+            >
+        </div>
+
+    </div>
+</a>
+
+<div  style="width: 100%;height: 50px;">
+    <div  style="padding:8px;float: right;background-color: buttonface;border:1px solid #ccc;border-radius: 4px;color:black;margin-left: 5px;margin-right: 15px;margin-top: 12px;margin-bottom: -2px;font-size: 12px;" id="{{order.order_id}}" class="read_cookie"  onclick="send(this)" >
+        催促确认
+    </div>
+</div>
+
+
+
+{% if loop.last %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+{% endif %}
+
+{% endfor %}
+<div id="send" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height: 100%;">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">催促供应商确认</div>
+        <div style="padding: 10%;text-align: center;">将发送催促消息给供应商,1小时可发送1次</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine" style="float: right;padding-right: 15%;padding-left: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+
+<div id="success" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display:none;height: 100%;">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">催促供应商消息发送成功 </div>
+        <div style="padding: 10%;text-align: center;">已发送催促消息</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="close" style="text-align: center;">关闭</p>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="" id="order_id"/>
+
+<script>
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var expires = "; expires=" + date.toGMTString();
+        }
+        document.cookie = name + "=" + encodeURI(value) + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ')
+                c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0)
+                return decodeURI(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    function removeCookie(name) {
+        setCookie(name, "", -1);
+    }
+
+    var a=document.getElementsByTagName('a');
+
+    for(var i=0;i<a.length;i++){
+
+        a[i].addEventListener('touchstart',function(){},false);
+
+    }
+
+    function send(obj)
+    {
+        var myDate = new Date();
+        var current_hour = myDate.getHours();
+        var id = $(obj).attr('id');
+        var cookie_hour = getCookie(id);
+        if((current_hour-cookie_hour) == 0)
+        {
+
+        }
+        else
+        {
+            $("#order_id").val(id);
+            $("#send").css("display","block");
+        }
+    }
+
+    $("#cancel").click(function ()
+    {
+        var id = $("#order_id").val();
+        $("#send").css("display","none");
+    });
+
+    $("#determine").click(function ()
+    {
+        var id = $("#order_id").val();
+        var myDate  = new Date();
+        var hour = myDate.getHours();
+        setCookie(id,hour,30);
+
+        $("#"+id).css("background-color","#ccc");
+        $("#"+id).css("color","black");
+        var site = location.protocol + '//' + location.host + '/api/wx_user/procurement/send_supply';
+        var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id':id,'type':'send'};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r)
+            {
+                if(r.errno == 0)
+                {
+                    $("#send").css("display","none");
+                    $("#success").css("display","block");
+
+                }
+            }
+        });
+    });
+
+    $("#close").click(function ()
+    {
+        var id = $("#order_id").val();
+        $("#send").css("display","none");
+        $("#success").css("display","none");
+
+        $("#"+id).css("background-color","#ccc");
+        $("#"+id).css("color","black");
+         $("#order_id").val();
+    });
+
+
+    function readCookie()
+    {
+        $(".read_cookie").each(function()
+        {
+            var id = $(this).attr('id') ;
+            var myDate = new Date();
+            var current_hour = myDate.getHours();
+            var cookie_hour = getCookie(id);
+            if((current_hour-cookie_hour) == 0)
+            {
+                $("#"+id).css("background-color","#ccc");
+            }
+            else
+            {
+
+                $("#"+id).css("background-color","red");
+                $("#"+id).css("border","1px solid red");
+                $("#"+id).css("color","white");
+            }
+        });
+    }
+
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</body>
+</html>

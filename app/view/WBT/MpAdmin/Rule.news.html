@@ -1,0 +1,34 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set head_active = 'mp_rule' %}
+
+{% block sub_breadcrumbs %}
+<li><a href="/mp_admin/rule/list?mp_user_id={{ mp_user_id }}">规则</a><span class="divider">&gt;</span></li>
+<li class="active">{{ rule_name }}</li>
+{% endblock %}
+
+{% block content_login %}
+{{ parent() }}
+<p>一个规则下最多添加十个图文消息</p>
+{% endblock %}
+
+{% block action %}
+{% if allow_new_item %}
+<button type="button" class="btn" title="添加规则图文消息"
+        onclick="bluefinBH.ajaxDialog('/mp_admin/mp_rule_dialog/add_news?mp_user_id={{ mp_user_id }}&mp_rule_id={{ mp_rule_id }}');">
+    添加图文消息
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+{{ parent() }}
+<link href="/libs/jquery-lightbox/css/jquery.lightbox-0.5.css?v={{third_lib_version}}" rel="stylesheet" />
+{% endblock %}
+
+{% block js_link %}
+{{ parent() }}
+<script src="/libs/jquery-lightbox/js/jquery.lightbox-0.5.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

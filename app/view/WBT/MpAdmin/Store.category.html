@@ -1,0 +1,36 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_store' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/store/store?mp_user_id={{mp_user_id}}&community_id={{community_id}}">商城</a><span class="divider">/</span></li>
+<li>{{ store.title }}</li>
+{% endblock %}
+
+{% block action %}
+{% if store_rw %}
+<button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/store_dialog/category_add?store_id={{ store.store_id }}&mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">
+    添加分类
+</button>
+<button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/store_dialog/category_copy?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&store_id={{ store.store_id }}');">
+    复制分类
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

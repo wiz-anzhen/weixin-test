@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*头部导航*/
+        .nav_shopping{position:fixed;z-index:9999;top:0px;height:132px;width:100%;background-color: #ff6633;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;}
+        .bottom ul{list-style: none;}
+        .bottom ul li{float:left;}
+        .bottom ul .home{width: 14.4%;text-align: center;border:0px solid green;height:144px;margin-left: 24px;}
+        .bottom ul .add_go{width: 52%;text-align: center;border:0px solid green;height:144px;color: #ffffff;margin-left: 60px;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+        /*导航返回按键*/
+        .back{width:13.2%;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+
+        /*详情底部统计*/
+        .total{width: 96%;height: 82px;font-size: 54px;line-height: 82px;margin:auto;color: red;margin-top: 4px;padding: 1em 0;font-weight: bold;}
+        .total .total-num{float: left;height: 54px;line-height: 54px;margin-top: 12px;}
+        .total .total-money{float: right;height: 54px;line-height: 54px;margin-top: 12px;}
+
+        /*中间部分*/
+        .title{font-size: 3.5em;width: 96%;margin: 24px 24px 24px 24px;}
+        .pay_method{font-size: 3.5em;margin: 36px 24px 36px 24px;}
+        .detail li{list-style: none;padding: 0.8em 0em 0em 0.6em;}
+        .detail .user{font-size: 3em;margin: 0px 36px 0px 60px;line-height: 24px;}
+        .detail .address{font-size: 3em;line-height: 24px;margin-left: 60px;margin-top:16px;margin-bottom: 16px;}
+        .detail .tel{font-size: 3em;margin: 0px 36px 32px 60px;line-height: 24px;}
+        .kong{width: 100%;height:48px;border-top: 2px solid #9FA0A0;background-color: #F3F3F3;margin: 1.5em 0;}
+        .line{height:0;clear:both;display:block;margin-left: 24px; margin-right: 24px;border-top:3px solid #9FA0A0}
+        .wx_pay{line-height: 132px;background-color: #fff9f7;margin-left: 24px;margin-right: 24px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+        .cash_pay{line-height: 132px;margin-left: 24px;margin-right: 24px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+
+        .listing{font-size: 3.5em;margin-top: 36px;margin-bottom: 36px;margin-left: 24px;width: 96%;}
+        .listing-detail{width: 96%;margin: auto;height: 9em;}
+        .listing-detail .left{float: left;font-size: 3em;height: 3em;line-height: 3em;}
+
+        .listing-detail .right{float: right;height: 3em;}
+        .listing-detail .right .money{height: 1.5em;color: red;font-size:2.5em;line-height: 2em;}
+        .listing-detail .right .num{height: 2em;font-size: 2.5em;text-align: right;}
+
+
+        /*订单提交成功*/
+        .success {width: 100%;font-size: 3em;color: #01ad2d;height: 7.2em;border:0px solid red;padding-top: 1.2em;display: none;}
+        .success .notice{text-align: center;line-height:2em;}
+        .success .kong{height: 1.4em;}
+    </style>
+</head>
+<body>
+<div class="nav_shopping"><div class="back" onclick="window.history.go(-1)"></div>订单详情</div>
+<div class="top-kong"></div>
+<div class="order-detail clear">
+    <div class="title">收货信息</div>
+    <div style='height:0;clear:both;display:block;margin-left: 24px; margin-right: 24px;border-top:3px solid #9FA0A0'></div>
+    <div class="detail">
+        <ul>
+            <li class="user">{{nick}}</li>
+            <li class="address">{{address}}</li>
+            <li class="tel">{{phone}}</li>
+        </ul>
+    </div>
+
+    <div class="kong" style="border-top:3px solid #9FA0A0"></div>
+
+    <div class="pay_method">支付方式</div>
+    <div class="line"></div>
+    {% if pay_type %}
+    <div class="wx_pay" onclick="changePay('wx_pay')">
+        <label for="wx_pay">
+            <div>
+            <img id="wx_pay_img" src="/images/shop/checked.png"
+                 style="padding-left: 48px;padding-right: 48px;vertical-align: middle"/>
+            <span style="line-height: 36px;font-size: 3em;vertical-align: middle;">微信支付</span>
+            </div>
+        </label>
+    <input type="radio" name="pay_method" value="wx_pay" id="wx_pay"
+           style="display:none;"
+           checked="checked"/>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="cash_pay" onclick="changePay('cash_pay')">
+        <label for="cash_pay">
+            <div>
+            <img id="cash_pay_img" src="/images/shop/no-checked.png" style="padding-left: 48px;padding-right: 48px;vertical-align: middle"/>
+            <span style="line-height: 36px;font-size: 3em;vertical-align: middle;">货到付款</span>
+            </div>
+        </label>
+    <input type="radio" name="pay_method" value="cash_pay" id="cash_pay" style="display: none;"/>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="kong" style="margin-top:48px;border-top: 3px solid #9FA0A0;"></div>
+    {% else %}
+    <div style="line-height: 132px">
+    <img src="/images/shop/checked.png" style="margin-left: 48px;margin-right: 48px;vertical-align: middle"/>
+     <span style="line-height: 36px;font-size: 3em;vertical-align: middle">货到付款</span>
+    </div>
+    <div class="kong" style="margin-top:24px;border-top: 3px solid #9FA0A0;"></div>
+    {% endif %}
+
+
+
+    <div class="listing">商品清单</div>
+{% for p in productArr %}
+    {% if p.num %}
+    <div class="listing-detail clear" style="border-top: 3px solid #9FA0A0;">
+        <div class="left">{{p.title}}</div>
+        <div class="right">
+            <div class="money">￥{{p.price}}</div>
+            <div class="num">x{{p.num}}</div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+
+    <div class="total clear" style="border-top:3px solid #ff2500;border-bottom:4px solid #ff2500;">
+        <div class="total-num">总计</div>
+        <div class="total-money">{{total_num}}件商品，{{total_money}}元</div>
+    </div>
+    <input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+    <input type="hidden" name="phone" value="{{phone}}">
+    <input type="hidden" name="community_id" value="{{community_id}}">
+    <input type="hidden" name="total_num" value="{{total_num}}">
+    <input type="hidden" name="total_money" value="{{total_money}}">
+    <input type="hidden" name="store_id" value="{{store_id}}">
+    <input type="hidden" name="cart_id" value="{{cart_id}}">
+</div>
+
+
+<div class="bottom">
+    <ul>
+        <li class="home" onclick="location.href='/app/mall/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&store_id={{store_id}}&phone={{phone}}'"></li>
+        <li class="add_go" tag="status" onclick="send();">提交订单</li>
+    </ul>
+</div>
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    function send()
+    {
+        var mpUserID = $("[name='mp_user_id']").val();
+        var phone = $("[name='phone']").val();
+        var communityID = $("[name='community_id']").val();
+        var total_num = $("[name='total_num']").val();
+        var total_money = $("[name='total_money']").val();
+        var nick = $(".user").text();
+        var address = $(".address").text();
+        var tel = $(".tel").text();
+        var cartID = $("[name='cart_id']").val();
+        var payMethod = $("input[type='radio']:checked").val();
+        var payType = '{{pay_type}}';
+        if( payType == "")
+        {
+            payMethod = "cash_pay"
+        }
+        var site = location.protocol + '//' + location.host + '/api/wx_user/appmall/order_detail';
+        var post_data = {'mp_user_id': mpUserID,'community_id':communityID,'tel':tel,'nick':nick,'phone':phone,'address':address,'total_price':total_money,'total_num':total_num,'cart_id':cartID,'pay_method':payMethod};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r){
+                //alert(r.errno);
+                if(r.errno == 1)
+                {
+                    alert(r.error);
+                }
+                else
+                {
+                    if($("[tag='status']").text() == '提交订单')
+                    {
+                        $("[name='cart_id']").val(cartID);
+                        var orderID = r["order_id"];
+                        var payMethod = r["pay_method"];
+                        var mpUserID = r["mp_user_id"];
+                        location.replace("/app/pay/index?order_id="+orderID+"&total_fee={{total_money}}&mp_user_id="+mpUserID+"&community_id={{community_id}}&store_id={{store_id}}&phone={{phone}}&pay_method="+payMethod);
+                    }
+                    else
+                    {
+                        var storeID = $("[name='store_id']").val();
+                        location.href="/app/mall/list?mp_user_id={{mp_user_id}}&phone={{phone}}&community_id={{community_id}}&store_id="+storeID;
+                    }
+                }
+
+            }
+        });
+    }
+    $(function () {
+        //判断是否宽屏
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1")
+        }
+    });
+
+    function changePay(payMethod)
+    {
+        if(payMethod == "wx_pay")
+        {
+           $("#wx_pay_img").attr("src","/images/shop/checked.png");
+           $("#cash_pay_img").attr("src","/images/shop/no-checked.png");
+           $(".wx_pay").css("background-color","#fff9f7");
+           $(".cash_pay").css("background-color","white");
+        }
+        else
+        {
+            $("#wx_pay_img").attr("src","/images/shop/no-checked.png");
+            $("#cash_pay_img").attr("src","/images/shop/checked.png")
+            $(".cash_pay").css("background-color","#fff9f7");
+            $(".wx_pay").css("background-color","white");
+        }
+    }
+</script>
+</html>

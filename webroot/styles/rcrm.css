@@ -1,0 +1,4 @@
+.rate{height:20px;position:relative;width:100px;overflow:hidden;display:inline-block;background:url("../images/star/star.png") repeat-x;}
+.rate i{position:absolute;top:0;left:0;cursor:pointer;height:20px;width:20px;background:url("../images/star/star.png") repeat-x 0 -500px;}
+.rate .select{background-position:0 -20px}
+.rate .hover{background-position:0 -20px}

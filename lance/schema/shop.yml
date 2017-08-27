@@ -1,0 +1,366 @@
+
+#预编译指令
+!comment-locale: zh_CN
+
+
+@order_status:
+  comment: 订单状态
+  values:
+    default_status: 无
+    submitted_to_pay: 待付款
+    paid_to_verify: 待确认
+    verified_to_ship: 待发货
+    dispatched: 已发货
+    arrived: 已到达服务网点
+    finished: 交易成功
+    closed: 交易关闭
+    reject: 已拒收
+    refund: 退款退货中
+
+
+
+store:
+  comment: '商城列表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    title: text|+64|comment='名称'
+    comment|?: text|comment=备注
+    is_delete: int|+1|comment=是否删除|=0
+    bound_community_id|?: int|+10|comment=绑定小区id
+    bound_store_id|?: int|+10|comment=绑定商城id
+
+
+category:
+  comment: '产品分类'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    store_id: int|+10|comment="商城ID store.store_id"
+    title: text|+64|comment=名称
+    cover_img|?: url|+64|comment=分类封面图
+    description|?: text|+128|comment=分类描述
+    sort_no: float|comment=排序|=0
+    comment|?: text|comment=备注
+    is_delete: int|+1|comment=是否删除|=0
+    is_on_shelf: bool|comment=是否上架|=0
+    send_author|?: text|+128|comment=发布者
+    send_time|?: datetime|comment=发布时间
+    shelf_time|?: text|+128|comment=上架时间
+
+@product_unit_type:
+  comment: 单位
+  values:
+    kilo: 元/斤
+    kg: 元/公斤
+    tael: 元/两
+    bottle: 元/瓶
+    package: 元/件
+    box: 元/箱
+    strip: 元/条
+    part: 元/份
+    an: 元/个
+    bag: 元/包
+    basket: 元/筐
+    cover: 元/套
+    handful: 元/把
+    pouch: 元/袋
+    pomegranate: 元/桶
+    chunk: 元/块
+    roll: 元/卷
+    samll_box: 元/盒
+    box: 元/箱
+    double: 元/双
+    big_box: 元/大袋
+
+
+product:
+  comment: '产品'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    is_on_shelf: bool|comment=是否上架|=1
+    cost_price|?: money|comment=成本价
+    reference_price|?: money|comment=参考价
+    profit|?: money|comment=利润
+    commissions|?: money|comment=提成
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    store_id: int|+10|comment="商城ID store.store_id"
+    category_id: int|+10|comment="分类ID category.category_id"
+    title: text|+128|comment=商品名称
+    img_url|?: url|comment=图片地址
+    big_img_url|?: url|comment=大图片地址
+    price: money|comment=价格|=0
+    description|?: text|+128|comment=商品描述
+    product_unit|?: product_unit_type|comment=单位
+    sort_no: float|comment=排序|=0
+    comment|?: text|comment=备注
+    detail_url|?: url|comment=详情地址
+    detail|?: text|comment=商品详情
+    parameters_url|?: url|comment=商品参数地址
+    is_delete: int|+1|comment=是否删除|=0
+  keys:
+    category_id: category_id
+
+
+@pay_method:
+  comment: 付款方式
+  values:
+    cash_pay: 货到付款
+    wx_pay: 微信支付
+
+@reason_type:
+  comment: 原因
+  values:
+    option_first: 我不想买了
+    option_second: 卖家缺货
+    option_third: 付款遇到问题（如余额不足）
+    option_fourth: 选错了
+    other: 其他原因
+
+order:
+  comment: '订单'
+  has:
+    order_id: text|+32|comment=订单号
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    wx_user_id: text|+64|comment=微信用户ID
+    status: order_status|comment=交易状态
+    comment|?: text|+255|comment=备注
+    customer_name|?: text|+64|comment=客户姓名
+    tel|?: text|+64|comment=电话
+    address|?: text|+255|comment=地址
+    total_price: money|comment=订单总价
+    total_num: int|+10|comment=订单总数量|=1
+    create_time: datetime|comment=订单创建时间
+    finish_time|?: datetime|comment=交易完成时间
+    cs_id|?: int|+10|comment=客服专员id
+    cs_group_id|?: int|+10|comment=客服专员分组id
+    pay_method|?: pay_method|comment=付款方式
+    pay_finished: bool|comment=支付状态|=0
+    store_type|?: text|+32|comment=商城类型
+    reason|?: reason_type|comment=原因
+  keys:
+    pk: order_id
+    community_id: community_id
+    create_time: create_time
+    finish_time: finish_time
+    cs_id: cs_id
+    cs_group_id: cs_group_id
+
+order_detail:
+  comment: '订单详情'
+  with: [ auto_increment_id ]
+  has:
+    order_id: text|+32|comment=订单号
+    product_id: int|+10|comment=产品ID
+    img_url|?: url|comment=图片地址
+    price: money|comment=价格|=0
+    product_unit|?: product_unit_type|comment=单位
+    title: text|+128|comment=产品名称
+    description|?: text|+128|comment=产品描述
+    count: float|+10|comment=数量|=1
+    refund: bool|comment=是否退货|=0
+  keys:
+    order_product_id|u: [ order_id, product_id ]
+
+order_change_log:
+  comment: 订单变更记录
+  with: [ auto_increment_id ]
+  has:
+    order_id: text|+32|comment=订单号
+    status_before: order_status|comment=变更前状态
+    status_after: order_status|comment=变更后状态
+    operator: text|+128|comment=操作人
+    change_time: datetime|comment=操作时间
+    comment: text|+255|comment=备注
+  keys:
+    order_id: [ order_id ]
+    change_time: [ change_time ]
+
+cart:
+  comment: '购物车'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    store_id: int|+10|comment=商城ID
+    wx_user_id: text|+64|comment=微信用户ID
+  keys:
+    wxUserId_storeId|u: [ mp_user_id, store_id, wx_user_id ]
+
+cart_detail:
+  comment: '购物车详情'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    cart_id: text|+32|comment=购物车ID
+    product_id: int|+10|comment=产品ID
+    count: float|+10|comment=数量|=1
+  keys:
+    cart_product_id|u: [ cart_id, product_id ]
+
+wx_pay_record:
+  comment: 支付记录
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+     order_id: int|+20|comment=订单号
+     wx_user_id: text|+64|comment=微信用户ID
+     username: text|+128|comment=用户姓名
+     mp_user_id: int|+10|comment=公众账号ID
+     community_id: int|+10|comment=community.community_id
+     outTradeNo|?: text|+128|comment=微信商户订单号
+     transactionId|?: text|+128|comment=微信支付单号
+     pay_iterm: text|+128|comment=付款项目
+     pay_method: pay_method|comment=付款方式
+     pay_start_date|?: datetime|comment=订单开始时间
+     pay_end_date|?: datetime|comment=订单完成时间
+     pay_value: money|comment=支付金额|=1
+     pay_finished: int|+1|comment=是否完成支付|=0
+     mark|?: text|128|comment=备注信息
+
+  keys:
+    username: username
+    outTradeNo: outTradeNo
+    transactionId: transactionId
+    order_id|u: order_id
+
+
+product_comment:
+  comment: '商品评论'
+  with: [ auto_increment_id, ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    wx_user_id: text|+64|comment='wx_user.wx_user_id'
+    community_id: int|+10|comment=‘community.community_id’
+    order_id: text|+32|comment=订单号
+    nick|?: text|+64|comment=称呼
+    head_pic|?: url|comment=头像
+    product_id: int|+10|comment="产品ID"
+    product_title: text|+128|comment="产品名称"
+    order_finish_time|?: datetime|comment=购买时间
+    comment_time|?: datetime|comment=评论时间
+    comment_level|?:  int|+1|comment="评论星数"
+    comment|?: text|comment=评论内容
+  keys:
+    product_id: [product_id,wx_user_id]
+    comment_time: comment_time
+    community_id: community_id
+
+procurement_order:
+  comment: '订单'
+  has:
+    order_id: text|+32|comment=订单号
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    wx_user_id: text|+64|comment=微信用户ID
+    status: procurement_order_status|comment=交易状态
+    comment|?: text|+255|comment=备注
+    customer_name|?: text|+64|comment=下单者
+    tel|?: text|+64|comment=电话
+    address|?: text|+255|comment=地址
+    total_price: money|comment=订单总价
+    total_num: int|+10|comment=订单总数量|=1
+    create_time: datetime|comment=订单创建时间
+    finish_time|?: datetime|comment=交易完成时间
+    bound_community_id|?: int|+10|comment=绑定供应商id
+    bound_store_id|?: int|+10|comment=绑定供应商商城id
+    store_id|?: int|+10|comment=商城id
+    category_id|?: int|+10|comment=报价单id
+    refund_order_id|?: text|+32|comment=退款退货原订单号
+    refund_describe|?: text|comment=退款退货原因描述
+    refund_img_first|?: url|comment=退款退货图片地址1
+    refund_img_second|?: url|comment=退款退货图片地址2
+    refund_img_third|?: url|comment=退款退货图片地址3
+    order_self|?: text|+32|comment=是否是自订|=order_supply
+  keys:
+    pk: order_id
+    community_id: community_id
+    create_time: create_time
+
+@procurement_order_status:
+  comment: 交易状态
+  values:
+    none: 无
+    chef_verify: 等待厨师长确认
+    supply_verify: 等待供应商确认
+    supply_send: 等待供应商发货
+    examine: 等待验货
+    supply_examine: 等待供应商确认验货
+    refund: 退款退货中
+    refund_finished: 退款退货完成
+    finished: 已完成
+
+
+procurement_order_change_log:
+  comment: 订单变更记录
+  with: [ auto_increment_id ]
+  has:
+    order_id: text|+32|comment=订单号
+    status_before: procurement_order_status|comment=变更前状态
+    status_after: procurement_order_status|comment=变更后状态
+    operator: text|+128|comment=操作人
+    change_time: datetime|comment=操作时间
+    comment: text|+255|comment=备注
+  keys:
+    order_id: [ order_id ]
+    change_time: [ change_time ]
+
+procurement_order_change_detail:
+  comment: '订单详情变化'
+  with: [ auto_increment_id ]
+  has:
+    order_id: text|+32|comment=订单号
+    product_id: int|+10|comment=产品ID
+    img_url|?: url|comment=图片地址
+    price: money|comment=价格|=0
+    product_unit|?: product_unit_type|comment=单位
+    title: text|+128|comment=产品名称
+    description|?: text|+128|comment=产品描述
+    count|?: float|+10|comment=数量
+    chef_count|?: float|+10|comment=订货员改变次数|=0
+    status: procurement_order_status|comment=交易状态
+    part_id: int|+10|comment=档口ID
+  keys:
+    order_id: order_id
+    status: status
+    product_id: product_id
+
+procurement_order_detail:
+  comment: '订单详情'
+  with: [ auto_increment_id ]
+  has:
+    order_id: text|+32|comment=订单号
+    product_id: int|+10|comment=产品ID
+    img_url|?: url|comment=图片地址
+    price: money|comment=价格|=0
+    product_unit|?: product_unit_type|comment=单位
+    title: text|+128|comment=产品名称
+    description|?: text|+128|comment=产品描述
+    count: float|+10|comment=数量|=1
+    refund: bool|comment=是否退货|=0
+    part_id: int|+10|comment=档口ID
+  keys:
+    order_product_id|u: [ order_id, product_id ,part_id]
+
+procurement_cart:
+  comment: '购物车'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    store_id: int|+10|comment=商城ID
+    wx_user_id: text|+64|comment=微信用户ID
+    part_id: int|+10|comment=档口ID
+  keys:
+    wxUserId_storeId|u: [ mp_user_id, store_id, wx_user_id ,part_id]
+
+procurement_cart_detail:
+  comment: '购物车详情'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    cart_id: text|+32|comment=购物车ID
+    product_id: int|+10|comment=产品ID
+    part_id: int|+10|comment=档口ID
+    count: float|+10|comment=数量|=1
+  keys:
+    cart_product_id|u: [ cart_id, product_id,part_id]

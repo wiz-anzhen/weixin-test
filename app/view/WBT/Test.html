@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>新邻居</title>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v=20130" type="text/css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        body { padding-bottom: 20px; padding-top: 9px; }
+        a, a:hover { color: #000; text-decoration: none; }
+
+        div.item { margin-right: 0; margin-left: 0; padding: 16px 17px 12px 20px; border-top: 2px solid rgb(202, 202, 202); }
+        div.item:last-child { border-bottom: 2px solid rgb(202, 202, 202); }
+        div.img { float: left; margin-right: 16px; }
+        div.img img { border-radius: 6px; overflow: hidden; }
+        .content div { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .content .name { height: 36px; font-size: 30px; }
+        .content span { float: right; font-size: 20px; color: #8dfc00; }
+        .content .comment { margin-top: 12px; height: 33px; font-size: 25px; color: rgb(121, 121, 121); }
+    </style>
+</head>
+<body>
+<div class="body">
+    {% for user in users %}
+    <div class="row item">
+        <a target="_blank" href="javascript:">
+            <div class="img">
+                <img src="/images/test/{{ user.pic }}" height="92px" width="92px">
+            </div>
+            <div class="content">
+                <div class="name">
+                    {{ user.title }}
+                    <span>+ 关注</span>
+                </div>
+                <div class="comment">{{ user.text }}</div>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    没有可以显示的邻居哦～～
+    {% endfor %}
+</div>
+</body>
+</html>

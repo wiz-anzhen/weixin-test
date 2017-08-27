@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+</head>
+<body>
+{% if type == 'shop' %}
+<header style="height:50px;line-height:50px;margin-bottom:40px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>订货单</h1>
+</header>
+<img src="/images/procurement_ok.png" style="margin-left:33%;margin-bottom: 10px;" width="33%" height=""/>
+<div class="main" style="width:100%;text-align:center;">
+    <p style="padding:2% 0;font-size:1.2em;">订货单已发送至厨师长</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待厨师长确认</p>
+</div>
+
+{% elseif type == 'chef' %}
+<header style="height:50px;line-height:50px;margin-bottom:40px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>采购单</h1>
+</header>
+<img src="/images/procurement_ok.png" style="margin-left:33%;margin-bottom: 10px;" width="33%" height=""/>
+<div class="main" style="width:100%;text-align:center;">
+    {% if order_self == 'order_supply' %}
+    <p style="padding:2% 0;font-size:1.2em;">采购单已确认成功</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待供应商确认</p>
+    {% endif %}
+    {% if order_self == 'order_self' %}
+    <p style="padding:2% 0;font-size:1.2em;">订货单已发送至验货员</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待验货</p>
+    {% endif %}
+</div>
+
+{% elseif type == 'supply' %}
+
+<header style="height:50px;line-height:50px;margin-bottom:40px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>订货单</h1>
+</header>
+<img src="/images/procurement_ok.png" style="margin-left:33%;margin-bottom: 10px;" width="33%" height=""/>
+<div class="main" style="width:100%;text-align:center;">
+    <p style="padding:2% 0;font-size:1.2em;">订货单已发送至供应商</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待供应商确认</p>
+</div>
+
+
+{% elseif type == 'examine' %}
+
+<header style="height:50px;line-height:50px;margin-bottom:40px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>验货成功</h1>
+</header>
+<img src="/images/procurement_ok.png" style="margin-left:33%;margin-bottom: 10px;" width="33%" height=""/>
+<div class="main" style="width:100%;text-align:center;">
+    {% if order_self == 'order_supply' %}
+    <p style="padding:2% 0;font-size:1.2em;">已完成验货</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待供应商确认</p>
+    {% endif %}
+    {% if order_self == 'order_self' %}
+    <p style="padding:2% 0;font-size:1.2em;">已完成验货</p>
+    {% endif %}
+</div>
+
+
+{% elseif type == 'refund' %}
+
+<header style="height:50px;line-height:50px;margin-bottom:40px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    <h1>退货</h1>
+</header>
+<img src="/images/procurement_ok.png" style="margin-left:33%;margin-bottom: 10px;" width="33%" height=""/>
+<div class="main" style="width:100%;text-align:center;">
+    {% if order_self == 'order_supply' %}
+    <p style="padding:2% 0;font-size:1.2em;">退货单已发送至供应商</p>
+    <p style="padding:2% 0;font-size:1.2em;color:#ccc;">等待供应商确认</p>
+    {% endif %}
+    {% if order_self == 'order_self' %}
+    <p style="padding:2% 0;font-size:1.2em;">已完成退货</p>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% if template %}
+{% else %}
+<div class="footer" style="width:100%;padding:5% 0;border-top:1px solid #ccc;text-align:center;position:fixed;bottom:10px;">
+    <a href="/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" style="-webkit-tap-highlight-color:rgba(255,255,255,0);text-decoration:none;color:#000;outline:none;">
+        <div style="width:90%;padding:4% 0;margin:0 auto;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;">
+            返回首页
+        </div>
+    </a>
+</div>
+{% endif %}
+</body>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

@@ -1,0 +1,12 @@
+host: http://anzhen.xin
+mail_host: anzhen.xin
+page_count_small: 1
+page_count_mid: 50
+page_count_big: 100
+cookie_expire_time: 300
+partner_id: 1219736201
+pay_sign_key:
+app_id:
+partner_key:
+email_technology: anzhen@kingcores.com,cuiguangbin@kingcores.com
+cwb_mp_user_id: 29385

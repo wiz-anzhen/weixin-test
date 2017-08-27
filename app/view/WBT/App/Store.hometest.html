@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css"></style>
+    <title>{{ store.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/scripts/store/style.css?v={{third_lib_version}}">
+    <link rel="stylesheet" type="text/css" href="/scripts/store/shop.css?v={{third_lib_version}}">
+    <link rel="stylesheet" type="text/css" href="/libs/fancybox/jquery.fancybox-1.3.4.css?v={{third_lib_version}}">
+    {% block css_placeholder %}{% endblock %}
+</head>
+<body>
+<iframe id="mobileFrame" frameborder="0" src="about:blank" style="display:none"></iframe>
+<script type="text/javascript" src="/scripts/store/common.js?v={{third_lib_version}}"></script>
+
+<div id="bg" style="height: 785px; display: none;"></div>
+
+<header id="page_title">
+    <div class="container">
+        <a href="javascript:void(0)" id="cart_button" class="closed">
+            <img src="/scripts/store/cart_icon.png" width="16" height="20" alt="" id="cart_icon">
+            <span id="food_num">0</span>
+        </a>
+        <h1 id="page_name"></h1>
+    </div>
+</header>
+
+{% include 'WBT/WxUser/Store.cart.html' %}
+
+<div id="shop_main" class="main container" style="display: block;">
+    {% block main_container %}{% endblock %}
+</div>
+
+{% block js_placeholder %}
+<!--<script type="text/javascript" src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>-->
+<script type="text/javascript" src="/libs/fancybox/jquery-1.7.2.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/fancybox/jquery.fancybox-1.3.4.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/wbt/sdk.web.js?v={{our_lib_version}}"></script>
+<script type="text/javascript" src="/scripts/store/foods.js?v={{our_lib_version}}"></script>
+<script type="text/javascript">
+    var iniFoodNum = [];
+    var showImg    = {{ show_img }};
+</script>
+<script type="text/javascript">
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+//        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+{% endblock %}
+</body>
+</html>

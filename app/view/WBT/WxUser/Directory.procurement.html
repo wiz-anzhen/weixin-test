@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="renderer" content="webkit"/>
+    <title>金果餐饮采购助手</title>
+    <style type="text/css">
+        html,body,div,ul,li,ol,img,span,p,h1,h2,h3{ margin:0; padding:0;}
+        ul,ol{ list-style:none;}
+        a{text-decoration: none;}
+        body{font-size:16px;}
+        a:link{text-decoration: none;color:#ffffff;-webkit-tap-highlight-color:rgba(255,255,255,0);}
+        a:visited{text-decoration: none;color:#ffffff;-webkit-tap-highlight-color:rgba(255,255,255,0);}
+        a:active{text-decoration: none;color:#ffffff;-webkit-tap-highlight-color:rgba(255,255,255,0);}
+        {% if  community_type == "procurement_total"  %}
+        ul li{width:50%;margin:5% 20%;padding:5%; background:  #ffb142;color: white;text-align: center;border-radius:20px;float: left;vertical-align: middle;-webkit-tap-highlight-color:rgba(255,255,255,0);font-size:22px;}
+        {%  else %}
+        ul li {width:32%;margin:5%;padding:4% 4%; background: #ffb142;color: white;text-align: center;border-radius:20px;float: left;vertical-align: middle;-webkit-tap-highlight-color:rgba(255,255,255,0);font-size:22px;}
+        {% endif %}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+{% if mp_user_id != 6 %}
+<div id="content">
+
+    <div class="box" style="width: 100%;height:50px;border-bottom: 1px solid gray;position: relative;margin-bottom: 25px;">
+        <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;">
+            采购助手
+            <div style="float: right;margin-right: 20px;">
+                <a href="/wx_user/help/help_type?mp_user_id={{mp_user_id}}&community_type={{community_type}}" style="color: blue;font-size: 14px;">帮助</a>
+            </div>
+        </div>
+
+    </div>
+    {% if  community_type == "procurement_restaurant"  %}
+    <ul>
+        <li>
+            <a href="/wx_user/procurement/shop?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">订货</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/chef_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">等待厨师长确认</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/supply_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">等待供应商确认</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/examine?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">验货</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/supply_examine?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">等待供应商验货确认</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/return?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">退货</span>
+                </div>
+            </a>
+        </li>
+        {% if member_type == "manager" %}
+        <li>
+            <a href="/wx_user/procurement/single_month?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">月度账单</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/single_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">查看订单</span>
+                </div>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    <div style="text-align: center;width: 100%;clear: both;margin-top: 60px;" >
+        <p style="width: 100%;text-align: center;">金果创新（北京）科技有限公司</p>
+        <a href="tel:4000082101" style="color: blue;">电话: 4000082101</a>
+    </div>
+    <div style="color:white;clear: both;margin-top: 30px;">0000</div>
+    {% endif %}
+
+
+    {%  if community_type == "procurement_supply" %}
+    <ul>
+        <li>
+            <a href="/wx_user/supply/order_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">确认订货单</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/supply/order_send?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">发货</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/supply/examine_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">确认验货单</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/supply/return_verify?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">确认退货单</span>
+                </div>
+            </a>
+        </li>
+        {% if member_type == "manager" %}
+        <li>
+            <a href="/wx_user/supply/single_month?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">月度账单</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/supply/single_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">查看订单</span>
+                </div>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {% if member_type == "manager" %}
+    <div style="text-align: center;width: 100%;clear: both;margin-top: 60px;" >
+        <p style="width: 100%;text-align: center;">金果创新（北京）科技有限公司</p>
+        <a href="tel:4000082101" style="color: blue;">电话: 4000082101</a>
+    </div>
+    <div style="color:white;clear: both;margin-top: 30px;">0000</div>
+    {%  else %}
+    <div style="text-align: center;width: 100%;clear: both;position: fixed;bottom: 30px;" >
+        <p style="width: 100%;text-align: center;">金果创新（北京）科技有限公司</p>
+        <a href="tel:4000082101" style="color: blue;">电话: 4000082101</a>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {%  if community_type == "procurement_total" %}
+    <ul>
+        <li>
+            <a href="/wx_user/procurement/manager_month?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">月度账单</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/manager_graph?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">月度图表</span>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="/wx_user/procurement/manager_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" onClick="dailyTraffic('{{ directory.directory_id }}', '{{ directory.mp_user_id }}','{{ directory.community_id }}','{{ wx_user_id }}')" style=" display:table;height: 80px;width: 100%;">
+                <div style="text-align: center;vertical-align: middle;display:table-cell;-webkit-tap-highlight-color:rgba(255,255,255,0);">
+                    <span style="width: 100%;color:white;">查看订单</span>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+    <div style="text-align: center;width: 100%;clear: both;margin-top: 60px;" >
+        <p style="width: 100%;text-align: center;">金果创新（北京）科技有限公司</p>
+        <a href="tel:4000082101" style="color: blue;">电话: 4000082101</a>
+    </div>
+    <div style="color:white;clear: both;margin-top: 30px;">0000</div>
+    {% endif %}
+</div>
+{% else %}
+<div class="box" style="width: 100%;height:50px;border-bottom: 1px solid gray;position: relative;margin-bottom: 25px;">
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;">
+        采购助手
+    </div>
+    <div  style="margin:0 auto;text-align: center;font-size: 1.5em;padding-top:100px;">
+        系统正在升级，请稍后再试！
+    </div>
+</div>
+{% endif %}
+<script type="text/javascript">
+    function  dailyTraffic(directory_id,mp_user_id,community_id,wx_user_id)
+    {
+        var post_data = {'directory_id': directory_id, 'mp_user_id': mp_user_id, 'community_id': community_id,'wx_user_id': wx_user_id};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/directory/daily_traffic';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: afterDailyTraffic
+        });
+    }
+
+    function afterDailyTraffic(data) {
+        if (data.errno != 0) {
+            alert(data.error);
+        }
+    }
+
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</body>
+</html>

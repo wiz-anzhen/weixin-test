@@ -1,0 +1,96 @@
+# 微信公众平台自动问答相关数据表
+
+#------------------------------------------------------------------------------
+#预编译指令
+!comment-locale: zh_CN
+
+#------------------------------------------------------------------------------
+#枚举类型
+
+@wx_menu_type:
+  comment: '微信菜单类型'
+  values:
+    CLICK: click类型
+    VIEW: view类型
+
+@wx_menu_content_type:
+  comment: '微信菜单内容类型'
+  values:
+    custom_text: 自定义文本消息
+    custom_news: 自定义图文消息
+
+@weixin_message_type:
+  comment: '微信消息类型'
+  values:
+    text: '文本'
+    voice: '音频'
+    news: '图文'
+    image: '图片'
+    event: '事件'
+    location: '地理位置'
+
+
+
+mp_rule_news_item:
+  comment: '保存图文消息元信息'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=mp_user.mp_user_id|=0
+    title: text|comment=标题
+    description|?: text|comment=描述
+    pic_url|?: url|comment=图片url
+    url|?: url|comment=图文消息url
+    sort_no: float|comment='排序id'|=0
+    top_dir_no|?: int|+10|comment=一级目录编号
+  keys:
+    mp_user_id: mp_user_id
+
+
+wx_menu:
+  comment: '微信自定义菜单'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    access_authority: int|+1|comment=访问权限|=0
+    name: text|+16|comment='菜单名字'
+    sort_no: float|comment='排序id'|=0
+  keys:
+    mp_user_id: mp_user_id
+
+@access_authority_type:
+  comment: '访问权限类型'
+  values:
+    all: 公开
+    register: 注册
+    identify: 认证
+    other: 注册+认证
+
+wx_sub_menu:
+  comment: '微信自定义子菜单'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    access_authority|?: access_authority_type|=all
+    wx_menu_id: int|+10|comment='微信子菜单id'
+    wx_menu_name: text|+16|comment='菜单名字'
+    wx_menu_type: wx_menu_type|=click
+    wx_menu_key|?: text|+32|comment='按钮KEY值'
+    sort_no: float|comment='排序id'|=0
+    content_type|?: wx_menu_content_type
+    content_value|?: text|comment="导航内容"
+    url|?: url|comment="view类型所对应的网址"
+  keys:
+    wx_menu_id: wx_menu_id
+    wx_menu_key: wx_menu_key
+
+mp_rule:
+  comment: '公众帐号关键词匹配规则'
+  with: [ auto_increment_id, create_timestamp, update_timestamp]
+  has:
+    mp_user_id: int|+10|comment=mp_user.mp_user_id|=0
+    name: text|+64|comment=规则名称
+    keyword: text|comment=规则关键词
+    content_type: weixin_message_type|=text
+    content: text |comment=规则内容
+  keys:
+    mp_user_id: mp_user_id

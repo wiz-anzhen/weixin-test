@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>验证</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    <form method="post" action="/web/web/check_verify_phone_code?mp_user_id={{ mp_user_id }}&order_id={{ order_id }}&wx_user_id={{ wx_user_id }}">
+        {{ nav_bar|raw }}
+        <input type="text" id="verify_phone_code" name="verify_phone_code" style="width: 96%;" placeholder="请在此填写手机短信接收到的三位验证码" value=""/>
+        <br/><br/>
+        <input type="submit" id="submit-btn" class="btn btn-success btn-large" style="width: 100%" value="下一步"/>
+        <br/><br/>
+        <span class="alert alert-success feedback-status" style="display: none;width:85%;"></span>
+    </form>
+    <br/><br/>
+</div>
+
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script>
+    {% if recheck %}
+        $(".feedback-status").addClass('alert-error').html("验证码错误，系统已重新发送，请核对后重试一次！").show();
+    {% endif %}
+    $(function(){
+        $("#submit-btn").click(function(){
+            var $code = $("#verify_phone_code").val();
+            if($code.length != 3) {
+                $(".feedback-status").addClass('alert-error').html("验证码是三位！").show();
+                return false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

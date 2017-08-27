@@ -1,0 +1,27 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_community_phone_book' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>二级管理员</li>
+{% endblock %}
+
+{% block action %}
+<button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/company_admin_dialog/add?mp_user_id={{ mp_user_id }}');">
+    添加管理员
+</button>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}

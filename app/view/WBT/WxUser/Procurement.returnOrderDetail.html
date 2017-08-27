@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+
+<div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+    <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/procurement/return_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&store_id={{ order_data.store_id}}');">返回</div>
+    <div onclick="location.replace('/wx_user/procurement/return_progress?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&store_id={{ order_data.store_id}}&store_title={{ store_title }}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color: red;font-weight: bolder;float: right;width: 30%; ">退货进度</div>
+    <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 50%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">{{store_title}}</div >
+</div>
+<div style="color: white;background-color: #80c269;padding:5px 5px;">
+    {% if order_data.order_self == 'order_supply' %}
+    订货方式：给供应商下单
+    {% endif %}
+    {% if order_data.order_self == 'order_self' %}
+    订货方式：自订货，不通过供应商
+    {% endif %}
+</div>
+
+<div id="main" style="width: 100%;height: auto;">
+    <ul>
+        <li>
+            <dl style="display: inline-block;font-size: 13px;padding: 3% 0;margin-left: 30px">
+                <dt style="font:normal normal 15px arial;margin-bottom: 4px;">{{ order_data.create_time}}</dt>
+                <dd style="font:normal normal 13px arial;">订单号：{{ order_id }}</dd>
+            </dl>
+        </li>
+        {% for data_content in order_detail_data %}
+        <li style="padding:8px 5px;background:#ebebeb;">
+            <p style="float: left;margin-left: 5px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 50%;">
+                档口:{{data_content.part}}
+            </p>
+            <p style="float: right;color: red;font-weight: bolder;margin-right: 20px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 30%;text-align: right;">
+                &yen;{{data_content.price}}
+            </p>
+        </li>
+        {% for order_detail in data_content.content %}
+        <li style="display: block;border-top: 1px solid #ebebeb;border-bottom: 1px solid #ebebeb;margin-top: -1px;">
+            <dl style="display: inline-block;font-size: 13px;padding: 10px 0;margin-left: 4%;width: 30%;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;">
+                <dt style="font:normal normal 15px arial;">{{order_detail.title}}</dt>
+                <dd style="font:normal normal 13px arial;">{{order_detail.price}}{{order_detail.product_unit_new}}</dd>
+            </dl>
+            <div style="width: 25%;margin-left: 1%;display:inline-block;float: right;vertical-align: middle;text-align: center;">
+                {% if order_detail.refund == 0 %}
+                <div style="margin-left:10px;font:normal normal 14px Microsoft Yahei;display:inline-block;padding: 19px 10px;border-left:1px solid #ebebeb;width: 60%" id="detail_{{order_detail.product_id}}part{{data_content.part_id}}" onclick="alter(this)">退货</div>
+                {% else %}
+                <div style="margin-left:10px;font:normal normal 14px Microsoft Yahei;display:inline-block;padding: 19px 10px;border-left:1px solid #ebebeb;color:red;width: 60%" >已退货</div>
+                {% endif %}
+            </div>
+            <input type="text" value="{{order_detail.count}}" style="float:right;font:normal normal 20px Microsoft Yahei;padding: 12px 0;vertical-align: middle;text-align: center;width: 18%;margin-right: 30px;margin-top: 3px;border: 0 solid white;color:black;box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"  id="count_{{order_detail.product_id}}part{{data_content.part_id}}" disabled="disabled" class="detail_order_alter" />
+            <span style="float: right;padding: 14px 0;margin-right: -2px;font-size: 22px;box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;">&times;</span>
+        </li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+
+<div style="margin-top: 20px;text-align: center;margin-bottom: 60px;" id="price">
+    <p style="float: right;padding-right: 30px;font-size: 1em;">总金额：
+        <span id="total_price">{{order_data.total_price}}</span>元
+    </p>
+</div>
+<div style="color: #ffffff;margin-top:20px;clear:both;">000</div>
+
+
+<input type="hidden" value="" id="alter_product_id"/>
+</body>
+
+<script type="text/javascript">
+    //修改订单
+    function alter(obj)
+    {
+        $("#alter").css("display","block");
+        var id = $(obj).attr('id');//产品父元素id
+        //查找产品id
+        var idArray= new Array(); //定义一数组
+        idArray=id.split("_"); //字符分割
+        var product_id = idArray[1];
+
+        location.href = "/wx_user/procurement/return_apply?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&product_id="+product_id+"&order_id="+"{{ order_id }}"+"&store_title="+"{{ store_title }}";
+
+
+    }
+
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

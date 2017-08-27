@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*顶部导航*/
+        .nav_detail{position:fixed;z-index:999999;top:0;left:0;right:0;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+        /*导航返回按键*/
+        .back{width:132px;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;}
+        .bottom .comment{width: 52%;margin:auto;text-align: center;height:144px;color: #ffffff;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+
+        .main{width: 96%;margin:auto;font-size: 36px;color: #838383;}
+        .main .title{width: 100%;font-size: 42px;height: 90px;line-height: 90px;border-bottom: 3px solid #838383;color:#000000;}
+        .main .product{width: 96%;height: 120px;padding-top: 48px;padding-bottom: 48px;font-size: 36px;color: #838383;}
+        .main .product .img{float:left;width: 120px;height: 120px;margin-left: 24px;}
+        .main .product .img img{width:100%;height: 100%;}
+        .main .product .desc{float: left;margin-left: 60px;width: 75%;}
+        .main .star{width: 96%;height: 114px;line-height: 114px;}
+        .main .star .t,.gray{float: left;}
+        .main .star .t{margin-left:24px;margin-right: 16px;}
+        .main .star .gray{width: 114px;height:114px;margin-right:1px;background: url(/images/shop/c-red.png) no-repeat center;}
+        .main .comment{width: 96%;margin-left: 24px;margin-top:48px;}
+        .main .comment .textarea{width: 92%;background-color: #f3f3f3;height:60px;padding: 24px;font-size: 42px;color: #bfbfbf;border:solid 1px #bfbfbf; border-radius:20px; resize:none;}
+        .main .dashed{height:0;width: 100%;border-top: 1px dashed #838383;margin-top: 48px;}
+
+        #pay_after a:link{background-color: #b4d174;color:white;}
+        #pay_after a:visited{background-color: #b4d174;color:white;}
+        #pay_after a:active{background-color: #a2c054;color:white;}
+
+        .success_after{font-size: 3.6em;line-height: 132px;width: 360px;display: inline-block;color:white;text-decoration: none;border-radius: 8px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+    </style>
+</head>
+<body>
+<div class="nav_detail"><div class="back" onclick="location.replace(document.referrer);"></div>退款退货申请</div>
+<div class="top-kong"></div>
+
+<div id="before">
+
+    <div style="margin-right: 5%;margin-left: 5%;margin-top: 70px;font-size: 56px;background-color: #ebebeb;border-radius:15px;width: 90%;padding: 20px;">
+        <span style="font-size: 56px;">退款退货原因：</span>
+        <select id="cancel" name="cancel" onChange="select()" style="font-size: 56px;border-radius:4px; width: 50%">
+            {% for key,reason in reasons %}
+            <option  value="{{key}}" style="font-size: 56px;">{{reason}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <input type="text" id="other"  placeholder="其他原因"  style="display: none;font-size: 48px;margin-top:50px;border-radius:12px;clear:both;height: 200px;border: 2px solid rgb(241,240,245);margin-right: 5%;margin-left: 5%;width: 90%"/>
+    <br/>
+    <div class="bgcolor" style="background-color: #f4f1f1;width:100%;height:120px;position:fixed;bottom:4px;">
+        <button id="submit_next" class="btn btn-success btn-lg btn-block" style="width:58%;font-size: 48px;
+    margin-top:100px;margin-left: 20%;border-radius:40px;background-color:#b4d273;outline: none;position: fixed;bottom:20px;cursor:pointer">提交
+        </button>
+    </div>
+
+<div id="submit_status" class="alert alert-danger" style="display: none;font-size: 48px;margin-top:100px;width:78%;border-radius:12px;clear:both;margin-left: 10%;margin-right: 10%;text-align: center;vertical-align: middle;padding-top: 50px;padding-bottom: 50px;"></div>
+
+</div>
+<div id="pay_after" style="display: none;">
+    <div>
+        <img  src="/images/shop/order_success.png" style="margin-top:108px;margin-bottom: 48px;margin-right: auto;margin-left: auto;display:table-cell;vertical-align:middle;text-align:center;"/>
+    </div>
+    <div style="color:#676767;line-height: 48px;margin-bottom: 36px;font-size: 3.6em;text-align: center">退款退货申请已提交</div>
+    <div style="color:#b3b3b3;line-height: 42px;margin-bottom: 108px;font-size: 38px;text-align: center">
+    </div>
+    <div style="margin-right: auto;margin-left: auto;text-decoration: none;height: 160px;line-height:160px;text-align:
+            center;vertical-align:middle;overflow: hidden;border: none;width: 864px;">
+        <a href="/wx_user/order/person?mp_user_id={{mp_user_id}}" class="success_after" >
+            查看订单
+        </a>
+
+        <a href="javascript:void(0)" style="background-color: white;line-height: 13px;width: 48px;display: inline-block;color:white;text-decoration: none">
+            查看订单
+        </a>
+
+        {% if store_type == "restaurant" %}
+        <a href="/wx_user/store/index?mp_user_id={{mp_user_id}}&community_id={{community_id}}&store_id={{store_id}}" class="success_after" >
+            继续逛逛
+        </a>
+        {% else %}
+        <a href="/wx_user/mall/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&store_id={{store_id}}" class="success_after" >
+            继续逛逛
+        </a>
+        {% endif %}
+
+
+    </div>
+
+
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+<input type="hidden" name="wx_user_id" value="{{wx_user_id}}">
+<input type="hidden" name="community_id" value="{{community_id}}">
+<input type="hidden" name="order_id" value="{{order_id}}">
+<input type="hidden" name="max_pcid" value="{{max_pcid}}">
+<input type="hidden" name="store_id" value="{{store_id}}">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    function select()
+    {
+        var $cancel = $("#cancel").find("option:selected").val();
+        if($cancel == "other")
+        {
+            $("#other").show();
+        }
+    }
+
+    $("#submit_next").click(function () {
+        var $cancel = $("#cancel").find("option:selected").val();
+        var $other =$("#other").val();
+        var post_data = {'wx_user_id': '{{wx_user_id}}', 'order_id': '{{order_id}}', 'cancel': $cancel, 'other': $other};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/order/refund';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: afterSave
+        });
+    });
+
+    function afterSave(data) {
+        if (data.errno == 0) {
+            $("#before").hide();
+            $("#pay_after").show();
+        }
+        else {
+            $("#submit_status").html(data.error).show();
+        }
+    }
+
+    $(function () {
+        //判断是否宽屏
+
+        // $.mobile.hScroller = false;
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=0.35, maximum-scale=1")
+        }
+    })
+
+</script>
+</html>

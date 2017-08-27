@@ -1,0 +1,51 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_channel' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li><a href="/mp_admin/channel/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">频道</a><span
+        class="divider">/</span></li>
+<li class="active">{{title}}</li>
+{% endblock %}
+
+{% block content_login %}
+{{ form|raw }}
+{% endblock %}
+
+
+
+
+{% block js_link %}
+
+
+<script>
+    $(document).ready(function () {
+
+        check();
+        $(":radio[name='article_type']").click(function(){
+            check();
+        });
+    });
+
+    function check(){
+        if ( $(":radio[name='article_type']:checked").val() == 'article_ours' )
+        {
+            $("#form1ArticleUrl").parent().parent().hide();
+            $("#form1ArticleDetail").parent().parent().show();
+        }
+
+        if ( $(":radio[name='article_type']:checked").val() == 'article_third_party' )
+        {
+            $("#form1ArticleDetail").parent().parent().hide();
+            $("#form1ArticleUrl").parent().parent().show();
+        }
+    }
+</script>
+
+{% endblock %}

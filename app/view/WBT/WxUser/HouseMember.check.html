@@ -1,0 +1,36 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>查看已认证用户</title>
+{% endblock %}
+
+
+
+{% block content %}
+<div style="margin-top: 20px;">
+    {{ table|raw }}
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $(function () {
+        if (!bluefinBH.isRegistered('_pagination')) {
+            bluefinBH.register('_pagination', true);
+            $('.pagination').each(function () {
+                var divp = $(this),
+                        req = divp.data('request');
+                divp.on('click', 'a[data-page]', function (e) {
+                    location.href = bluefinBH.buildUrl(req, {'*PAGING*': {'page': $(this).data('page')}});
+                });
+            });
+        }
+    });
+
+</script>
+{% endblock %}
+

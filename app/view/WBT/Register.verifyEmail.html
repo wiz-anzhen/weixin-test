@@ -1,0 +1,46 @@
+{% extends "WBT/home.twig" %}
+
+{% block css_link %}
+    <link href="/styles/auth.css?v={{our_lib_version}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+       <div class="offset2 span8">
+           <div class="login-unit">
+{% if email %}
+                <legend><h4 class="status-title">离注册成功还差最后一步</h4></legend>
+                <div class="progress">
+                    <div class="bar bar-success" style="width: 33%;">第1步：填写信息</div>
+                    <div class="bar bar-info" style="width: 33%;">第2步：验证邮箱</div>
+                    <div class="bar" style="width: 34%;">第3步：注册成功</div>
+                </div>
+                <div>
+                    尊敬的用户您好，已经向您的邮箱 <span class="text-success">{{email}}</span> 发送了确认邮件。<br>请您登录邮箱按照提示操作。<br><br>
+                    如果您的邮箱已经通过验证，请点击{% if from %} <a href="{{ my_url('auth/index') }}">继续</a> 之前的访问。{% else %} <a href="{{ my_url('auth/index') }}">本链接</a> 开始使用微博推餐饮系统。{% endif %}
+                </div>
+{% elseif succeeded %}
+                <legend><h4 class="status-title">恭喜！您的微博推帐号注册成功!</h4></legend>
+                <div class="progress">
+                    <div class="bar bar-success" style="width: 33%;">第1步：填写信息</div>
+                    <div class="bar bar-success" style="width: 33%;">第2步：验证邮箱</div>
+                    <div class="bar bar-success" style="width: 34%;">第3步：注册成功</div>
+                </div>
+                <div>
+                    现在就开始登录吧&nbsp;&nbsp;<a href="{{ my_url('auth/index') }}">登录</a><br>
+                </div>
+{% else %}
+                <legend><h4 class="status-title">邮箱验证失败！</h4></legend>
+                <div class="progress">
+                    <div class="bar bar-success" style="width: 33%;">第1步：填写信息</div>
+                    <div class="bar bar-danger" style="width: 33%;">第2步：验证邮箱</div>
+                    <div class="bar" style="width: 34%;">第3步：注册成功</div>
+                </div>
+                <div>
+                    {{ _eventMessage }}
+                </div>
+{% endif %}
+            </div>
+       </div>
+    </div>
+{% endblock %}

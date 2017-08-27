@@ -1,0 +1,33 @@
+-- TABLE house_member
+
+CREATE TABLE IF NOT EXISTS `house_member` (
+    `house_member_id` INT(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `mp_user_id` INT(10) NOT NULL COMMENT 'mp_user.mp_user_id',
+    `house_no` CHAR(64) COMMENT '用户/房间号',
+    `community_id` INT(10) NOT NULL COMMENT 'community.community_id',
+    `house_address` VARCHAR(255) DEFAULT '未绑定' COMMENT '公司/地址',
+    `house_area` DECIMAL(15,2) NOT NULL DEFAULT 0 COMMENT '面积',
+    `name` VARCHAR(128) NOT NULL COMMENT '姓名',
+    `birthday` INT(10) COMMENT '生日/20100203',
+    `phone1` CHAR(32) COMMENT '电话1',
+    `phone2` CHAR(32) COMMENT '电话2',
+    `phone3` CHAR(32) COMMENT '电话3',
+    `procurement_power_type` VARCHAR(128) DEFAULT 'none' COMMENT '员工权限',
+    `add_by` CHAR(64) DEFAULT 'wuye' COMMENT '来源-物业或业主添加',
+    `wx_user_id` CHAR(64) COMMENT '微信用户OpenID',
+    `current_cs_id` INT(10) COMMENT '当前客服专员id',
+    `current_cs_group_id` INT(10) COMMENT '当前客服专员分组id',
+    `cs_name` CHAR(32) COMMENT '客服专员姓名',
+    `cs_group_name` CHAR(32) COMMENT '客服专员所在客服组名称',
+    `comment` VARCHAR(255) COMMENT '备注',
+    `verify_time` DATETIME COMMENT '用户认证时间',
+    `modify_time` DATETIME COMMENT '用户信息更新时间',
+    `reply_time` DATETIME COMMENT '用户留言时间',
+    `part_id` VARCHAR(128) COMMENT '所在档口',
+    `member_type` CHAR(32) NOT NULL DEFAULT 'owner' COMMENT '用户类型',
+    `add_type` CHAR(32) NOT NULL DEFAULT 'wuye' COMMENT '用户添加类型',
+    PRIMARY KEY (`house_member_id`),
+    UNIQUE KEY `uk_house_member_addr_name` (`community_id`,`house_address`,`name`),
+    UNIQUE KEY `uk_house_member_no_name` (`community_id`,`house_no`,`name`),
+    KEY `ak_house_member_wx_user_id` (`wx_user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='房产和用户关系表' AUTO_INCREMENT=1;

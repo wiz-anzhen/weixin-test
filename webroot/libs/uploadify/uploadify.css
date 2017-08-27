@@ -1,0 +1,56 @@
+/*
+Uploadify
+Copyright (c) 2012 Reactive Apps, Ronnie Garcia
+Released under the MIT License <http://www.opensource.org/licenses/mit-license.php>
+*/
+
+.uploadify {
+	float:left;
+	margin-left:5px;
+}
+.uploadify-button { line-height: 25px; font-size: 12px; height: 25px; padding-left: 10px; padding-right: 10px; background-image: url(../images/button_small.png); background-repeat: repeat-x; border: 1px solid #cccccc; color: #666; display: inline-block; cursor: pointer; text-align:center;  }
+.uploadify:hover { color: #333; background-position: 0px -10px; }
+.uploadify-button.disabled {
+	background-color: #D0D0D0;
+	color: #808080;
+}
+.uploadify-queue {
+	margin-bottom: 1em;
+}
+.uploadify-queue-item {
+	background-color: #F5F5F5;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	font: 11px Verdana, Geneva, sans-serif;
+	margin-top: 5px;
+	max-width: 350px;
+	padding: 10px;
+}
+.uploadify-error {
+	background-color: #FDE5DD !important;
+}
+.uploadify-queue-item .cancel a {
+	background: url('uploadify-cancel.png') 0 0 no-repeat;
+	float: right;
+	height:	16px;
+	text-indent: -9999px;
+	width: 16px;
+}
+.uploadify-queue-item.completed {
+	background-color: #E5E5E5;
+}
+.uploadify-progress {
+	background-color: #E5E5E5;
+	margin-top: 10px;
+	width: 100%;
+}
+.uploadify-progress-bar {
+	background-color: #0099FF;
+	height: 3px;
+	width: 1px;
+}
+#piclist{clear:both;width:100%;padding:0 10px;}
+#piclist ul li{float:left;margin:10px;text-align:center;}
+#piclist ul li a{color:#f00;}
+#piclist ul li img{border:1px solid #ccc; padding:2px;width:100px;height:100px;background:url("../../Admin/Images/loading.gif") no-repeat center center;}

@@ -1,0 +1,608 @@
+#bg {
+    position: fixed;
+    width: 100%;
+}
+
+#page_title {
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.main.container {
+    padding-top: 42px;
+}
+
+.error {
+    max-width: 260px;
+    text-overflow: ellipsis;
+    color: #E93232;
+}
+
+/********************** TOP BAR START ***********************/
+
+#return_button {
+    display: block;
+    float: left;
+    padding: 4px 10px 4px 0;
+    margin-left: 6px;
+    border: 1px solid #125f92;
+    border-radius: 4px;
+    background-color: #3486c1;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#63aee6), to(#3486c1));
+    background-image: -webkit-linear-gradient(top, #63aee6, #3486c1);
+    background-image: -moz-linear-gradient(top, #63aee6, #3486c1);
+    background-image: -o-linear-gradient(top, #63aee6, #3486c1);
+    box-shadow: inset 0px 0px 3px 0px rgba(255, 255, 255, 0.35);
+    margin-top: 5px;
+    font-size: 20px;
+    line-height: 16px;
+    color: #fff;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+#return {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    position: relative;
+    top: -2px;
+    padding-right: 2px;
+}
+
+#cart_button {
+    display: block;
+    float: right;
+    padding: 4px 10px;
+    margin-right: 6px;
+    border: 1px solid #125f92;
+    border-radius: 4px;
+    background-color: #3486c1;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#63aee6), to(#3486c1));
+    background-image: -webkit-linear-gradient(top, #63aee6, #3486c1);
+    background-image: -moz-linear-gradient(top, #63aee6, #3486c1);
+    background-image: -o-linear-gradient(top, #63aee6, #3486c1);
+    box-shadow: inset 0px 0px 3px 0px rgba(255, 255, 255, 0.35);
+    margin-top: 5px;
+    font-size: 20px;
+    line-height: 16px;
+    color: #fff;
+    text-decoration: none;
+}
+
+#cart_button.open {
+    background-color: #63aee6;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#3486c1), to(#63aee6));
+    background-image: -webkit-linear-gradient(top, #3486c1, #63aee6);
+    background-image: -moz-linear-gradient(top, #3486c1, #63aee6);
+    background-image: -o-linear-gradient(top, #3486c1, #63aee6);
+    box-shadow: inset 0px 0px 3px 0px rgba(255, 255, 255, 0.35);
+}
+
+#cart_icon {
+    margin: 0 4px;
+}
+
+#return_button #cart_placeholder {
+    width: 0;
+}
+
+#food_num {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    position: relative;
+    top: -2px;
+    padding-right: 2px;
+}
+
+#cart {
+    padding: 46px 4px 0 4px;
+    display: none;
+    overflow: hidden;
+}
+
+#cart_body {
+    padding: 13px 16px 67px 16px;
+    margin-bottom: 4px;
+    background-color: rgb(241, 240, 245);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+#cart_food_list, #cart_list {
+    position: relative;
+    top: -10px;
+}
+
+#cart_body li {
+    line-height: 16px;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 6px;
+}
+
+#cart_body li:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+#cart_body li .name {
+    float: left;
+    padding: 12px 0 0;
+    font-size: 17px;
+    height: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative;
+    top: -2px;
+}
+
+#cart_body li .pri {
+    padding: 4px 0 0;
+    float: left;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    width: 90%;
+}
+
+#cart #empty {
+    font-size: 17px;
+    text-align: center;
+    line-height: 17px;
+}
+
+#cart #total_price {
+    font-size: 15px;
+    line-height: 15px;
+    padding: 14px 0;
+}
+
+#cart p span {
+    font-family: Arial, sans-serif;
+}
+
+#total_price .money {
+    color: #dc594b;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    position: relative;
+    top: 1px;
+    float: right;
+}
+
+#not_enough {
+    display: block;
+    height: 38px;
+    border-radius: 6px;
+    text-align: center;
+    background-color: #444;
+    color: #fff;
+    text-decoration: none;
+    line-height: 38px;
+    font-size: 16px;
+}
+
+#buttons {
+    height: 38px;
+}
+
+#submit, #submitted, #refresh {
+    height: 38px;
+    border-radius: 6px;
+    text-decoration: none;
+    line-height: 38px;
+}
+
+#submit, #refresh {
+    display: block;
+    color: #fff;
+    font-size: 17px;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff51a351', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.grad background-repeat:repeat-x;
+}
+
+#comment {
+    display: block;
+    width: 98.7%;
+    height: 45px;
+    font-size: 15px;
+    border: 1px solid #aaaaaa;
+    border-radius: 6px;
+    background-color: #eee;
+    margin-bottom: 8px;
+}
+
+#submit {
+    float: right;
+    background-color: #da4f49;
+    background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
+    background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
+    background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
+    background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
+    border-color: #bd362f #bd362f #802420;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+#refresh {
+    float: left;
+    background-color: #5bb75b;
+    background-image: -moz-linear-gradient(top, #62c462, #51a351);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
+    background-image: -webkit-linear-gradient(top, #62c462, #51a351);
+    background-image: -o-linear-gradient(top, #62c462, #51a351);
+    background-image: linear-gradient(to bottom, #62c462, #51a351);
+    border-color: #51a351 #51a351 #387038;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+#submitted {
+    display: block;
+    color: #ddd;
+    font-size: 17px;
+    line-height: 127%;
+}
+
+#submitted a {
+    color: #fff;
+}
+
+#cart .time {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 13px;
+    color: #aeaeae;
+}
+
+#cart_title {
+    height: 15px;
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 15px;
+    font-size: 15px;
+    padding-bottom: 12px;
+    color: #8a8a8a;
+}
+
+#cart_title h2 {
+    float: left;
+}
+
+#close_cart {
+    float: right;
+}
+
+.category {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 22px;
+    padding: 0 14px;
+    background-color: #e2e2e2;
+    font-size: 14px;
+    color: #666;
+    line-height: 22px;
+}
+
+/********************** TOP BAR END ***********************/
+/********************* CATALOG START **********************/
+
+.catalog {
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#ddd));
+    background-image: -webkit-linear-gradient(top, #eee, #ddd);
+    background-image: -moz-linear-gradient(top, #eee, #ddd);
+    background-image: -o-linear-gradient(top, #eee, #ddd);
+    height: 46px;
+    display: block;
+    clear: both;
+    padding: 0 14px;
+    border-bottom: 1px solid #dadada;
+    border-top: 1px solid #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.catalog:last-child {
+    border-bottom: none;
+}
+
+.catalog:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.catalog .info {
+    width: 80%;
+    height: 46px;
+    overflow: hidden;
+    float: left;
+}
+
+.catalog .in {
+    display: block;
+    float: right;
+    padding: 16px 3px 0 0;
+}
+
+.catalog .in_expanded {
+    transform:rotate(90deg);
+    -ms-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -webkit-transform:rotate(90deg);
+    -o-transform:rotate(90deg);
+}
+
+.catalog .info span.l {
+    font-size: 12px;
+    color: #666;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 13px;
+}
+
+.catalog .name {
+    height: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #444;
+}
+
+.catalog .starts_b {
+    margin-top: 10px;
+}
+
+.catalog .gold {
+    position: absolute;
+    bottom: 11px;
+    overflow: hidden;
+}
+/********************** CATALOG END ***********************/
+/********************* FOOD START **********************/
+.food {
+    min-height: 62px;
+    display: block;
+    clear: both;
+    border-bottom: 1px solid #dadada;
+    border-top: 1px solid #fff;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 25px;
+}
+
+.food:last-child {
+    border-bottom: none;
+}
+
+.food:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+ .comment {
+    display: none;
+}
+
+.food .info {
+    width: 160px;
+    overflow: hidden;
+    float: left;
+}
+
+.food .info span.l {
+    font-size: 12px;
+    color: #666;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 13px;
+}
+
+.food .info span.l_comment {
+    margin: 3px auto 8px;
+    overflow: visible;
+    white-space: normal;
+}
+
+.food .add, .food .reduce, .food .num {
+    float: right;
+}
+
+.food .name {
+    height: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #444;
+}
+
+.food .reduce, .food .add {
+    cursor: pointer;
+    height: 30px;
+    min-width: 31px;
+    text-align: center;
+    margin-top: 14px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    background-color: #f1f1f1;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#f1f1f1));
+    background-image: -webkit-linear-gradient(top, #fff, #f1f1f1);
+    background-image: -moz-linear-gradient(top, #fff, #f1f1f1);
+    background-image: -o-linear-gradient(top, #fff, #f1f1f1);
+    color: #777;
+    font-size: 25px;
+    line-height: 30px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+}
+
+.food .add {
+    display: block;
+}
+
+.food .reduce, .food .num {
+    display: none;
+}
+
+.cart_add, .cart_reduce {
+    cursor: pointer;
+    float: right;
+    height: 30px;
+    min-width: 31px;
+    text-align: center;
+    margin: 7px;
+    border-radius: 7px;
+    background-color: #fff;
+    color: #777;
+    font-size: 25px;
+    line-height: 30px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    display: block;
+}
+
+.food .num {
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    border-radius: 9px;
+    padding: 0 5px;
+    height: 17px;
+    line-height: 18px;
+    background-color: #b3b3b3;
+    color: #fff;
+    margin: 21px 10px 0 10px;
+}
+
+.food .stars_b {
+    margin-top: 10px;
+}
+
+.food .gold {
+    position: absolute;
+    bottom: 11px;
+    overflow: hidden;
+}
+
+li.food img {
+    margin: 6px 6px 0 0;
+    height: 130px;
+}
+
+li.food .food_title {
+    width: 100%;
+    height: 28px;
+    font-size: 16px;
+    margin-top: 21px;
+    margin-left: 14px;
+}
+
+li.food .food_comment {
+    width: 100%;
+    margin: 23px 0 15px;
+    color: rgb(154, 154, 154);
+    text-align: center;
+    font-size: 13px;
+}
+
+li.food .price {
+    width: 100%;
+    color: rgb(190, 61, 90);
+    text-align: center;
+    font-size: 17px;
+}
+
+/********************** FOOD END ***********************/
+/********************** COMMENT START ***********************/
+
+.comment {
+    height: 22px;
+    padding: 0 14px;
+    background-color: #ccc;
+    font-size: 12px;
+    color: #666;
+    line-height: 22px;
+}
+
+/********************** COMMENT END ***********************/
+
+#search {
+    width: 80%;
+    font-size: 15px;
+    height: 32px;
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    color: #555;
+    float: left;
+    vertical-align: middle;
+    border-radius: 4px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+#clear_search {
+    display: block;
+    float: right;
+    margin: 2px 2px 2px 0;
+    cursor: pointer;
+    height: 32px;
+    width: 14%;
+    padding: 2px 0;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    background-color: #f1f1f1;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#f1f1f1));
+    background-image: -webkit-linear-gradient(top, #fff, #f1f1f1);
+    background-image: -moz-linear-gradient(top, #fff, #f1f1f1);
+    background-image: -o-linear-gradient(top, #fff, #f1f1f1);
+    color: #777;
+    font-size: 25px;
+    line-height: 30px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+}
+
+.ori_price {
+    text-decoration: line-through;
+    color: #f00;
+}

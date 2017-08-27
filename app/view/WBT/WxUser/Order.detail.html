@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*顶部导航*/
+        .nav_detail{position:fixed;z-index:999999;top:0;left:0;right:0;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+        /*导航返回按键*/
+        .back{width:132px;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+        /*订单明细部分*/
+        .gray{width: 100%;height:48px;border-top:3px solid #838383;background-color: #eeeeee;}
+        .basic {width: 96%;margin: auto;}
+        .basic .title{width: 100%;font-size: 42px;color: #000000;line-height:90px;}
+        .basic .number{border-top:3px solid #838383;}
+        .basic .number,.time,.pay,.status{width: 100%;height: 108px;font-size: 36px;line-height: 108px;color: #838383;padding-left: 12px;}
+        .basic .pay{border-top:3px solid #838383;}
+        .basic .number,.time,.pay,.status{border-bottom: 3px solid #838383;}
+        .basic .info{font-size: 36px;color: #838383;line-height: 60px;padding-top:24px;padding-bottom:24px;}
+        .basic .info .left{float:left;width: 19%;text-align: center;}
+        .basic .info .right{float:left;width: 70%;margin-left: 20px;}
+        .basic .info .right .addr{width:100%;}
+        .basic .status{border-bottom: 0;}
+        /*商品清单*/
+        .listing {width: 96%;margin: auto;}
+        .listing .nav{width: 100%;border-bottom: 3px solid #838383;}
+        .listing .nav .title{width: 30%;float:left;font-size: 42px;color: #000000;line-height:90px;}
+        .listing .nav .money{width: 60%;float:right;font-size: 36px;color: #000000;line-height:90px;text-align: right;color:#ff6633;}
+        .listing .p-detail{width: 100%;height: 120px;border-bottom: 3px solid #838383;padding-top: 24px;padding-bottom: 24px;}
+        .p-detail .left{float: left;width: 120px;height: 120px;}
+        .p-detail .left img{width: 100%;height: 100%;margin-left: 24px;}
+        .p-detail .middle{float: left;font-size: 36px;color:#838383;line-height: 120px;width: 50%;margin-left: 84px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;}
+        .p-detail .right{float: right;text-align: right;}
+        .p-detail .right .r-top{color: #ff0000;font-size: 32px;margin-top:19px;margin-bottom: 12px;}
+        .p-detail .right .r-bottom{font-size: 32px;}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:3px solid #ff6633;background-color: #F3F3F3;}
+        .bottom .comment{width: 52%;margin:auto;text-align: center;height:144px;color: #ffffff;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+    </style>
+</head>
+<body>
+<div class="nav_detail"><div class="back" onclick="window.history.go(-1)"></div>订单明细</div>
+<div class="top-kong"></div>
+<div class="basic">
+    <div class="title">基本信息</div>
+    <div class="number"><div>订单编号&nbsp;&nbsp;&nbsp;&nbsp;{{order_id}}</div></div>
+    <div class="time"><div>下单时间&nbsp;&nbsp;&nbsp;&nbsp;{{create_time}}</div></div>
+    <div class="info clear">
+        <div class="left">收货信息</div>
+        <div class="right">
+            <div class="name">{{nick}}</div>
+            <div class="tel">{{phone}}</div>
+            <div class="addr">{{address}}</div>
+        </div>
+    </div>
+    <div class="pay"><div>支付方式&nbsp;&nbsp;&nbsp;&nbsp;{% if pay_method == 'wx_pay' %}微信支付{% else %}货到付款{% endif %}</div></div>
+    <div class="status"><div>订单状态&nbsp;&nbsp;&nbsp;&nbsp;<font color="#ff6633">{{status}}</font></div></div>
+</div>
+<div class="gray"></div>
+<div class="listing">
+    <div class="nav clear"><div class="title">商品清单</div><div class="money">{{total_num}}件商品，共计{{total_money}}元</div></div>
+    {% for p in productData %}
+    <div class="p-detail clear">
+        <div class="left"><img src="{{p.img_url}}" ></div>
+        <div class="middle">{{p.title}}</div>
+        <div class="right">
+            <div class="r-top">￥{{p.price}}</div>
+            <div class="r-bottom">x{{orderDetailNum[p.product_id].count}}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+    {% if status == '待付款' %}
+        {% if pay_method == 'wx_pay' %}
+            <div class="bottom">
+                <div class="comment">去付款</div>
+            </div>
+        {% else %}
+            <div class="bottom" style="display:none;">
+                <div class="comment"></div>
+            </div>
+        {% endif %}
+    {% elseif status=='交易关闭' %}
+        <div class="bottom" style="display: none;">
+            <div class="comment">再次购买</div>
+        </div>
+    {% elseif status == '交易成功' %}
+        {% if comments[order_id].comment_level %}
+            <div class="bottom" style="display:none;">
+                 <div class="comment">去逛逛</div>
+            </div>
+        {% else %}
+            <div class="bottom">
+                <div class="comment">去评价</div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="bottom" style="display: none;">
+            <div class="comment"></div>
+        </div>
+    {% endif %}
+
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+<input type="hidden" name="wx_user_id" value="{{wx_user_id}}">
+<input type="hidden" name="community_id" value="{{community_id}}">
+<input type="hidden" name="store_id" value="{{store_id}}">
+<input type="hidden" name="order_id" value="{{order_id}}">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    $(".comment").click(function(){
+        var mpUserID = $("[name='mp_user_id']").val();
+        var wxUserID = $("[name='wx_user_id']").val();
+        var communityID = $("[name='community_id']").val();
+        var storeID = $("[name='store_id']").val();
+        var orderID = $("[name='order_id']").val();
+        var text = $(".comment").text();
+        if(text == '去评价')
+        {
+            location.href="/wx_user/order/comment?mp_user_id="+mpUserID+"&order_id="+orderID+"&wx_user_id="+wxUserID+"&community_id="+communityID+"&store_id="+storeID;
+        }
+        if(text == '去付款')
+        {
+            location.href="/wx_user/pay/index?order_id="+orderID+"&total_fee={{total_money}}&mp_user_id="+mpUserID+"&community_id="+communityID+"&store_id="+storeID+"&wx_user_id="+wxUserID+"&pay_method=wx_pay";
+        }
+        if(text == '去逛逛'||text == '再次购买')
+        {
+            location.href="/wx_user/mall/list?mp_user_id="+mpUserID+"&wx_user_id="+wxUserID+"&community_id="+communityID+"&store_id="+storeID;
+        }
+    })
+    $(function () {
+        //判断是否宽屏
+
+        // $.mobile.hScroller = false;
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=0.35, maximum-scale=1")
+        }
+    })
+
+</script>
+</html>

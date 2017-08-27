@@ -1,0 +1,138 @@
+{% extends 'WBT/Web/home.html' %}
+
+{% block main_container %}
+<input type="hidden" id="displayed" value=""/>
+<div>
+    <input type="text" id="search" placeholder="输入菜名来搜索..." oninput="search()"/>
+    <a id="clear_search" onclick="clearSearch();">x</a>
+</div>
+
+<ul class="food_list">
+    {% for catalog in catalogs %}
+    {% if catalog.menus|length > 0 %}
+    <li id="catalog_{{ catalog.restaurant_menu_catalog_id }}" class="catalog" onclick="clicked(this)">
+        <a>
+            <div class="info">
+                <h3 class="name">{{ catalog.catalog_name }}</h3>
+                <span class="l"></span>
+            </div>
+            <img class="in" width="16" height="16" src="/web-rcrm/in_s.png" alt="">
+        </a>
+    </li>
+        {% if catalog.comment is not empty %}
+        <li class="catalog_{{ catalog.restaurant_menu_catalog_id }} comment">
+            {{ catalog.comment }}
+        </li>
+        {% endif %}
+
+        {% for menu in catalog.menus %}
+        <li id="{% if catalog.restaurant_menu_catalog_id == 0 %}favorite_{% endif %}food_{{ menus[menu].restaurant_menu_id }}"
+            rel="{{ menus[menu].restaurant_menu_id }}" class="food catalog_{{ catalog.restaurant_menu_catalog_id }}"
+            pinyin="{{ menus[menu].pinyin }}">
+            {% if show_img %}{% if menus[menu].img_url %}
+            <img src="{{ menus[menu].img_url }}" alt="图片" style="float: left; height: 52px; width: 52px; margin: 6px 6px 0 0;"/>
+            {% endif %}{% endif %}
+            <div class="info">
+                <h3 class="name">{{ menus[menu].menu_name }}</h3>
+                <span class="l">
+                    {% if catalog.is_on_sale == 1 %}
+                    <span class="ori_price">￥<span class="price">{{ menus[menu].menu_price }}</span></span>
+                    ￥<span class="price">{{ menus[menu].on_sale_price }}</span>
+                    {% else %}
+                    ￥<span class="price">{{ menus[menu].menu_price }}</span>
+                    {% endif %}
+                </span>
+                {% if menus[menu].comment is not empty %}
+                <span class="l l_comment">{{ menus[menu].comment }}</span>
+                {% endif %}
+            </div>
+            {% if not is_browse %}
+            <a class="add">+</a>
+            <span class="num">0</span>
+            {% if not show_img %}
+            <a class="reduce">-</a>
+            {% endif %}
+            {% endif %}
+        </li>
+        {% else %}
+        <li class="food catalog_{{ catalog.restaurant_menu_catalog_id }}">
+            <div class="info">
+                <h3 class="name">该分类是空的</h3>
+            </div>
+        </li>
+        {% endfor %}
+    {% endif %}
+    {% else %}
+    <li id="none_catalog" class="catalog">
+        <div class="info">
+            <h3 class="name">没有可显示的内容</h3>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block js_placeholder %}
+{{ parent() }}
+<script type="text/javascript">
+    var $allMenus = {{ all_menus|raw }};
+</script>
+<script type="text/javascript">
+    {% if not is_browse %}
+    var adds = document.getElementsByClassName('add');
+    for (var i = 0; i < adds.length; i++) {
+        adds[i].onclick = addFood;
+    }
+
+    var reduces = document.getElementsByClassName('reduce');
+    for (i = 0; i < reduces.length; i++) {
+        reduces[i].onclick = deleteFood;
+    }
+    {% endif %}
+
+    function clicked($this) {
+        var $toDisplayId = $this.getAttribute('id');
+        $('li.' + $toDisplayId).each(function () {
+            $(this).toggle();
+        });
+        var $img = $this.getElementsByTagName('img')[0];
+        if ($img.src.indexOf('in_s.png') == -1)
+            $img.src = '/web-rcrm/in_s.png';
+        else
+            $img.src = '/web-rcrm/in_d.png';
+    }
+
+    function search() {
+        var $keyword = $("#search").val();
+        if (!$keyword) {
+            $(".food_list li[class~=catalog]").show();
+            $(".food_list li[class~=food]").hide();
+            $(".food_list li[class~=comment]").hide();
+        } else {
+            $(".food_list li[class~=catalog]").hide();
+            $(".food_list li[class~=comment]").hide();
+            $(".food_list li[class~=food]").hide();
+
+            for (var $i in $allMenus)
+                if ($allMenus[$i]['menu_name'].indexOf($keyword) != -1
+                        || $allMenus[$i]['pinyin'].indexOf($keyword) != -1) {
+                    console.dir($allMenus[$i]);
+                    $(".food_list li").each(function () {
+                        if ($(this).attr('id') == 'food_' + $allMenus[$i]['restaurant_menu_id'])
+                            $(this).show();
+                    });
+                }
+        }
+    }
+
+    function clearSearch() {
+        $("#search").val('');
+        $(".food_list li").each(function(){
+            var $id = $(this).attr('id');
+            if (!$id) $(this).hide();
+            else if ($id.indexOf('catalog_') >= 0) $(this).show();
+            else $(this).hide();
+        });
+    }
+</script>
+{% endblock %}

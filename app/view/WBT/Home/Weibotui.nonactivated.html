@@ -1,0 +1,34 @@
+{% extends "WBT/home.twig" %}
+
+{% block header %}
+<ul class="pull-right nav nav-pills">
+    <li><a href="#">{{ username }}</a></li>
+    <li class="active"><a href="/">首页</a></li>
+    <li><a href="/auth/logout">退出</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="banner-mod">
+                    <div class="banner-mod-inner">
+                        <div class="clearfix">
+                            <div class="banner-sub-block pull-left">
+                                <p class="p-tight">
+
+                                </p>
+                                <p class="p-tight">
+                                     </p>
+                                <p class="p-tight-bottom">
+                                    <span class="text14">您的帐号还未激活，请点击</span> <a href="/home/weibotui/activate">发送激活邮件</a><span class="text14">，到 </span><span class="text-success">{{ loginProfile.username }}</span><span> 进行帐号激活。</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

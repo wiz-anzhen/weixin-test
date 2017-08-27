@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>验货单确认</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<header style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    {% if  from_type != 'restaurant' %}
+    <span style="height:50px;line-height:50px;font-size:1em;padding-left:3%;color: #000;float: left; " onclick="location.replace(document.referrer);">返回</span>
+    {% endif %}
+    <span style="height:50px;line-height:50px;font-size:1.2em;">验货单</span>
+    {% if procurement_order.status == 'supply_examine' and from_type != 'restaurant' %}
+    <a id="determine_start" href="#" style="height:50px;line-height:50px;font-size:1em;padding-right:3%;float: right; color: red;font-weight: bolder;">确认</a>
+    {% endif %}
+</header>
+<div style="width: 94%;height: 80px;border-bottom: 1px solid #ccc;padding:3% ;">
+    <p style="padding: 3px 0;">
+        <img src="/images/procurement_house.png" style="width: 15px;height: 15px;padding-right: 5px;">{{store_name}}
+    </p>
+    <p style="color:#363636;padding: 3px 0;">{{ procurement_order.create_time}}</p>
+    <p style="color:#bbb;font-size:0.8em;padding: 3px 0;">订单号:{{ order_id }}</p>
+</div>
+
+{% for data_content in examine_detail %}
+<div style="padding:8px 5px;background:#e4e4e4;clear: both;border-bottom:1px solid #ccc;">
+    <p style="float: left;margin-left: 5px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 50%;">
+        档口:{{data_content.part}}
+    </p>
+    <p style="float: right;color: red;font-weight: bolder;margin-right: 20px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 30%;text-align: right;">
+        &yen;{{data_content.price}}
+    </p>
+    <div style="color: #e4e4e4;">0</div>
+</div>
+{% for detail in data_content.content %}
+<div class="main" style="width:100%;padding-top:4%; padding-bottom:11%; margin:0 auto;border-bottom:1px solid #ccc;">
+    <div class="Products" style="padding-left:5%;float:left;width: 42%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+        <p>{{detail.title}}</p>
+        <p style="font-size: 10px;">{{detail.price}}{{detail.product_unit_new}}</p>
+    </div>
+    <div class="Number" style="float:right;font-size: 14px;width: 40%;text-align: right;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding-top:2%;margin-right: 25px;">
+        {% if change == 'yes' %}
+             {% if detail.change == 'yes' %}
+              <span style="text-align: left;margin-right: 10px;">原数量：x{{detail.count}}</span>
+              <span style="text-align: right;color: red;">x{{detail.current_count}}</span>
+             {% else %}
+                  <span style="text-align: center;">x{{detail.count}}</span>
+              {% endif %}
+        {% else %}
+        <span style="text-align: center;">x{{detail.count}}</span>
+        {% endif %}
+
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+
+<div class="main" style="width:100%;padding-top:5%; padding-bottom:15%; margin:0 auto;">
+    <div class="Number" style="padding-right:3%;float:right;">
+        <span style="font-size:1.2em;font-weight:bolder;">共计:&yen;{{total_price}}元</span>
+    </div>
+</div>
+
+<div id="determine_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">验货单确认 </div>
+        <div style="padding: 10%;text-align: center;">确认收到验货单,并发送通知给采购员</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_ok" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    /*
+    function getByClass (oParent,sClass){
+        var aEle=oParent.getElementsByTagName('*');
+        var aResult=[];
+        for (var i = 0; i < aEle.length; i++) {
+            if(aEle[i].className==sClass){
+                aResult.push(aEle[i]);
+            }
+        }
+        return aResult;
+    }
+    var dialog=document.getElementById('dialog');
+    var Cancel=getByClass(dialog,'Cancel')[0];
+    var Determine=getByClass(dialog,'Determine')[0];
+    var abody=document.getElementsByTagName('body')[0];
+    var windowW=abody.offsetWidth;
+    var windowH=document.body.scrollHeight;
+    var btn3=document.getElementById('btn3');
+    btn3.onclick=function(){
+        dialog.style.display='block';
+        dialog.style.width=windowW+'px';
+        dialog.style.height=windowH+'px';
+    }
+    Cancel.onclick=function(){
+        dialog.style.display='none';
+    }
+    Determine.onclick=function(){
+        location.href="/wx_user/supply/examine_submit?order_id={{order_id}}&mp_user_id={{mp_user_id}}";
+    }
+    */
+    $("#determine_start").click(function (){
+
+        $("#determine_content").css("display","block");
+    });
+    $("#cancel").click(function (){
+
+        $("#determine_content").css("display","none");
+    });
+    $("#determine_ok").click(function ()
+    {
+        $("#determine_ok").css("display","none");
+        var site = location.protocol + '//' + location.host + '/api/wx_user/supply/send_supply';
+        var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id':'{{ order_id }}','type':'finished'};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r)
+            {
+                if(r.errno == 0)
+                {
+                    location.href = "/wx_user/supply/examine_submit?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&template={{template}}";
+
+                }
+            }
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

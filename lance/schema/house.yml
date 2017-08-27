@@ -1,0 +1,388 @@
+#------------------------------------------------------------------------------
+#预编译指令
+!comment-locale: zh_CN
+
+
+@house_member_type:
+  comment: 用户类型
+  values:
+    owner: 业主
+    employee: 员工
+    member: 会员
+    lessee: 租户
+    friends: 朋友
+    relative: 亲戚
+    order: "普通员工"
+    manager: "经理"
+    chef: "厨师长"
+
+
+
+@procurement_power_type:
+  comment: 工作人员权限
+  values:
+    none: 无
+    order: 订货
+    examine: 验货
+    refund: 退货
+
+
+@member_add_type:
+  comment: 用户添加类型
+  values:
+    owner: 业主
+    wuye: 物业
+
+
+@reocrd_content_type:
+  commnet: 聊天记录类型
+  values:
+     text: 文本
+     pic: 图片
+     voice: 音频
+
+@community_type:
+  comment: 社区属性
+  values:
+    none: 普通社区
+    procurement_supply: 采购/供应商
+    procurement_restaurant: 采购/餐厅
+    procurement_total: 采购/餐厅总店
+
+community:
+  comment: '社区'
+  with: [ auto_increment_id, create_timestamp, update_timestamp]
+  has:
+    mp_user_id: int|+10|comment=mp_user_id
+    name: text|+64|comment=社区名称
+    phone|?: text|+128|comment=热线电话
+    admin_email|?: text|comment=主送管理员email
+    admin_cc_email|?: text|comment=抄送管理员email
+    comment|?: text|+128|comment=备注
+    is_virtual: bool|comment=是否是虚拟社区|=0
+    is_app: bool|comment=是否应用到APP|=0
+    valid: bool|comment=是否有效|=1
+    bill_comment|?: text|comment=收费通知单提示
+    bill_name|?: text|+128|comment=收费通知单名称
+    address|?: text|+128|comment=详细地址
+    province|?: text|+128|comment=所在省份
+    city|?: text|+128|comment=所在城市
+    area|?: text|+128|comment=所在区/县
+    longitude|?: text|+64|comment=精度
+    latitude|?: text|+64|comment=纬度
+    community_type|?: community_type|comment='社区属性'
+
+restaurant:
+  comment: '餐厅列表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    title: text|+64|comment='名称'
+    comment|?: text|comment=备注
+    bound_community_id|?: int|+10|comment=绑定小区id
+
+  keys:
+    ukey|u: [ title ,community_id]
+
+part:
+  comment: '档口列表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    title: text|+64|comment='名称'
+    comment|?: text|comment=备注
+    bound_store_id|?: text|+128|comment=绑定供应商id
+
+  keys:
+    ukey|u: [ title ,community_id]
+
+community_config:
+   comment: '社区配置表'
+   with: [ auto_increment_id ]
+   has:
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+     community_id: int|+10|comment='community.community_id'
+     config_type: community_config_type|comment='社区配置类型'
+     config_value|?: text|comment='社区配置值'
+
+   keys:
+     ukey|u: [ community_id, config_type]
+
+@community_config_type:
+   comment: '社区配置类型'
+   values:
+    cs_answer: '客服专员下班时间系统回复内容'
+
+house_member:
+  comment: '房产和用户关系表'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment=mp_user.mp_user_id
+    house_no|?: text|+64|comment=用户/房间号
+    community_id: int|+10|comment=community.community_id
+    house_address|?: text|+255|comment=公司/地址|=未绑定
+    house_area: money|comment=面积|=0
+    name: text|+128|comment=姓名
+    birthday|?: int|+10|comment=生日/20100203
+    phone1|?: text|+32|comment=电话1
+    phone2|?: text|+32|comment=电话2
+    phone3|?: text|+32|comment=电话3
+    member_type: house_member_type
+    procurement_power_type|?: text|+128|comment=员工权限|=none
+    add_type: member_add_type|=wuye
+    add_by|?: text|+64|comment=来源-物业或业主添加|=wuye
+    wx_user_id|?: text|+64|comment=微信用户OpenID
+    current_cs_id|?: int|+10|comment=当前客服专员id
+    current_cs_group_id|?: int|+10|comment=当前客服专员分组id
+    cs_name|?: text|+32|comment=客服专员姓名
+    cs_group_name|?: text|+32|comment=客服专员所在客服组名称
+    comment|?: text|+255|comment=备注
+    verify_time|?: datetime|comment=用户认证时间
+    modify_time|?: datetime|comment=用户信息更新时间
+    reply_time|?: datetime|comment=用户留言时间
+    part_id|?: text|+128|comment=所在档口
+  keys:
+    wx_user_id: wx_user_id
+    addr_name|u: [community_id,house_address, name]
+    no_name|u: [community_id,house_no, name]
+
+test_procurement:
+  comment: '仅用来生成一些枚举类型的代码'
+  with: [ auto_increment_id ]
+  has:
+    power|?: procurement_power_type|comment=员工权限
+
+bill_day:
+  comment: '账单日期表'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment=mp_user.mp_user_id
+    community_id: int|+10|comment=community.community_id
+    bill_day: int|+10|comment=账单日期
+  keys:
+    bill_day: bill_day
+    ukey|u: [community_id,bill_day]
+
+@bill_pay_method:
+  comment: 付款方式
+  values:
+    other: 其他
+    wx_pay: 微信支付
+
+bill:
+  comment: '收费通知单明细'
+  with: [ auto_increment_id ]
+  has:
+    bill_day: int|+10|comment=账单日期
+    mp_user_id: int|+10|comment=mp_user.mp_user_id
+    community_id: int|+10|comment=community.community_id
+    house_no|?: text|+64|comment=房间编号
+    name|?: text|+32|comment=业主姓名
+    phone|?: text|+64|comment=业主联系电话
+    house_address: text|+255|comment=地址
+    house_area|?: money|comment=面积
+    total_payment: money|comment=累计应缴合计
+    read_time|?: datetime|comment=阅读时间
+    bill_pay_method|?: bill_pay_method|comment=付款方式
+    pay_finished: bool|comment=是否完成支付|=0
+  keys:
+    bill_day: bill_day
+    read_time: read_time
+    ukey|u: [house_address,community_id,bill_day]
+
+bill_detail:
+  comment: '收费通知单业主欠费明细'
+  with: [ auto_increment_id ]
+  has:
+    bill_id: int|+10|comment=bill.bill_id
+    community_id: int|+10|comment=community.community_id
+    bill_day: int|+10|comment=账单日期
+    bill_detail_name: text|+128|comment=业主欠费明细收费项目名称
+    billing_cycle: text|+128|comment=计费周期
+    detail_payment: money|comment=应收金额
+    detail_remarks|?: text|+255|comment=备注
+  keys:
+    bill_id: bill_id
+    community_id: community_id
+    bill_day: bill_day
+
+community_report:
+  comment: '每日社区报表'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    ymd: int|+10|comment='年月日，示例20120525'
+    zhuhu_count: int|+10|comment='住户总数'|=0
+    yezhu_count: int|+10|comment='业主总数'|=0
+    zhuhu_verify: int|+10|comment='认证住户总数'|=0
+    yezhu_verify: int|+10|comment='认证业主总数'|=0
+  keys:
+    ukey|u: [ community_id, ymd ]
+
+cs_chat_record:
+   comment: '客服通话记录表'
+   with: [ auto_increment_id ]
+   has:
+     wx_user_id: text|+64|comment=业主ID
+     mp_user_id: int|+10|comment'业主公众号ID
+     wx_user_name|?: text|+128|comment=业主名称
+     community_id: int|+10|comment=业主所在社区ID
+     vip_no: int|+20|comment=客服专员会员号ID
+     group_name|?: text|+128|comment=客服组名称
+     cs_name|?: text|+128|commnet=客服人员名名称
+     content_type: reocrd_content_type|comment=聊天内容类型
+     content_value: text|comment=聊天记录
+     cs_group_id|?: int|+10|comment=客服专员分组id
+     cs_id|?: int|+10|comment=客服专员id
+     record_time: datetime|comment'聊天记录时间
+   keys:
+      wx_user_id: wx_user_id
+
+chat_room_record:
+   comment: '聊天室通话记录表'
+   with: [ auto_increment_id ]
+   has:
+     wx_user_id: text|+64|comment=用户ID
+     mp_user_id: int|+10|comment'公众号ID
+     wx_user_name|?: text|+128|comment=用户名称
+     community_id: int|+10|comment=用户所在社区ID
+     vip_no: int|+20|comment=客服专员会员号ID
+     group_name|?: text|+128|comment=客服组名称
+     cs_name|?: text|+128|commnet=客服人员名名称
+     content_type: reocrd_content_type|comment=聊天内容类型
+     content_value: text|comment=聊天记录
+     cs_group_id|?: int|+10|comment=客服专员分组id
+     cs_id|?: int|+10|comment=客服专员id
+     record_time: datetime|comment'聊天记录时间
+   keys:
+      wx_user_id: wx_user_id
+
+address_level_info:
+   comment: '地址分级数据表'
+   with: [auto_increment_id]
+   has:
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+     community_id: int|+10|comment='community.community_id'
+     add_info: text|+128|comment=地址信息
+     level: int|+10|comment=级别
+     parent_id: int|+10|comment=上一级地址信息id|=0
+   keys:
+     parent_id: parent_id
+
+@group_send_content_type:
+  comment: '群发信息内容类型'
+  values:
+    custom_text: 自定义文本消息
+    custom_news: 自定义图文消息
+
+@group_send_range_type:
+  comment: '群发范围类型'
+  values:
+    send_to_whole_community: 本社区所有用户
+    send_by_house_no: 指定用户编号（房间编号）
+    send_to_mp_user: 本公众账号所有微信用户
+
+group_send:
+   comment: '群发信息'
+   with: [auto_increment_id]
+   has:
+      mp_user_id: int|+10|comment='mp_user.mp_user_id'
+      community_id: int|+10|comment='community.community_id'
+      title: text|+128|comment=消息标题
+      content_type: group_send_content_type
+      content_value|?: text|comment=消息内容
+      msg_id|?: text|+64|comment=返回消息ID
+      status|?: text|comment=返回发送状态
+      create_time: datetime|comment=创建时间
+      group_send_no|?: text|comment=指定房间编号
+      group_send_time|?: datetime|comment=发布时间
+      group_send_author|?: text|+128|comment=发布者
+      group_send_range: group_send_range_type
+      send_type|?: text|+32|comment=发送类型
+   keys:
+      create_time: create_time
+      msg_id: msg_id
+      community_id: [community_id,mp_user_id]
+
+group_send_item:
+   comment: '保存群发信息内容'
+   with: [auto_increment_id]
+   has:
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+     community_id: int|+10|comment='community.community_id'
+     title: text|comment=消息标题
+     content|?: text|comment=消息内容
+     pic_url|?: url|comment=消息图片url
+     description|?: text|comment=内容摘要
+     content_source_url|?: url|comment=原文链接
+     author|?: text|+128|comment=作者
+     sort_no: float|comment='排序'|=0
+     show_cover_pic: bool|comment=是否显示封面|=0
+     group_send_id|?: int|+10|comment=群发信息id
+   keys:
+      group_send_id:  group_send_id
+
+@user_notify_send_range_type:
+   comment: '向用户发送模板消息通知范围类型'
+   values:
+     send_to_whole_community: 本社区所有用户
+     send_by_house_no: 指定房间编号用户
+     send_customer: 向客服专员发送
+     send_total: 公众账号所有关注者
+     send_total_verify: 公众账号已认证关注者
+     send_total_un_verify: 公众账号未认证关注者
+     send_to_whole_app: App所有用户
+     send_app_community: App小区用户
+
+@user_notify_send_status:
+   comment: '向用户发送模板消息通知发布状态'
+   values:
+     send_no: 未发布
+     send_wait: 待发布
+     send_process: 发布中
+     send_finished: 已发布
+
+user_notify:
+   comment: '向用户发送模板消息通知'
+   with: [auto_increment_id]
+   has:
+       mp_user_id: int|+10|comment='mp_user.mp_user_id'
+       community_id: int|+10|comment='community.community_id'
+       title: text|+64|comment=消息标题
+       description|?: text|comment=内容摘要
+       content_url|?: url|comment=消息链接
+       infoid|?: text|+64|comment= 信息编号/来源
+       send_status|?: user_notify_send_status
+       create_time: datetime|comment=创建时间
+       send_no|?: text|comment=指定房间编号
+       send_time|?: datetime|comment=发布时间
+       send_author|?: text|+128|comment=发布者
+       send_range: user_notify_send_range_type
+       specialist_group|?: text|+128|comment=客服组
+       send_type|?: text|+32|comment=发布类型
+   keys:
+       create_time: create_time
+       community_id: [community_id,mp_user_id]
+
+push_message:
+   comment: '向App用户推送通知表'
+   with: [auto_increment_id]
+   has:
+       mp_user_id: int|+10|comment='mp_user.mp_user_id'
+       community_id: int|+10|comment='community.community_id'
+       title: text|+64|comment=通知标题
+       content: text|+64|comment=通知内容
+       infoid|?: text|+64|comment= 信息编号/来源
+       send_status|?: user_notify_send_status
+       create_time: datetime|comment=创建时间
+       send_no|?: text|comment=指定房间编号
+       send_time|?: datetime|comment=发布时间
+       send_author|?: text|+128|comment=发布者
+       send_range: user_notify_send_range_type
+       send_type|?: text|+32|comment=发布类型
+   keys:
+       create_time: create_time
+       community_id: [community_id,mp_user_id]

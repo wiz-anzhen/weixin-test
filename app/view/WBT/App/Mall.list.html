@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <title></title>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        body,div,ul,li,img{margin:0;padding:0;}
+        body{width:100%;height:100%;margin-left: auto;margin-right: auto;}
+        .clear:after {content:"";display:block;clear:both;}
+
+        .content{width: 100%;margin-left: auto;margin-right: auto;}
+        .out,.inner{list-style:none;}
+        .money,.title{font-size:2.5em;padding-top: 12px;}
+        .money{color:red;padding-left:20px;}
+        .title{padding-left:20px;}
+        .conn{border:0px solid green;width:456px;}
+        .img img{border:0px solid red;width:448px;height:448px;}
+        .out-li{float:left;padding: 24px 16px 0 16px;}
+        .go{position:fixed;z-index:9999;right:24px;bottom:24px;width:132px;height:132px;
+            background: #f8f8f8 url(/images/shop/go_before.png) no-repeat left;
+            filter:alpha(Opacity=80);-moz-opacity:0.8;opacity: 0.8; background-color:#ffffff;
+        }
+        .num{position:fixed;z-index:99999;right:12px;bottom:120px;width:60px;height:60px;color:#ffffff;font-size:36px;background:url("/images/shop/notice.png") no-repeat;}
+        .num div{text-align: center;vertical-align: middle;padding:10px 0;font-weight: bold;}
+
+        .sort{width:132px;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/sort-before.png") no-repeat}
+
+        .nav_list{position:fixed;z-index:9999;top:0;left:0;height:132px;width:100%;background-color: #ff6633;font-size:3em;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 132px;width: 100%;}
+
+        .list{display:none; position:absolute;z-index:999;top:132px;left:24px;}
+        .list ul{list-style: none;}
+        .list li{height:132px;width: 528px;background-color: #ff6633;line-height: 132px;border-bottom: 2px solid #d73c08;}
+        .list li span{color:#ffffff;font-size: 45px;padding-left:45px;}
+
+        .money_price{font-size:36px;font-weight: bold;color: #b3b3b3;text-decoration:line-through;padding-left:36px;}
+
+        .bottom_kong{height: 100px;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+    <script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+    <script src="/libs/bluefin/bootstrap-carousel.js?v={{third_lib_version}}"></script>
+    <script src="/libs/bluefin/bootstrap-transition.js?v={{third_lib_version}}"></script>
+</head>
+<body id="body" onload="resize_img();">
+<div class="nav_list"><div class="sort" onclick="sort();"></div><span id="t-nav">{% if category_name %}{{category_name}}{%else%}精选商品{%endif%}</span></div>
+<div class="top-kong"></div>
+
+<div class="list">
+    <ul>
+        {% for c in category %}
+        <li onclick="changeTitle(this);" id="{{c.category_id}}" class="{{c.title}}"><span>{{c.title}}</span></li>
+        {% endfor %}
+    </ul>
+</div>
+<div style="margin-bottom: 5px;clear:both;text-align: center;position: relative;">
+    <div id="myCarousel" class="carousel slide">
+        <ol class="carousel-indicators">
+            {% for key,c in category %}
+            {% if c.cover_img %}
+            <li data-target="#myCarousel" data-slide-to="{{key}}" style="width:6px;height:6px;"  {% if key == 0 %} class="active" {% endif %}></li>
+            {% endif %}
+            {% endfor %}
+        </ol>
+        <!-- Carousel items -->
+        <div class="carousel-inner" id="carousel-inner">
+            {% for key,c in category %}
+            {% if c.cover_img %}
+            <div {% if key == 0 %} class="item active" {% else %} class="item" {% endif %}>
+            <a href="/app/mall/list?mp_user_id={{c.mp_user_id}}&category_id={{c.category_id}}&name={{c.title}}&store_id={{c.store_id}}&community_id={{c.community_id}}&phone={{phone}}"  target="_blank" ><img src="{{c.cover_img}}" ></a>
+            <div class="carousel-caption">
+                <p style="font-size: 36px;">{{c.title}}</p>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Carousel nav -->
+    <a class="carousel-control left" href="#myCarousel" data-slide="prev" style="opacity:.1" onclick="carousel_direction('prev')"></a>
+    <a class="carousel-control right" href="#myCarousel" data-slide="next" style="opacity:.1" onclick="carousel_direction('next')"></a>
+</div>
+</div>
+
+<div class="content clear" id="content">
+    <ul class="out clear">
+        {% for p in product %}
+        <li class="out-li" >
+            <div class="conn">
+                <ul class="inner">
+                    <li class="img"><a href="/app/mall/detail?mp_user_id={{mp_user_id}}&product_id={{p.product_id}}&&community_id={{community_id}}&store_id={{store_id}}&phone={{phone}}"><img src="{{p.img_url}}"></a></li>
+                    <li class="title">{{p.title}}</li>
+                    <li class="money">￥{{p.price}}<span class="money_price">￥{{p.reference_price}}</span></li>
+                </ul>
+            </div>
+        </li>
+        <input type="hidden" name="store_id" value="{{p.store_id}}">
+
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="go" onclick="goShopping();"></div>
+{% if num %}
+<div class="num" id="num"><div id="num-num">{{num}}</div></div>
+{% endif %}
+<input type="hidden" name="phone" value="{{phone}}">
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+
+<input type="hidden" name="community_id" value="{{community_id}}" />
+{% if store_id %}
+<input type="hidden" name="store_id" value="{{store_id}}">
+{% endif %}
+<div class="bottom_kong"></div>
+</body>
+
+
+<script type="text/javascript">
+    /*
+     function orientationChange() {
+     alert("肖像模式 0,screen-width: " + document.body.clientWidth + "; screen-height:" + document.body.clientHeight);
+     }
+     // 添加事件监听
+     addEventListener('load', function(){
+     orientationChange();
+     });
+     */
+    function changeTitle(ob)
+    {
+        var categoryID = $(ob).attr('id');
+        var name = $(ob).attr('class');
+        var communityID = $("[name='community_id']").val();
+        var phone = $("[name='phone']").val();
+        var storeID = $("[name='store_id']").val();
+
+        if( name == '精选商品')
+        {
+            categoryID = '';
+        }
+
+        location.href = "/app/mall/list?mp_user_id={{mp_user_id}}&category_id="+categoryID+"&name="+name+"&store_id="+storeID+"&community_id="+communityID+"&phone="+phone;
+
+    }
+
+    function sort()
+    {
+        var dis = $(".list").css("display");
+        if(dis == 'block')
+        {
+            $(".list").attr("style","display:none;");
+        }
+        if(dis == 'none')
+        {
+            $(".list").attr("style","display:block;");
+        }
+    }
+    function list()
+    {
+        $(".list").attr("style","display:none;");
+    }
+    //
+    $(document).ready(function () {
+        $("div:not(.nav_list,.sort)").click(function(){dis(); });
+
+    });
+    $(window).bind("scroll", function(){dis();});
+    function dis()
+    {
+        var dis = $(".list").css("display");
+        if(dis == 'block')
+        {
+            $(".list").attr("style","display:none;");
+        }
+    }
+    /*
+     function goShopping()
+     {
+     var num = $("#num-num").text();
+     if(num == 0)
+     {
+     location.href='/wx_user/mall/shopping_empty?mp_user_id={{mp_user_id}}'
+     }
+     else
+     {
+     location.href='/wx_user/mall/shopping?mp_user_id={{mp_user_id}}'
+     }
+     }
+     */
+    function goShopping()
+    {
+        var communityID = $("[name='community_id']").val();
+
+        var phone = $("[name='phone']").val();
+        var storeID = $("[name='store_id']").val();
+        var mpUserID = $("[name='mp_user_id']").val();
+        var num = $("#num-num").text();
+
+        if(num == 0)
+        {
+            location.href='/app/mall/shopping_empty?mp_user_id='+mpUserID+'&phone='+phone+'&store_id='+storeID+"&community_id="+communityID;
+        }
+        else
+        {
+            location.href='/app/mall/shopping?mp_user_id='+mpUserID+'&phone='+phone+'&store_id='+storeID+"&community_id="+communityID;
+        }
+    }
+    $(function () {
+        //判断是否宽屏
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            // alert(5);
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1");
+            //.img img{border:0px solid red;width:456px;height:448px;}
+            //.conn{border:1px solid green;width:456px;}
+            $(".conn").attr("style","border:0px solid green;width:414px;");
+            $(".img img").attr("style","border:0px solid red;width:410px;height:410px;")
+        }
+    });
+
+    function carousel_direction(direction)
+    {
+        $('.carousel').carousel("direction");
+    }
+</script>
+
+<script type="text/javascript">
+    function resize_img() {
+        $("#carousel-inner").find('img').each(function () {
+            var $clientWidth = document.body.clientWidth;
+            var $img = new Image();
+            $img.src = $(this).attr("src");
+            $(this).css("width", "900");
+            $(this).css("height", "500");
+        });
+        $('.carousel').carousel({
+            interval: 2000
+        });
+        $('.carousel').carousel('cycle');
+    }
+</script>
+</html>

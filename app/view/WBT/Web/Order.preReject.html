@@ -1,0 +1,42 @@
+{% if cannot_edit %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>拒绝订单</title>
+</head>
+<body>
+<p style="font-size: 55px;">{{ order_status }}</p>
+</body>
+</html>
+{% else %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>拒绝订单</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    {{navbar|raw}}
+    <form method="post" action="/web/order/submit_reject?order_id={{ order_id }}&wx_user_id={{wx_user_id}}">
+        <select id="reason" name="reason" class="" style="width:98%; margin-top: 10px; height: 30px; font-size: 20px">
+            <option value="1">超出送餐范围</option>
+            <option value="2">非真实地址</option>
+            <option value="3">测试</option>
+            <option value="4">其他</option>
+        </select>
+        <br/><br/>
+        <textarea rows="5" id="content" name="content" style="width:96%; font-size: 20px" placeholder="请在此填写备注"></textarea>
+        <br/><br/>
+        <input type="submit" name="submit1" id="submit1" class="btn btn-success btn-large" style="width: 100%" value="拒绝并短信通知顾客"/>
+        <br/><br/>
+        <input type="submit" name="submit2" id="submit2" class="btn btn-success btn-large" style="width: 100%" value="拒绝但不通知顾客"/>
+    </form>
+</div>
+</body>
+</html>
+{% endif %}

@@ -1,0 +1,91 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'index' %}
+
+{% block sub_breadcrumbs %}
+<li class="active">帐号列表</li>
+{% endblock %}
+
+{% block action %}
+{% if is_super_admin %}
+
+<table class="table table-bordered table-striped table-hover">
+
+    <tbody>
+    <tr>
+        <td>
+            当前用户累积总数
+        </td>
+        <td>{{total_user_num}}</td>
+    </tr>
+    <tr>
+        <td>
+            当前活跃用户数<br />
+            (截止到今天{{hour}}点)
+        </td>
+        <td>{{active_user_num}}</td>
+    </tr>
+    <tr>
+        <td>
+            昨天活跃用户数
+        </td>
+        <td>{{yesterday_active_user_num}}</td>
+    </tr>
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-success" title="添加" onclick="bluefinBH.ajaxDialog('/mp_admin/mp_user_dialog/add?mp_usr_id={{mp_usr_id}}');">
+    添加
+</button>
+{% endif %}
+<div id="page_mask" class="promptbg"></div>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+<style>
+    #page_mask{
+        visibility: hidden;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        display: block;
+        z-index: 999;
+        background-color: rgb(0, 0, 0);
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+
+<script type="text/javascript">
+
+    $(function(){
+        var ua = navigator.userAgent;
+        var v = ua.indexOf("Chrome");
+        if("{{weixin}}" == false)
+        {
+            if(v == -1)
+            {
+                var page_mask = document.getElementById('page_mask');
+                page_mask.style.visibility = 'visible';
+                alert("请使用谷歌浏览器访问，下载谷歌浏览器");
+                location.href="/mp_admin/super_admin_list/down"
+            }
+        }
+
+    });
+
+</script>
+
+{% endblock %}

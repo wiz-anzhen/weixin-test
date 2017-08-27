@@ -1,0 +1,36 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>会员验证</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241, 240, 245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">会员验证</h3>
+    </div>
+    <div class="panel-body">
+        恭喜，您已经成功通过安全会员验证，点击左上角返回按钮，再点击底部菜单即可访问业主专属内容。
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>积分</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <script src="/scripts/rcrm.js?v={{our_lib_version}}"></script>
+</head>
+<body>
+<div class="container">
+    {{navbar|raw}}
+    {% if result.errno == 0 %}
+        {% if result.is_used == 0 %}
+            <span class="alert alert-success" style="display: block; width: 85%">
+                您扫描的是 {{result.mp_user_name}} 的积分卡,设置称呼后即可获取积分。
+            </span>
+            <form method="post">
+                <div class="input-prepend" style="width: 100%">
+                    <span class="add-on">称呼</span>
+                    <input type="text" id="nick" value="{{result.nick}}" cid="{{cardID|raw}}" placeholder="请输入称呼" style="width: 85%">
+                </div>
+            </form>
+            <a class="btn btn-success btn-large" style="width:85%" id="scoreButton">确定</a><br/><br/>
+            <span id="scoreStatus" class="alert" style="display: none; width: 85%"></span>
+        {% else %}
+            <span class="alert alert-error" style="display: block; width: 85%">该积分卡已经使用过</span>
+        {% endif %}
+    {% else %}
+        <span class="alert alert-error" style="display: block; width: 85%">{{result.error|raw}}</span>
+    {% endif %}
+</div>
+</body>
+</html>

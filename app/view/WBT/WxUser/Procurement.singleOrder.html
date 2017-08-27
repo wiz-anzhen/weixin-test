@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="renderer" content="webkit"/>
+    <title>订单列表</title>
+    <style type="text/css">
+        html,body,div,ul,li,ol,img,span,p,h1,h2,h3{ margin:0; padding:0;}
+        *{-webkit-tap-highlight-color:rgba(255,255,255,0);}
+        ul,ol{ list-style:none;}
+        a{text-decoration: none;}
+        a:link{text-decoration: none;color:#ffffff;}
+        a:visited{text-decoration: none;color:#ffffff;}
+        a:active{text-decoration: none;color:#ffffff;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+    <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</div>
+    <div onclick="location.replace('/wx_user/procurement/single_select?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color:#000;float: right;width: 20%; ">筛选</div>
+    <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 60%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">查看订单</div >
+</div>
+{% if count == 'none' %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div style="text-align: center;">
+    <div style="text-align: center;margin:30% auto;padding:30px;font-size: 1.2em;">对不起，还没有订单</div>
+</div>
+<a onclick="location.replace(document.referrer);" style="-webkit-tap-highlight-color:rgba(255,255,255,0);text-decoration:none;color:#000;outline:none;">
+    <div style="width:79%;padding:4% 0;margin:0 10%;font-size:1.5em;font-weight:bolder;text-align:center; border:1px solid #000;border-radius:15px;position: fixed;bottom: 30px;">
+        返回
+    </div>
+</a>
+{% endif %}
+
+{% for order in order_data %}
+
+<div style="height:15px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+<div onclick="location.replace('/wx_user/procurement/manager_detail?mp_user_id={{order.mp_user_id}}&order_id={{order.order_id}}&top_directory_id={{top_directory_id}}');">
+<div style="width: 100%;border-bottom: 1px solid #ccc;overflow: hidden;">
+
+    <p style="padding:5% 3%;float: left"><img src="/images/procurement_house.png" style="width: 15px;height: 15px;padding-right: 5px;">{{order.bound_name}}</p>
+    <p style="padding:5% 3%;float: left">&gt;</p>
+    <p style="padding:5% 3%;color: orange;font-size:12px;float: right">{{order.status_name}}</p>
+
+</div>
+<div class="order" style="width: 100%;line-height:28px;font-size: 0.9em">
+    <div style="padding-left: 3%;">餐厅:&nbsp;{{order.restaurant_name}}</div>
+    <div style="padding-left: 3%;">时间:&nbsp;{{order.create_time}}</div>
+    <div style="padding-left: 3%;">订单号:{{order.order_id}}</div>
+    <div style="padding-left: 3%;color: #f00;">金额:{{order.total_price}}元</div>
+</div>
+
+</div>
+{% if loop.last %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+{% endif %}
+
+{% endfor %}
+
+
+<div style="color: #ffffff;margin-top:30px;clear:both;">000</div>
+<script>
+    var a=document.getElementsByTagName('a');
+    for(var i=0;i<a.length;i++){
+
+        a[i].addEventListener('touchstart',function(){},false);
+
+    }
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>筛选</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+        ul,ol{list-style: none;}
+
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+
+<div class="box" style="width: 100%;height:50px;position: relative;border-bottom:1px solid #ccc;">
+    <span style="position: absolute;left: 10px;top: 15px;padding:0 15px;" onclick="location.replace('/wx_user/procurement/manager_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</span>
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;padding:0 15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 60%">筛选</div>
+</div>
+<div style="height:10px;background:#e4e4e4;"></div>
+<form>
+    <div style="width: 100%;">
+        <div style="padding: 3% 2%">
+            <p style="float: left">开始区间</p>
+            <input type="date" id="order_start" style="width:40%;height: 20px;border: 1px solid #ccc;background: #eee;float: right;" value="{{monthCurrentTwo}}">
+        </div>
+        <div style="padding: 6% 2%">
+            <p style="float: left;">结束区间</p>
+            <input type="date" id="order_end" style="width:40%;height: 20px;border: 1px solid #ccc;background: #eee;float: right;" value="{{monthCurrent}}"/>
+        </div>
+    </div>
+    <div style="height:10px;margin-top:3%;background:#e4e4e4;"></div>
+    <h1 style="font-size: 1em;padding: 5% 3%;">分店选择</h1>
+    <div style="border-bottom: 1px solid #ccc;width: 95%;margin: 0 auto;margin-bottom: 2%;"></div>
+        {% for restaurant in restaurant_data %}
+          <div style="width:39%;margin:2%;padding:3%; border:1px solid #ccc;background: #fff;text-align: center;height:15px;border-radius:3px;float: left;-webkit-tap-highlight-color:rgba(255,255,255,0);"   class="restaurant" id="{{restaurant.bound_community_id}}">
+              <input type="radio"   value="{{restaurant.bound_community_id}}"  style="width: 20px;height: 20px;float: left;display: none" name="restaurant" id="{{restaurant.bound_community_id}}_r"/>
+               <label for="{{restaurant.bound_community_id}}_r" style="display: block;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;width: 100%;" class="{{restaurant.bound_community_id}}" onclick="selectSupply(this)">{{restaurant.title}}</label>
+         </div>
+        {% endfor %}
+    <div style="height:10px;background:#e4e4e4;clear: both;"></div>
+    <h1 style="font-size: 1em;padding: 5% 3%;">供应商选择</h1>
+    <div style="border-bottom: 1px solid #ccc;width: 95%;margin: 0 auto;margin-bottom: 2%;"></div>
+    <div id="supply"></div>
+    <div style="height:10px;background:#e4e4e4;clear: both;"></div>
+    <h1 style="font-size: 1em;padding: 5% 3%;">订单状态</h1>
+    <div style="border-bottom: 1px solid #ccc;width: 95%;margin: 0 auto;margin-bottom: 2%;"></div>
+        {% for key,status in status_data %}
+        <div style="width:39%;margin:2%;padding:3%; border:1px solid #ccc;background: #fff;text-align: center;height:15px;border-radius:3px;float: left;-webkit-tap-highlight-color:rgba(255,255,255,0);font-size: 0.8em;"  class="status" id="{{key}}">
+            <input type="radio"  name="status" value="{{key}}"  id="{{key}}_input" style="width: 20px;height: 20px;float: left;display: none"/>
+             <label for="{{key}}_input" style="display: block;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;width: 100%" onclick="changeStatus(this)" class="{{key}}">{{status}}</label>
+        </div>
+        {% endfor %}
+    <div style="border-bottom: 1px solid #ccc;margin-bottom: 5%;clear:both;"></div>
+    <div id="confirm" style="width:25%;padding:3%;margin-right:3%;margin-bottom:3%;background:red;color:#fff;outline:none;float: right;text-align: center;border-radius: 4px;">
+    确认
+    </div>
+    <div id="reset" style="width:25%;padding:3%;margin-right:3%;margin-bottom:3%;outline:none;color:#ccc;background: #fff;border:1px solid #ccc;float: right;text-align: center;border-radius: 4px;">
+        重置
+    </div>
+
+
+</form>
+</body>
+<script type="text/javascript">
+
+
+    $("#confirm").click(function()
+    {
+        var restaurant_id = $("input[name='restaurant']:checked").val();
+        var supply_id = $("input[name='supply']:checked").val();
+        var status = $("input[name='status']:checked").val();
+
+        if( typeof(restaurant_id)== "undefined")
+        {
+            restaurant_id = "";
+        }
+        if( typeof(supply_id)== "undefined")
+        {
+            supply_id = "";
+        }
+        if( typeof(status)== "undefined")
+        {
+            status = "";
+        }
+
+        var getUrl = "&order_time_start="+$("#order_start").val()+"&order_time_end="+$("#order_end").val()+"&restaurant_id="+restaurant_id+"&supply_id="+supply_id+"&status="+status;
+        location.replace("/wx_user/procurement/manager_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}" + getUrl);
+    });
+
+    $("#reset").click(function()
+    {
+
+        $("#order_start").val("");
+        $("#order_end").val("");
+
+        $(".status").each(function(){
+            $(this).css("border","1px solid #ccc");
+            var id = $(this).attr("id");
+            id = id+"_input";
+            $("#"+id ).prop("checked",false);
+        });
+        $(".restaurant").each(function(){
+            $(this).css("border","1px solid #ccc");
+            var id = $(this).attr("id");
+            id = id+"_r";
+            $("#"+id ).prop("checked",false);
+        });
+        $(".supply").each(function(){
+            $(this).css("border","1px solid #ccc");
+            var id = $(this).attr("id");
+            var idArray = id.split("_");
+            id = idArray[0]+"_supply";
+            $("#"+id ).prop("checked",false);
+        });
+    });
+
+
+
+    function selectSupply(obj)
+    {
+        var restaurantID = $(obj).attr("class");
+        $(".restaurant").each(function(){
+            $(this).css("border","1px solid #ccc");
+        });
+
+        var id = restaurantID+"_r";
+        var check =  $("#"+id ).prop("checked");
+        $("#"+restaurantID).css("border","1px solid red");
+
+
+        var post_data = {'restaurant_id': restaurantID};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/procurement/return_supply';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'json',
+            async: true,
+            success: returnSupply
+        });
+    }
+
+    function returnSupply(response)
+    {
+        var div = document.getElementById("supply");
+        while(div.hasChildNodes()) //当div下还存在子节点时 循环继续
+        {
+            div.removeChild(div.firstChild);
+        }
+        for(var i=0; i< response.length;i++)
+        {
+            var content_div = '<div style="width:39%;margin:2%;padding:3%; border:1px solid #ccc;background: #fff;text-align: center;height:15px;border-radius:3px;float: left;-webkit-tap-highlight-color:rgba(255,255,255,0);"  class="supply" id='+response[i]['store_id']+"_content"+'>';
+            var content_input = '<input type="radio"  name="supply" value='+response[i]['store_id']+'  id='+response[i]['store_id']+"_supply"+' style="width: 20px;height: 20px;float: left;display: none"/>';
+            var content_label = '<label onclick="changeSupply(this)" class='+response[i]['store_id']+"_content"+' for='+response[i]['store_id']+"_supply"+' style="display: block;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;width: 100%">'+response[i]['title']+'</label>';
+            $("#supply").append(content_div+content_input+content_label+"</div>");
+
+        }
+    }
+
+       function changeStatus(obj)
+       {
+           $(".status").each(function(){
+               $(this).css("border","1px solid #ccc");
+           });
+           var id_div = $(obj).attr("class");
+
+           var id = id_div+"_input";
+           var check =  $("#"+id ).prop("checked");
+           $("#"+id_div).css("border","1px solid red");
+
+
+       }
+
+
+
+    function changeSupply(obj)
+    {
+        $(".supply").each(function(){
+            $(this).css("border","1px solid #ccc");
+        });
+        var id_content = $(obj).attr("class");
+
+        var idArray = id_content.split("_");
+        var id = idArray[0]+"_supply";
+
+        var check =  $("#"+id ).prop("checked");
+
+        $("#"+id_content).css("border","1px solid red");
+    }
+
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

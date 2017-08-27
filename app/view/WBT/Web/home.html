@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css"></style>
+    <title>{{ mp_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/web-rcrm/style.css?v={{our_lib_version}}">
+    <link rel="stylesheet" type="text/css" href="/web-rcrm/shop.css?v={{our_lib_version}}">
+    {% block css_placeholder %}{% endblock %}
+</head>
+<body{% if not is_browse %} onload="onLoad()"{% endif %}>
+<iframe id="mobileFrame" frameborder="0" src="about:blank" style="display:none"></iframe>
+<script type="text/javascript" src="/web-rcrm/common.js"></script>
+
+<div id="bg" style="height: 785px; display: none;"></div>
+
+<header id="page_title">
+    <div class="container">
+        {% if not is_browse %}
+        <a href="javascript:void(0)" id="cart_button" class="closed">
+            <img src="/web-rcrm/cart_icon.png" width="16" height="20" alt="" id="cart_icon">
+            <span id="food_num">0</span>
+        </a>
+        {% endif %}
+        <h1 id="page_name">{% if not is_browse %}订单号：{{ id_of_day }}{% else %}{{ mp_name }}{% endif %}</h1>
+    </div>
+</header>
+
+{% if not is_browse %}
+{% include 'WBT/Web/cart.html' %}
+{% endif %}
+
+<div id="shop_main" class="main container" style="display: block;">
+    {% block main_container %}{% endblock %}
+</div>
+
+{% block js_placeholder %}
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script src="/libs/wbt/sdk.web.js?v={{our_lib_version}}"></script>
+{% if not is_browse %}
+<script src="/web-rcrm/foods.js?v={{our_lib_version}}"></script>
+{% endif %}
+<script type="text/javascript">
+    var iniFoodNum = {{ ini_food_num|raw }};
+    var minPrice   = {% if minPrice is not null %}{{ minPrice }}{% else %}0{% endif %};
+    var showImg    = {{ show_img }};
+</script>
+{% endblock %}
+
+</body>
+</html>

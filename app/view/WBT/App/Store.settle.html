@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>订单结算</title>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<div>
+    <table class="table table-bordered">
+        <thead>
+        <tr><th>我的购物车</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div class="panel panel-default">
+                    <div class="panel-heading">购物车详情</div>
+                    <div class="panel-body">
+                        <input type="hidden" id="store_id" name="store_id" value="{{ store.store_id }}">
+                        <input type="hidden" id="phone" name="phone" value="{{ app_user.phone }}">
+                        <span><label>姓名：<input type="text" id="name" name="name" value="{{ app_user.nick }}"/></label></span>
+                        <br/>
+                        <span><label>电话：<input type="tel" id="tel" name="tel" value="{{ app_user.phone }}"/></label></span>
+                        <br/>
+                        <span><label>地址：<input type="text" id="address" name="address" value="{{ app_user.address }}"/></label></span>
+                    </div>
+                    <table class="table table-bordered">
+                        <tbody>
+                        {% set count = 0 %}
+                        {% set total_price = 0 %}
+                        {% for product in cart_data %}
+                        {% set count = count + product.num %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td width="15%">{{ product.num }}</td>
+                            <td width="30%">
+                                {% set total = product.price * product.num %}
+                                {% set total_price = total_price + total %}
+                                {{ total }} 元
+                            </td>
+                        </tr>
+                        {% if loop.last %}
+                        <tr><td colspan="3" style="text-align: right">共 {{ count }} 件商品，{{total_price}} 元</td></tr>
+                        {% endif %}
+                        {% else %}
+                        <tr>
+                            <td colspan="3">没有可显示的内容</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="message" class="alert" style="display: none;"></div>
+                    <button id="submit" class="btn btn-info btn-block" style="margin-top: 20px;">提交订单</button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script type="text/javascript">
+    $("#submit").click(function() {
+        var $storeId  = $("#store_id").val();
+        var $phone = $("#phone").val();
+        var $name     = $("#name").val();
+        var $tel      = $("#tel").val();
+        var $address  = $("#address").val();
+
+        if ($tel.length == 0) {
+            show_error('请填写电话');
+            return;
+        }
+
+        if ($address.length == 0) {
+            show_error('请填写地址');
+            return;
+        }
+
+        var $url  = '/api/wx_user/app_order/checkout';
+        var $data = {
+            'store_id': $storeId,
+            'wx_user_id': $wxUserId,
+            'name': $name,
+            'tel': $tel,
+            'address': $address
+        };
+        $.post($url, $data, function($data) {
+            if ($data['errno'] == 0) {
+                show_success($data['error']);
+            } else {
+                show_error($data['error']);
+            }
+        })
+    });
+    function show_error($message) {
+        $("#message").text($message).attr('class', 'alert alert-warning').show();
+    }
+    function show_success($message) {
+        $("#message").text($message).attr('class', 'alert alert-success').show();
+        $("#submit").css("display","none");
+    }
+</script>
+</body>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+       WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');}
+    );
+</script>
+</html>

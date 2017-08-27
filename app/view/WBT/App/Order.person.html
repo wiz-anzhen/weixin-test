@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*顶部导航*/
+        .nav_detail{position:fixed;z-index:999999;top:0;left:0;right:0;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;}
+        .top-kong{height: 156px;width: 100%;}
+        /*导航返回按键*/
+        .back{width:132px;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+        /*订单部分*/
+        .order{width: 96%;margin:auto;}
+        .o-top{width: 100%;height: 84px;font-size:36px;}
+        .o-top .time{float:left;width:45%;height:36px;color:#838383;line-height:36px;margin:24px 0;}
+        .o-top .money{float:right;width:45%;text-align: right;padding-right:24px;height:36px;color:#ff0000;line-height:36px;margin:24px 0;}
+
+        .o-middle{width: 100%;height: 168px;font-size:36px;border-top:3px solid #838383;border-bottom:3px solid #838383;background-color:#eeeeee;}
+        .o-middle .img{float:left;margin-right:12px;width:120px;height:120px;margin-top:24px;}
+        .o-middle img{width: 100%;height:100%;margin-left:12px;}
+        .o-middle .img-1{margin-left:24px;}
+        .o-middle .total{float:left;height:36px;margin-top:66px;color: #838383;line-height: 36px;width:26%;margin-left:100px;}
+        .o-middle .zou{float:right;height:36px;margin-top:66px;color: #838383;line-height: 36px;width:5%;text-align: right;padding-right:48px;}
+        .o-bottom{width: 100%;height: 132px;font-size:36px;}
+        .o-bottom .left{float:left;width: 65%;}
+        .o-bottom .right{float:right;width: 300px;}
+        .o-bottom .left .l-bottom,.l-top{height:36px;width: 100%;font-size: 36px;color:#838383;line-height: 36px;}
+        .o-bottom .l-top{margin-top:18px;}
+        .o-bottom .l-bottom{margin-top:12px;}
+        .o-bottom .right div{width: 204px;height: 96px;background:#ff6633;-moz-border-radius:40px;-webkit-border-radius:40px;border-radius: 50px;margin-top: 18px;margin-left:48px;color:#ffffff;font-size: 36px;text-align: center;line-height: 96px;}
+        .gray{width: 100%;height:48px;border-top:3px solid #838383;background-color: #eeeeee;}
+        .kong-hui{width: 100%;height:48px;border-top: 3px solid #9FA0A0;background-color: #F3F3F3;margin: 1.5em 0;}
+    </style>
+</head>
+<body>
+<div class="nav_detail"><div class="back" onclick="window.history.go(-1)"></div>我的订单</div>
+<div class="top-kong"></div>
+{% for order in orders %}
+<div class="order">
+    <div class="o-top clear"><div class="time">{{order.create_time}}</div><div class="money">￥{{order.total_price}}</div></div>
+    <div class="o-middle clear" onclick="detail(this);" tag="{{order.order_id}}">
+        {% for detail in order_details[order.order_id] %}
+        {% if loop.index<4 %}
+        <div class="img"><img src="{{products[detail.product_id].img_url}}"></div>
+        {% endif %}
+        {% endfor %}
+        <div class="total">商品共{{order.total_num}}件</div>
+        <div class="zou">&gt;</div>
+    </div>
+    <div class="o-bottom clear">
+        <div class="left">
+            <div class="l-top">订单号&nbsp;&nbsp;{{order.order_id}}</div>
+            <div class="l-bottom">状态&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#ff0000">{% if order.status == '待付款' %}{% if order.pay_method == 'wx_pay' %}&nbsp;&nbsp;&nbsp;{{order.status}}{% else %}{{order.status}}&nbsp;&nbsp;&nbsp;货到付款{%  endif%}{% elseif order.status == '交易关闭' %}{{order.status}}{% elseif order.status == '交易成功' %}{% if comments[order.order_id].comment_level %}已完成{% else %}待评价{% endif %}{% else %}{{order.status}}{% endif %}</font></div>
+        </div>
+        {% if order.status == '待付款' %}
+            {% if order.pay_method == 'wx_pay' %}
+            <div class="right"><div class="{{order.order_id}}" onclick=go(this,"{{order.total_price}}"); tag="fukuan">去付款</div></div>
+            {% else %}
+            <div class="right"><div class="{{order.order_id}}" onclick="go(this);"  style="display:none;" >货到付款</div></div>
+            {%  endif %}
+        {% elseif order.status == '交易关闭' %}
+            <div class="right"><div class="{{order.order_id}}" onclick="go(this);"  style="display:none;">{{order.status}}</div></div>
+        {% elseif order.status == '交易成功' %}
+            {% if comments[order.order_id].comment_level %}
+            <div class="right"><div class="{{order.order_id}}" onclick="go(this);" style="display:none;">已完成</div></div>
+            {% else %}
+            <div class="right"><div class="{{order.order_id}}" onclick="go(this);" tag="pingjia">去评价</div></div>
+            {%  endif %}
+        {% else  %}
+            <div class="right"><div class="{{order.order_id}}" onclick="go(this);"  style="display:none;">{{order.status}}</div></div>
+        {%  endif %}
+
+    </div>
+</div>
+<div class="kong-hui"></div>
+{% else %}
+<div style="width: 90%;margin-top:80px;text-align: center;color: #838383;font-size: 42px;">您目前还没有下单哦，快去购物吧...</div>
+<input type="hidden" name="order_id" value="{{order.order_id}}" >
+<div class="gray"></div>
+{% endfor %}
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+<input type="hidden" name="phone" value="{{phone}}">
+<input type="hidden" name="community_id" value="{{community_id}}">
+<input type="hidden" name="store_id" value="{{store_id}}">
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    function go(ob,total_price)
+    {
+        var orderID = $(ob).attr('class');
+        var text = $(ob).text();
+        var mpUserID = $("[name='mp_user_id']").val();
+        var phone = $("[name='phone']").val();
+        var communityID = $("[name='community_id']").val();
+        var storeID = $("[name='store_id']").val();
+        if(text == '去评价')
+        {
+            location.href="/app/order/comment?mp_user_id="+mpUserID+"&order_id="+orderID+"&phone="+phone+"&community_id="+communityID+"&store_id="+storeID;
+        }
+        if(text == '去付款')
+        {
+            location.href="/app/pay/index?mp_user_id="+mpUserID+"&phone="+phone+"&community_id="+communityID+"&store_id="+storeID+"&order_id="+orderID+"&total_fee="+total_price+"&pay_method=wx_pay";
+        }
+    }
+
+    function detail(ob)
+    {//订单商品详细页面
+        var orderID = $(ob).attr('tag');//order_id
+        var mpUserID = $("[name='mp_user_id']").val();
+        var phone = $("[name='phone']").val();
+        var communityID = $("[name='community_id']").val();
+        var storeID = $("[name='store_id']").val();
+        location.href="/app/order/detail?mp_user_id="+mpUserID+"&order_id="+orderID+"&phone="+phone+"&community_id="+communityID+"&store_id="+storeID;
+    }
+    $(function () {
+        //判断是否宽屏
+
+        // $.mobile.hScroller = false;
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1")
+        }
+    })
+
+</script>
+</html>

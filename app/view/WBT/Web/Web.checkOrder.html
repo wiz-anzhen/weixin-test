@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>签到备注</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <link href="/libs/bootstrap/css/bootstrap-responsive.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div>
+    {{navbar|raw}}
+
+    <table class="table table-bordered table-striped table-condensed">
+        <tr><th>菜名</th><th>数量</th><th>单价</th></tr>
+        {% set total_count = 0 %}
+        {% set total_money = 0 %}
+        {% for detail in order_detail %}
+        <tr><td>{{detail.menu_name}}</td><td>{{detail.menu_count}}</td><td>{{detail.menu_price}}</td></tr>
+        {% set total_count = total_count + detail.menu_count %}
+        {% set total_money = total_money + detail.menu_count * detail.menu_price %}
+        {% endfor %}
+        <tr><td>合计</td><td>{{total_count}}</td><td>{{total_money}}</td></tr>
+    </table>
+
+    备注：{{ order_comment }}<br/>
+    外卖单提交时间：{{ order_submit_time }}<br/>
+    电话：{{ order_phone }}<br/>
+    地址：{{ order_address }}<br/>
+    称呼：{{ order_customer_name }}<br/>
+    会员号：{{ order_vip_no }}<br/>
+
+    <br/>
+
+    <a target="_blank" href="{{host}}/web/web/confirm?order_id={{order_id}}&wx_user_id={{wx_user_id}}">确认订单</a>
+    <br/>
+    <br/>
+</div>
+
+</body>
+</html>

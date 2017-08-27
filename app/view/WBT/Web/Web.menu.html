@@ -1,0 +1,40 @@
+{% extends 'WBT/Web/home.html' %}
+
+{% block main_container %}
+<p class="error" id="error"></p>
+<h2 class="category">菜单分类：{{ catalog_name }}</h2>
+<ul class="food_list">
+    {% for menu in menus %}
+    <li id="food_{{ menu.restaurant_menu_id }}" rel="{{ menu.restaurant_menu_id }}" class="food">
+    <div class="info">
+        <h3 class="name">{% if menu.is_on_sale %}【特价】{% endif %}{{ menu.menu_name }}</h3>
+        <span class="l">￥<span class="price">{{ menu.price }}</span></span>
+    </div>
+    <a class="add" href="javascript:void(0)">+</a>
+    <span class="num">0</span>
+    <a class="reduce" href="javascript:void(0)">-</a>
+</li>
+    {% else %}
+    <li class="food">
+        <div class="info">
+            <h3 class="name">分类下没找到菜单</h3>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block js_placeholder %}
+{{ parent() }}
+<script type="text/javascript">
+    var adds = document.getElementsByClassName('add');
+    for (var i = 0; i < adds.length; i++) {
+        adds[i].onclick = addFood;
+    }
+
+    var reduces = document.getElementsByClassName('reduce');
+    for (i = 0; i < reduces.length; i++) {
+        reduces[i].onclick = deleteFood;
+    }
+</script>
+{% endblock %}

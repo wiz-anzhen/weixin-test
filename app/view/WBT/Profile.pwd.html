@@ -1,0 +1,26 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set head_active = 'profile' %}
+
+{% block sub_breadcrumbs %}
+<li class="active">修改密码</li>
+{% endblock %}
+
+{% block content_login %}
+{% if _eventMessage %}
+<div id="eventMessage" class="alert {{ _eventAlertClass }}"><button type="button" class="close" data-dismiss="alert">×</button>
+    <strong>{{ _eventMessage|raw }}</strong>
+</div>
+{% endif %}
+
+{{form|raw}}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}

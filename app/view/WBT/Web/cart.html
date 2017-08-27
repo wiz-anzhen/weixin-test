@@ -1,0 +1,41 @@
+<div id="cart" class="container" style="display: none;">
+    <div id="cart_body">
+        <div id="cart_title">
+            <span id="close_cart"><img src="/web-rcrm/close.png" width="13" height="13" alt=""></span>
+        </div>
+        <ul id="cart_food_list">
+
+        </ul>
+        <div{% if not in_open_time %} style="display:none;"{% endif %}>
+            <p id="empty" style="display: block;">还没有点菜哦</p>
+        </div>
+        <div id="total_price" style="display: none;">
+            共 <span id="food_num2"> 0 </span> 份美食
+            <span class="money">
+                ¥ <span id="money_num1">0</span>
+            </span>
+        </div>
+
+        <div{% if not in_open_time %} style="display:none;"{% endif %}>
+            <p id="not_enough" style="display: none;">还需 <span>¥</span><span id="money_num2"></span> 元才满起送价</p>
+            <div id="buttons">
+                <textarea id="comment" name="comment" placeholder="请在此填入您的订单备注，如忌口等要求"></textarea>
+                <a href="/web/web/take_away_address?mp_user_id={{mp_user_id}}&order_id={{order_id}}&wx_user_id={{wx_user_id}}" id="submit" onclick="return submit(this);">提交订单</a>
+                <script type="text/javascript">
+                    function submit($this) {
+                        $this.href = $this.href + '&comment=' + document.getElementById('comment').value;
+                        return true;
+                    }
+                </script>
+            </div>
+            {% if is_take_away == 1 %}
+            <span id="submitted" style="display: none;">订单已提交，请拨打<a href="tel:{{ phone_no }}">{{ phone_no }}</a>（点击即可拨打）告知服务员外卖单编号（{{ id_of_day }})进行电话确认。</span>
+            {% else %}
+            <span id="submitted" style="display: none;">提交成功，请将您点的菜告知服务员，您还可以在微信会员中心查看所有点菜记录。</span>
+            {% endif %}
+        </div>
+        <div{% if in_open_time %} style="display:none;"{% endif %}>
+            <span id="submitted">抱歉，现在还没到外卖时间，所以还不能提交哦。外卖服务时间为{{ open_time }}。</span>
+        </div>
+    </div>
+</div>

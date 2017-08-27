@@ -1,0 +1,31 @@
+{% extends "WBT/home.twig" %}
+
+{% block header %}
+<ul class="pull-right nav nav-pills">
+    <li><span> {{ username }}</span></li>
+    <li><a href="/">首页</a></li>
+    <li><a href="/auth/logout">退出</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+    <div class="row content-area">
+        <div class="span12">
+            <div class="hero-unit">
+                <div class="container">
+                    <div class="row">
+                        <div class="span3">
+                            <img src="/images/error.png">
+                        </div>
+                        <div class="span9">
+                            <br>
+                            <h3 class="form-title">{{ code ? code ~ ' ' : '' }}{{ title }}</h3>
+                            <p>{{ message }}</p>
+                            <p><a class="btn btn-primary btn-large" href="{{ from | default(context('app.base')) }}">返回</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

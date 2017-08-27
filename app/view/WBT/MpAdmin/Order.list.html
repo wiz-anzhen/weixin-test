@@ -1,0 +1,322 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_order' %}
+
+{% block css_link %}
+<style type="text/css">
+
+    .show_change{
+        width:auto;
+        height:auto;
+        position:absolute;
+        overflow:hidden;
+    }
+    .hide_change{
+        width:90px;
+        height:40px;
+        overflow:hidden;
+    }
+
+    .inform{
+        float:right;
+        display:inline;
+    }
+
+    .table thead th
+    {
+        text-align: center;
+    }
+    .inform_show{
+        background-color:red;
+        border-radius: 3px;
+        display:none;
+        padding:1px 10px;
+        cursor:pointer;
+    }
+    .inform_hide{
+        display:inline;
+        background-color:#bebebe;
+        border-radius: 3px;
+        color:white;
+        padding:1px 6px;
+    }
+    #inform_list{
+        position:absolute;
+        left:700px;
+        top:170px;
+        height:auto;
+    }
+    #count_content{
+        background-color:red;
+        border-radius: 3px;
+        display:none;
+        margin:0 10px;
+        padding:1px 6px;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/order/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">订单(商城)管理</a>
+    <span class="divider">/</span>
+</li>
+<li>
+    {% set status_name = { 'submitted_to_pay': '待付款',
+    'paid_to_verify': '待确认',
+    'verified_to_ship': '待发货',
+    'dispatched': '已发货',
+    'arrived': '已到达服务网点',
+    'finished': '交易成功',
+    'closed': '交易关闭',
+    'reject': '已拒收',
+    'refund': '退款退货中',
+    'all': '全部订单' } %}
+    {{ status_name[status] }}
+    <span class="divider">/</span>
+</li>
+<div class="inform">
+
+</div>
+{% endblock %}
+
+{% block content_login %}
+<form class="form-inline" role="form" id="form" method="post" style="margin-bottom: 20px;display:none;">
+    <div class="form-group" style="display:inline;">
+        <label for="tel">手机号</label>
+        <input type="text" class="form-control" style="width:100px" id="tel" name="tel" placeholder="请输入手机号" value="{{tel}}">
+    </div>
+    <div class="form-group" style="display:inline;">
+        <label for="order_id">订单号</label>
+        <input type="text" class="form-control" style="width:100px" id="order_id" name="order_id" placeholder="请输入订单号" value="{{orderId}}">
+    </div>
+    <div class="form-group" style="display:inline;">
+        <label for="customer_name">姓名</label>
+        <input type="text" class="form-control" style="width:100px" id="customer_name" name="customer_name" placeholder="请输入姓名" value="{{customer_name}}">
+        <input type="hidden" id="status" name="status" value="{{status}}">
+        <input type="hidden" id="page" name="page" value="{{page}}">
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label for="status">订单状态</label>
+        <select name="status_so" style="width:100px;" id="select" onchange="update_time_search_visibility();">
+            <option value="" {% if  selected0 %}selected='selected'{% endif %}>请选择</option>
+            <option value="default_status" {% if  selected1 %}selected='selected'{% endif %}>无</option>
+            <option value="submitted_to_pay" {% if  selected2 %}selected='selected'{% endif %}>待付款</option>
+            <option value="verified_to_ship" {% if  selected4 %}selected='selected'{% endif %}>待发货</option>
+            <option value="dispatched" {% if  selected5 %}selected='selected'{% endif %}>已发货</option>
+            <option value="finished"  {% if  selected7 %}selected='selected'{% endif %}>交易成功</option>
+            <option value="close" {% if  selected8 %}selected='selected'{% endif %}>交易关闭</option>
+            <option value="reject" {% if  selected9 %}selected='selected'{% endif %}>已拒收</option>
+            <option value="refund" {% if  selected10 %}selected='selected'{% endif %}>退款退货中</option>
+        </select>
+    </div>
+    <div class="form-group" style="display:inline;">
+        <label for="pay_method">支付方式</label>
+        <select name="pay_method" style="width:100px;" id="pay_method">
+            <option value="" >请选择</option>
+            <option value="cash_pay" {% if pay_method == 'cash_pay' %}selected='selected'{% endif %}>货到付款</option>
+            <option value="wx_pay" {% if  pay_method == 'wx_pay' %}selected='selected'{% endif %}>微信支付</option>
+            <option value="online" {% if pay_method == 'online' %}selected='selected'{% endif %}>在线支付</option>
+
+        </select>
+    </div>
+    <div class="form-group" style="display:inline;">
+        <label for="pay_finished">是否完成支付</label>
+        <select name="pay_finished" style="width:100px;" id="pay_finished">
+            <option value="all" {% if pay_finished == 'all' %}selected='selected'{% endif %}>全部订单</option>
+            <option value="1" {% if pay_finished == '1' %}selected='selected'{% endif %}>已支付</option>
+            <option value="0" {% if pay_finished == '0' %}selected='selected'{% endif %}>未支付</option>
+
+        </select>
+    </div>
+    <div style="margin-top: 20px">
+    <input type="text" name="start" id="start" value="" style="display:none;"  />
+    <input type="text" name="end" id="end" value="" style="display:none;"  />
+    <div class="form-group" style="display:inline;">
+        <label for="group_name">客服组</label>
+        <select class="group_name" style="width:100px;" id="group_name" onchange="so('change')">
+            <option  value="" id="kong">请选择</option>
+            {% for cs_group in group %}
+            <option  value="{{cs_group.customer_specialist_group_id}}"{% if group_id == cs_group.customer_specialist_group_id %} selected="selected"{% endif %}>{{cs_group.group_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group" style="display:inline;">
+        <label for="cs">客服专员</label>
+        <select class="form-control input-lg" style="width:100px;" id="cs" name="cs">
+            {% if cs_id %}
+            <option  value="{{cs_id}}" selected="selected">{{cs_name}}</option>
+            {% else %}
+            <option  value="" >请选择</option>
+            {% endif %}
+
+        </select>
+    </div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-success" onclick="searcha('all')" style="display:inline;">搜索</button>
+        <button type="button" class="btn btn-success" onclick="clearData()" style="display:inline;">清空</button>
+        <a class="btn btn-success"
+           href="/api/fcrm/order/order_download?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&c_tel={{ c_tel }}&c_order_id={{ c_order_id }}&c_cs_group_id={{ c_cs_group_id }}&c_cs_id={{ c_cs_id }}&c_status={{ c_status }}&c_customer_name={{ c_customer_name }}&c_time_start={{ c_time_start }}&c_time_out={{ c_time_end }}&&o_time_start={{ o_time_start }}&&o_time_end={{ o_time_end }}&pay_method={{pay_method}}&pay_finished={{pay_finished}}">导出Excel</a>
+    </div>
+    <div id="time_search" style="margin-top:10px;display: none">
+        <b style="font-size:14px;">交易完成</b><br/>
+        <span id="time_s" >起始时间：</span><input type="text" name="time_start" id="time_start" value="{{ c_time_start }}" placeholder="例如：20140505" />
+        <span id="time_e" >截止时间：</span><input type="text" name="time_end" id="time_end" value="{{ c_time_end }}" placeholder="例如：20140506" />
+        <div style="float:right;"></div>
+    </div>
+    <div style="margin-top:10px;">
+        <b style="font-size:14px;">订单创建</b><br/>
+        起始时间：<input type="text" name="order_time_start" id="order_time_start" value="{{ o_time_start }}" placeholder="例如：20140505"/>
+
+
+        截止时间：<input type="text" name="order_time_end" id="order_time_end" value="{{ o_time_end }}" placeholder="例如：20140506" />
+
+        <div style="float:right;"></div>
+    </div>
+    </div>
+</form>
+
+
+<ul class="nav nav-tabs">
+
+    <li{% if status == 'submitted_to_pay' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('submitted_to_pay')">待付款</a>
+    </li>
+    <!--
+    <li{% if status == 'paid_to_verify' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('paid_to_verify')">待确认</a>
+    </li>
+    -->
+    <li{% if status == 'verified_to_ship' %} class="active"{% endif %}>
+    <a href="#"onclick="searcha('verified_to_ship')">待发货</a>
+    </li>
+    <li{% if status == 'dispatched' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('dispatched')">已发货</a>
+    </li>
+    <!--
+    <li{% if status == 'arrived' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('arrived')">已到达服务网点</a>
+    </li>
+    -->
+    <li{% if status == 'finished' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('finished')">交易成功</a>
+    </li>
+    <li{% if status == 'closed' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('closed')">交易关闭</a>
+    </li>
+    <li{% if status == 'reject' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('reject')">已拒收</a>
+    </li>
+    <li{% if status == 'refund' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('refund')">退款退货中</a>
+    </li>
+    <li{% if status == 'all' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('all')">全部订单</a>
+    </li>
+
+</ul>
+{{ table|raw }}
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+
+
+
+<script type="text/javascript">
+
+    function so(operate)
+    {
+        var $csGroupId = $("#group_name").find("option:selected").val();
+        var post_data = {'cs_group_id': $csGroupId};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/return_cs';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'text',
+            async: true,
+            success: function(e){
+                if(operate == 'refresh')
+                {
+                    document.getElementById("cs").options.length = 1;
+                }
+                else
+                {
+                    document.getElementById("cs").options.length = 0;
+                    $("#cs").append("<option  value=''>"+"请选择"+"</option>");
+                }
+                for(var i=0; i< e.length;i++)
+                {
+                    $("#cs").append("<option  value='"+e[i]['customer_specialist_id']+"'>"+e[i]['name']+"</option>");
+                }
+            }
+        });
+    }
+
+    function update_time_search_visibility()
+    {
+        var v = document.getElementById('select').value;
+        if(v == 'finished')
+        {
+            $("#time_search").show();
+            $("#time_start").val('');
+            $("#time_end").val('');
+        }
+        else
+        {
+            $("#time_search").hide();
+        }
+    }
+
+    update_time_search_visibility();
+
+    if($("#status").val() == 'all')
+    {
+        $("#form").attr("style","margin-bottom: 20px;display:block;");
+    }
+
+    function searcha($status)
+    {
+        $("#status").val($status);
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&tel="+$("#tel").val()+"&order_id="+$("#order_id").val()+"&customer_name="+$("#customer_name").val()+"&status="+$("#status").val()+"&status_so="+$("[name='status_so']").find("option:selected").val()+"&group_name="+$("#group_name").find("option:selected").val()+"&cs="+$("[name='cs']").find("option:selected").val()+"&time_start="+$("#time_start").val()+"&time_end="+$("#time_end").val()+"&order_time_start="+$("#order_time_start").val()+"&order_time_end="+$("#order_time_end").val()+"&pay_method="+$("#pay_method").find("option:selected").val()+"&pay_finished="+$("#pay_finished").find("option:selected").val();
+        location.replace(wlh + getUrl);
+
+    }
+
+    function clearData(){
+        $("input").val("");
+        //$("#form").submit();
+        var arr = window.location.href.split("&");
+        location.replace(arr[0]+"&"+arr[1]+"&status="+"all");
+    }
+
+    function inform(){
+        document.getElementById("inform_list").style.display="inline";
+    }
+    function disappearInform()
+    {
+        document.getElementById("inform_list").style.display="none";
+    }
+
+    $(function(){
+        so("refresh");
+    })
+
+</script>
+
+
+
+{% endblock %}

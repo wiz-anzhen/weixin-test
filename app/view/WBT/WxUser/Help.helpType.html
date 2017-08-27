@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>帮助</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="renderer" content="webkit"/>
+</head>
+<body style="margin:0; padding:0;">
+<div style="width: 100%;height:50px;border-bottom: 1px solid gray;margin-bottom: 25px;">
+    <div class="sp2" style="text-align: center;font-size: 1.5em;line-height: 50px;">
+        采购助手
+    </div>
+</div>
+<div>
+<ul>
+   {% if  community_type == "procurement_restaurant"  %}
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=chef&community_type={{community_type}}">
+            厨师长确认帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=order&community_type={{community_type}}">
+            订货帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=examine&community_type={{community_type}}">
+            验货帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=return&community_type={{community_type}}">
+            退货帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=chef_self&community_type={{community_type}}">
+            自订货厨师长确认帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=order_self&community_type={{community_type}}">
+            自订货帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=examine_self&community_type={{community_type}}">
+            自验货帮助
+        </a>
+    </li>
+    <li style="padding: 6px;">
+        <a href="/wx_user/help/weixin?mp_user_id={{mp_user_id}}&img_type=return_self&community_type={{community_type}}">
+            自退货帮助
+        </a>
+    </li>
+    {% endif %}
+
+    {% if  community_type == "procurement_supply"  %}
+    {% endif %}
+
+    {%  if community_type == "procurement_total" %}
+    {% endif %}
+</ul>
+</div>
+</body>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

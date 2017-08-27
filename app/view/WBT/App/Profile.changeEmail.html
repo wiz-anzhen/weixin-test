@@ -1,0 +1,60 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>设置邮箱</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand">设置邮箱</a>
+        </div>
+    </nav>
+    <div>
+        <input type="text" id="email" class="form-control input-lg" style="width:95%;margin:0 auto;" placeholder="请输入邮箱" value="{% if app_user.email %}{{ app_user.email }}{% endif %}" /><br/>
+        <a id="submit_next" class="btn btn-success btn-lg btn-block" style="width:95%;margin:0 auto;">保存</a>
+    </div><br/>
+    <div id="submit_status" class="alert alert-danger" style="display: none;"></div>
+</div>
+{% endblock %}
+
+
+{% block js_link %}
+<script>
+    $(function(){
+        $("#submit_next").click(function(){
+            var $email = $("#email").val();
+            if ($email.length < 3)
+            {
+                $("#submit_status").html("请输入正确的邮箱地址").show();
+                return false;
+            }
+
+            var post_data = {'phone': '{{app_user.phone}}', 'email': $email};
+            var site = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/save_email';
+            $.ajax({
+                type: 'post',
+                url: site,
+                data: post_data,
+                datatype: 'json',
+                async: true,
+                success: afterSavePhone
+            });
+        });
+    });
+
+    function afterSavePhone(data) {
+        if(data.errno == 0)
+        {
+            $("#submit_status").html('保存成功').show();
+            location.replace(document.referrer);
+        }
+        else
+        {
+            $("#submit_status").html(data.error).show();
+        }
+    }
+</script>
+{% endblock %}
+

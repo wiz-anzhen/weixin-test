@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<div class="box" style="width: 100%;height:50px;position: relative;border-bottom:1px solid #ccc;">
+    <span style="position: absolute;left: 10px;top: 15px;padding:0 15px;" id="close" >关闭</span>
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;padding:0 15px;">{{template_type}}</div>
+</div>
+
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+
+<div id="orderForm" style="width:100%;padding-top:15px; padding-bottom:15px; margin:0 auto;clear: both;">
+    <div class="Products" style="padding-left:5%;font-weight:bolder;">
+        <p style="padding: 3px 0;">
+            <img src="/images/procurement_house.png" style="width: 15px;height: 15px;padding-right: 5px;">{{store_title}}
+        </p>
+        <p style="color:#363636;font-size:1.2em;padding: 3px 0;">{{ order_data.create_time}}</p>
+        <p style="color:#bbb;font-size:0.8em;padding: 3px 0;">订单号:{{ order_id }}</p>
+    </div>
+</div>
+
+{% for data_content in order_detail_data %}
+<div style="padding:8px 5px;background:#e4e4e4;clear: both;border:1px solid #ccc;margin-top: 8px;">
+    <p style="float: left;margin-left: 5px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 50%;">
+        档口:{{data_content.part}}
+    </p>
+    <p style="float: right;color: red;font-weight: bolder;margin-right: 25px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 30%;text-align: right;">
+        &yen;{{data_content.price}}
+    </p>
+    <div style="color: #e4e4e4;">000</div>
+</div>
+{% for order_detail in data_content.content %}
+
+<div class="main" style="width:80%;padding-top:3%; padding-bottom:7%; margin:5px auto;clear: both;font-size: 0.9em;">
+
+    <div class="Products" style="float:left;width: 30%;">
+        <p style="overflow:hidden;white-space:nowrap;">{{order_detail.title}}</p>
+        <p style="font-size: 0.5em;">{{order_detail.price}}{{order_detail.product_unit_new}}</p>
+    </div>
+
+    <div style="width: 30%;text-align: center;float: left;overflow:hidden;white-space:nowrap;margin: 0 5% ;">...............................................................................</div>
+
+    <div class="Number" style="float:right;">
+        <span style="font-size:1.2em;">x{{order_detail.count}}</span>
+    </div>
+
+</div>
+
+{% endfor %}
+{% endfor %}
+
+
+<div style="margin-top: 20px;margin-bottom: 40px;font-size: 1.2em;padding: 15px;border-top: 1px solid #ccc;border-bottom: 1px solid #ccc" id="price">
+    <p>
+        <span style="color: #000000">总金额：</span>
+        <span style="color: red;">{{order_data.total_price}}元</span>
+    </p>
+</div>
+
+<div style="color: #ffffff;margin-top:20px;clear:both;">000</div>
+
+<script>
+    $(function(){
+        $("#close").click(function(){
+            WeixinJSBridge.invoke('closeWindow',{},function(res)
+            {
+            });
+        })
+    })
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</body>
+
+</html>

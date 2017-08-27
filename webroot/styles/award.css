@@ -1,0 +1,32 @@
+@media (max-width: 767px) {
+    body {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+}
+body {
+    background: url('/images/bg_model/bk_repeat1_3.jpg') repeat-y right 0,
+    url('/images/bg_model/bk_repeat1_2.jpg') repeat-y left 0,
+    url('/images/bg_model/bk_top1_1.jpg') repeat-x 0 0,
+    url('/images/bg_model/bk_repeat1_1.jpg') repeat 0 0,#864c2c;
+    background-size: 3.5px 23.5px,3.5px 23.5px,304.5px 93px,313px 23.5px;
+    padding-top: 17px;
+}
+#main{
+    border: 0px solid #222;
+    position: absolute;
+    right: 20px;
+    top: 90px;
+}
+.card{
+    background: url('/images/award/card_1.png?v=091701') no-repeat 0 0;
+    -webkit-background-size: 267px 159px;
+    background-size: 267px 159px;
+    margin: 0 auto 20px auto;
+    position: relative;
+    width: 267px;
+    height: 159px;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    box-shadow: 0 0 4px rgba(0,0,0,.6);
+}

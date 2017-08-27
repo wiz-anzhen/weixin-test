@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=100%,target-densitydpi=400px,user-scalable=no,initial-scale=0.325" id="meta">
+    <title></title>
+    <style type="text/css">
+        body,div,ul,li{margin:0;padding:0;}
+        .clear:after {content:"";display:block;clear:both;}
+        /*头部导航*/
+        .nav_shopping{position:fixed;z-index:9999;top:0px;height:132px;width:100%;background-color: #ff6633;margin-bottom:20px;font-size:48px;text-align: center;color: #ffffff;line-height: 132px;margin-bottom: 32px;}
+        .top-kong{height: 164px;width: 100%;}
+        /*底部菜单*/
+        .bottom{position:fixed;z-index:9999;bottom:0;left:0;width:100%;height:144px;color:#bbbbbb;border-top:2px solid #ff6633;background-color: #F3F3F3;}
+        .bottom ul{list-style: none;}
+        .bottom ul li{float:left;}
+        .bottom ul .home{width: 14.4%;text-align: center;border:0px solid green;height:144px;margin-left: 24px;text-align: center;background: url(/images/shop/home_before.png) no-repeat center;}
+        .bottom ul .add_go{width: 52%;text-align: center;border:0px solid green;height:144px;text-align: center;color: #ffffff;margin-left: 60px;background:url(/images/shop/detail_add_go_before.png) no-repeat center;font-size: 48px;line-height: 144px;}
+
+        /*导航返回按键*/
+        .back{width:13.2%;height:132px;border:0px solid white;position: absolute;top:0;left:24px;background:url("/images/shop/back-before.png") no-repeat}
+
+        /*购物详情*/
+        .shopping .detail{width: 96%;margin: auto;border: 0px solid green;}
+        .shopping .detail .left{ float:left;width: 360px;height:360px;border: 0px solid green;}
+        .shopping .detail .middle{float:left;width: 260px;border: 0px solid green;margin-left: 8px;}
+        .shopping .detail .right{float:right;width: 132px;border: 0px solid green;margin-right: 48px;}
+
+        .shopping .detail .left img{width: 360px;height:360px;}
+
+        .shopping .detail .middle .m-top{width:340px;height:280px;color: #000000;font-size: 3.5em;border: 0px solid green;line-height: 70px;overflow: hidden;}
+        .shopping .detail .middle .m-bottom{width:260px;height:80px;color: #ff2500;font-size: 80px;line-height:42px;border: 0px solid green;font-family: "方正超粗黑简体";}
+
+        .shopping .detail .right .r-add,.r-reduce{width: 132px;height: 132px;}
+        .shopping .detail .right .r-add,.r-reduce img{width: 132px;height: 132px;}
+        .shopping .detail .right .r-num{width: 132px;height: 96px;border: 0px solid green;font-size: 44px;line-height: 96px;text-align: center;}
+
+        .kong{width: 96%;margin: 24px auto;text-align: center;border: 2px solid #b3b3b3;}
+
+        .total{width: 96%;height: 100px;font-size: 54px;line-height: 100px;border-top:2px solid #ff2500;border-bottom:2px solid #ff2500;margin:auto;color: red;margin-top: 44px;font-weight: bold;}
+        .total .total-num{float: left;height: 52px;line-height: 52px;padding-left: 48px;margin-top: 20px;}
+        .total .total-money{float: right;height: 52px;line-height: 52px;padding-right: 48px;margin-top: 20px;}
+    </style>
+</head>
+<body>
+<div class="nav_shopping"><div class="back" onclick="window.history.go(-1)"></div>购物车</div>
+<div class="top-kong"></div>
+<div class="shopping">
+{% for p in productArr %}
+    {% if p.num %}
+    <div class="detail clear"  id="detail_{{cart_id}}_{{p.product_id}}">
+        <div class="left"><img src="{{p.img_url}}"></div>
+        <div class="middle ">
+            <div class="m-top">{{p.title}}</div>
+            <div class="m-bottom" id="priceA_detail_{{cart_id}}_{{p.product_id}}">￥{{p.priceA}}</div>
+            <input type="hidden" name="price_detail_{{cart_id}}_{{p.product_id}}" id="price_detail_{{cart_id}}_{{p.product_id}}" value="{{p.price}}" />
+            <input type="hidden" name="same" id="same" value="price_detail_{{cart_id}}"/>
+            <input type="hidden" name="product_id" id="p_detail_{{cart_id}}_{{p.product_id}}" value="{{p.product_id}}"/>
+            <input type="hidden" name="cart_id" id="c_detail_{{cart_id}}_{{p.product_id}}" value="{{cart_id}}"/>
+        </div>
+        <div class="right">
+            <div class="r-add"  onclick="add(this);"><img src="/images/shop/add.png"></div>
+            <div class="r-num"  id="num_detail_{{cart_id}}_{{p.product_id}}">{{p.num}}</div>
+            <div class="r-reduce" onclick="reduce(this);"><img src="/images/shop/reduce.png"></div>
+        </div>
+    </div>
+
+    {% if loop.index < count %}
+    <div class="kong" id="k_detail_{{cart_id}}_{{p.product_id}}"></div>
+    {% endif %}
+
+
+   {% endif %}
+{% endfor %}
+
+    <div class="total clear">
+        <div class="total-num" id="total_num">共：{{total_num}}件</div>
+        <div class="total-money" id="total_money">￥{{total_money}}</div>
+        <input type="hidden" name="total_num_hidden" id="total_num_hidden" value="{{total_num}}">
+        <input type="hidden" name="total_money_hidden" id="total_money_hidden" value="{{total_money}}">
+    </div>
+</div>
+
+<div class="bottom">
+    <ul>
+        <li class="home" onclick="location.href='/app/mall/list?mp_user_id={{mp_user_id}}&phone={{phone}}&community_id={{community_id}}&store_id={{store_id}}'"></li>
+        <li class="add_go" onclick="location.href='/app/mall/order_detail?mp_user_id={{mp_user_id}}&store_id={{store_id}}&phone={{phone}}&community_id={{community_id}}'">去结算</li>
+    </ul>
+</div>
+
+
+<input type="hidden" name="phone" value="{{phone}}">
+<input type="hidden" name="mp_user_id" value="{{mp_user_id}}">
+<input type="hidden" name="store_id" value="{{store_id}}">
+<input type="hidden" name="community_id" value="{{community_id}}" />
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+</body>
+<script type="text/javascript" src="/libs/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+    //购买数量为0时，影藏全部
+    function hide()
+    {
+        var totalNum = $("#total_num_hidden").val();
+        var totalMoney = $("#total_money_hidden").val();
+        if(totalNum <= 0 && totalMoney <= 0)
+        {
+            $("#total").attr("style","display:none;")
+            var communityID = $("[name='community_id']").val();
+
+            var phone = $("[name='phone']").val();
+            var storeID = $("[name='store_id']").val();
+            var mpUserID = $("[name='mp_user_id']").val();
+            location.href='/app/mall/shopping_empty?mp_user_id='+mpUserID+'&phone='+phone+'&store_id='+storeID+"&community_id="+communityID;
+        }
+    }
+
+    $(function(){
+        hide();
+    })
+    function add(ob)
+    {
+        var id = $(ob).parent().parent().attr('id');
+        var p = "price_"+id;
+        var n = "num_"+id;
+        var price = $("#"+p).val();
+        var numA = parseInt($("#"+n).text());
+        numA = numA +1;
+        $("#"+n).html(numA);
+        var priceA = (parseInt(numA) * parseFloat(price)).toFixed(2);
+        var pA = "priceA_"+id;
+        $("#"+pA).html("￥"+priceA);
+        //计算总数量
+        var totalNum = parseInt($("#total_num_hidden").val());
+        totalNum += 1;
+        $("#total_num").html("共："+totalNum+"件");
+        $("#total_num_hidden").val(totalNum);
+        //计算总价
+        var totalMoney = $("#total_money_hidden").val();
+        totalMoney = (parseFloat(totalMoney) + parseFloat(price)).toFixed(2);
+        $("#total_money_hidden").val(totalMoney);
+        $("#total_money").html("￥"+totalMoney);
+
+        //购物车数量增加
+        var cid = "c_"+id;
+        var pid = "p_"+id;
+        var cartID = $("#"+cid).val();
+        var productID = $("#"+pid).val();
+
+        var site = location.protocol + '//' + location.host + '/api/wx_user/appmall/shopping_add';
+        var post_data = {'cart_id': cartID,'product_id':productID};
+        $.ajax({
+            url:site,
+            data:post_data,
+            type:'POST',
+            dataType:'json',
+            async: true,
+            success:function(r){
+                //alert(r.errno);
+                if(r.errno == 1)
+                {
+                    alert(r.error);
+                }else
+                {
+                    hide();
+                }
+
+            }
+        });
+
+    }
+
+    function reduce(ob)
+    {
+        var id = $(ob).parent().parent().attr('id');
+        var p = "price_"+id;
+        var n = "num_"+id;
+        var price = $("#"+p).val();
+        var numA = parseInt($("#"+n).text());
+        //如果单个商品的数量<=0时，隐藏该商品
+        if(numA <= 0)
+        {
+            numA = 0;
+            $("#"+n).html(numA);
+            $("#"+id).attr("style","display:none;");
+            var k = "k_"+id;
+            $("#"+k).attr("style","display:none;");
+        }
+        else
+        {
+            numA = numA -1;
+
+            $("#"+n).html(numA);
+            if(numA == 0)
+            {
+                $("#"+id).attr("style","display:none;");
+                var k = "k_"+id;
+                $("#"+k).attr("style","display:none;");
+            }
+
+            //对应数量的价格
+            var priceA = (parseInt(numA) * parseFloat(price)).toFixed(2);
+            var pA = "priceA_"+id;
+            $("#"+pA).html("￥"+priceA);
+
+
+            //计算总数量
+            var totalNum = parseInt($("#total_num_hidden").val());
+            if(totalNum <= 0)
+            {
+                totalNum = 0;
+            }
+            else
+            {
+                totalNum -= 1;
+            }
+            $("#total_num").html("共："+totalNum+"件");
+            $("#total_num_hidden").val(totalNum);
+//            hide();
+
+            //计算总价
+            var totalMoney = $("#total_money_hidden").val();
+            if(totalMoney <= 0)
+            {
+                totalMoney = 0;
+            }
+            else
+            {
+                totalMoney = (parseFloat(totalMoney) - parseFloat(price)).toFixed(2);
+            }
+            $("#total_money_hidden").val(totalMoney);
+            $("#total_money").html("￥"+totalMoney);
+
+            hide();
+
+            //购物车数量减少
+            var cid = "c_"+id;
+            var pid = "p_"+id;
+         //   alert(pid);
+            var cartID = $("#"+cid).val();
+            var productID = $("#"+pid).val();
+//alert(productID);
+            var site = location.protocol + '//' + location.host + '/api/wx_user/appmall/shopping_reduce';
+            var post_data = {'cart_id': cartID,'product_id':productID};
+            $.ajax({
+                url:site,
+                data:post_data,
+                type:'POST',
+                dataType:'json',
+                async: true,
+                success:function(r){
+                    //alert(r.errno);
+                    if(r.errno == 1)
+                    {
+                        alert(r.error);
+                    }
+                    else
+                    {
+                        hide();
+                    }
+                }
+            });
+
+            //判断数量为0时将产品影藏
+            var numE = parseInt($("#"+n).text());
+            if(numE == 0)
+            {
+                $("#"+id).attr("style","display:none;");
+                var k = "k_"+id;
+                $("#"+k).attr("style","display:none;");
+            }
+
+        }
+    }
+    $(function () {
+        //判断是否宽屏
+        var winWide = window.screen.width;
+        //alert(winWide);//320
+        var wideScreen = false;
+        if (winWide <= 320) {//1024及以下分辨率
+            //$("#css").attr("href", "/styles/mall-list.css");
+        } else {
+            //$("#css").attr("href", "/styles/mall-list-big.css");
+            //wideScreen = true; //是宽屏
+            $("#meta").attr("content","width=100%, user-scalable=no, initial-scale=1, maximum-scale=1")
+        }
+    })
+</script>
+</html>

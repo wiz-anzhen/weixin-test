@@ -1,0 +1,84 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>缴费通知单</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    ul li
+    {
+        list-style-type:none;
+    }
+    .title
+    {
+        font-size: 15px;
+        font-weight: bold;
+        margin-top:8px;
+    }
+    .big_title
+    {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .payable
+    {
+        color:red;
+    }
+    .body
+    {
+        margin:20px 20px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    <div class="title" style="margin-top: 12px;text-align: center;margin-bottom: 10px">{{bill_name}}</div>
+    <div class="title">户名：{{house_name}}</div>
+    <div class="title">房号：{{house_address}}</div>
+    <div class="title">面积：{{house_area}}</div>
+    <div class="title">账单日期：{{bill_day}}</div>
+    {% if pay_finished %}
+    <div class="title"> 账单状态：已支付</div>
+    {% else %}
+    <div class="title"> 账单状态：未支付
+        {% if pay_type %}
+        <button type="button" class="btn btn-success" style="margin-left:18px;font-weight:normal;margin-top:-4px;font-size: 13px;" onclick="pay()">微信支付</button>
+        {% endif %}
+    </div>
+    {% endif %}
+    <br><br>
+    <div class="big_title" style="color:red;text-align:center;margin-bottom: 15px">
+        累计金额合计：{{total_payment}}
+    </div>
+
+    {% for detail in bill_detail %}
+    <div class="title">{{detail.bill_detail_name}}</div>
+    <div style="margin-bottom: 10px">
+        <ul>
+            <li>计费周期：{{detail.billing_cycle}}</li>
+            <li class="payable">应缴金额：{{detail.detail_payment}}</li>
+            {% if detail.detail_remarks %}
+            <li>备注：{{detail.detail_remarks }}</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    {% endfor %}
+    <div>
+        {{bill_comment|raw}}
+    </div>
+
+</div>
+{% endblock %}
+{% block js_link %}
+   <script>
+         function pay()
+         {
+             window.location.href = "/wx_user/pay/pay_bill?bill_id={{bill_id}}&total_fee={{total_payment}}&mp_user_id={{mp_user_id}}&community_id={{community_id}}&wx_user_id={{wx_user_id}}";
+         }
+    </script>
+{% endblock %}
+

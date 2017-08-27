@@ -1,0 +1,95 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_store' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/store/store_procurement?mp_user_id={{mp_user_id}}&community_id={{community_id}}">采购管理</a><span class="divider">/</span></li>
+<li class="active"><a href="/mp_admin/store/category_procurement?store_id={{store.store_id}}&mp_user_id={{mp_user_id}}&community_id={{community_id}}">{{store.title}}</a><span class="divider">/</span></li>
+<li>{{ category.title }}</li>
+{% endblock %}
+
+{% block action %}
+{% if store_rw %}
+
+{% if community_type == 'procurement_supply' %}
+{% elseif community_type == 'procurement_restaurant' %}
+<button type="button" class="btn btn-success" style="float:left;margin-bottom: 10px;margin-left:10px;" onclick="bluefinBH.ajaxDialog('/mp_admin/store_dialog/product_add_procurement?store_id={{ store.store_id }}&category_id={{ category.category_id }}&mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">
+    添加产品
+</button>
+
+<div>
+    <div id="form1Icon_UPLOAD" style="float:left;"></div>
+    <div  style="float:left;margin-left:30px;">
+        <a href="/download/category_demo.xlsx">点击下载批量录入Excel示例文件</a>
+    </div>
+</div>
+{% endif%}
+
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="/libs/uploadify/uploadify.css?v={{ third_lib_version }}">
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+
+{% block js_link %}
+
+<script src="/libs/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript">
+    $("#form1Icon_UPLOAD").uploadify({
+        'swf'           : '/libs/uploadify/uploadify.swf',
+        //       'uploader'      : '/api/image/file/upload_by_flash',
+        'uploader'      : '/api/fcrm/house/category_upload?store_id={{ store.store_id }}&category_id={{ category.category_id }}&mp_user_id={{ mp_user_id }}&community_id={{community_id}}',
+        'fileSizeLimit' : '50MB',
+        'width'         : 68,
+// 'height'        : 28,
+        'debug'         : false,
+// 'buttonText'   : '选择图片',
+// 'buttonClass'   : '/images/button/select_img.png',
+        'buttonImage'   : '/libs/uploadify/select_file.png',
+//                'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+        'fileTypeExts'  : '*.xlsx',
+        'method'        : 'post',
+        'multi'         : false,
+        /*                'onSelectError' : function(file, errorCode, errorMsg)
+         {
+         if(errorCode == -110)
+         {
+         alert('图片大小超过限制,最大可以上传5M的图片。');
+         }
+         },
+         */
+        'onUploadSuccess' : function(file, data)
+        {
+            data = eval("(" + data + ")");
+            if(data.errno == 0)
+            {
+                location.reload();
+                alert("录入成功");
+            }
+            else
+            {
+                location.reload();
+                alert(data.error);
+
+            }
+        }
+
+    });
+</script>
+{% endblock %}

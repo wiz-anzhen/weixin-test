@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>挑选货品</title>
+    <meta http-equiv="X-UA-Compatible" content ="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit"/>
+    <style type="text/css">
+        html,body,div,ul,li,ol,img,span,p,h1,h2,h3{ margin:0; padding:0;}
+        ul,ol{ list-style:none;}
+        a{text-decoration: none;}
+        .box2{margin-top: 10px;border-top: 1px solid gray;border-bottom: 1px solid gray;padding:10px 0;overflow: hidden;}
+        .left{float: left;margin-left: 3%;font-size: 0.5em;line-height: 16px;}
+        .right{float: right;margin-right: 5px;}
+        ul li{padding:10px 10px;border-top: 1px solid gray;overflow: hidden;}
+        .rBox{width: 50%;}
+        .rBox img{float: right;width: 30px;height:25px;margin-left: 7%;padding:1% ;display: block;}
+        .rBox .price{width: 30px;height:25px;margin-left: 7%;line-height: 28px;padding:0.5%;text-align:center;float: right;}
+    </style>
+</head>
+<body>
+<div class="box"style="width: 100%;position: relative;padding:15px 0;">
+    <span class="span1"style="position: absolute;left: 10px;top: 18px;"><a href="/wx_user/test/a"style="color: black;">返回</a></span>
+    <div class="sp2"style="margin:0 auto;text-align: center;font-size: 1.5em;">挑选货物</div>
+    <span class="span2"style="position: absolute;right: 10px;top:18px;"><a href="/wx_user/test/b">下单</a></span>
+</div>
+<div style="height:25px;background:#e4e4e4;"></div>
+<ul id="myUl">
+    <li class="libg"style="border-top: none;">
+        <div class="left">
+            白菜<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">1.5</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li class="libg">
+        <div class="left">
+            芥菜<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">1.0</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li class="libg">
+        <div class="left">
+            西红柿<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">1.5</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li>
+        <div class="left">
+            土豆<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">0.0</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li>
+        <div class="left">
+            豌豆<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">0.0</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li class="libg">
+        <div class="left">
+            油菜<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">1.0</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li class="libg">
+        <div class="left">
+            芹菜<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"style="width: 18%;"/>
+            <div class="price"style="background:#999;">1.5</div>
+            <img class="reduce"src="/images/big_reduce.png"style="width: 18%;"/>
+        </div>
+    </li>
+    <li>
+        <div class="left">
+            西兰花<br/>
+            1.50元/斤
+        </div>
+        <div class="right rBox">
+            <img class="increase"src="/images/big_increase.png"class="increase" style="width: 18%;"/>
+            <div class="price"style="background:#999;">0.0</div>
+            <img class="reduce"src="/images/big_reduce.png"class="reduce" style="width: 18%;"/>
+        </div>
+    </li>
+</ul>
+</body>
+<script type="text/javascript">
+    function getByClass (oParent,sClass) {
+        var aEle=oParent.getElementsByTagName('*');
+        var aResult=[];
+        for (var i = 0; i < aEle.length; i++) {
+            if(aEle[i].className==sClass){
+                aResult.push(aEle[i]);
+            }
+        }
+        return aResult;
+    }
+    var myUl=document.getElementById('myUl');
+    var lis=myUl.getElementsByTagName('li');
+    var increase=getByClass(myUl,'increase');
+    var money=getByClass(myUl,'price');
+    var reduce=getByClass(myUl,'reduce');
+    var num=0;
+    function increases() {
+        for (var i = 0; i < increase.length; i++) {
+            increase[i].index=i;
+            increase[i].onclick=function  () {
+                num=parseFloat(money[this.index].innerHTML)
+                num+=0.1;
+                money[this.index].innerHTML=num.toFixed(1);
+                setColor();
+            }
+        }
+    }
+    increases();
+    function reduces() {
+        for (var i = 0; i < reduce.length; i++) {
+            reduce[i].index=i;
+            reduce[i].onclick=function  () {
+                num=parseFloat(money[this.index].innerHTML)
+                if (num>=0) {
+                    if(num<0.1){
+                        num=0.1
+                    }
+                    num+=-0.1;
+                    money[this.index].innerHTML=num.toFixed(1);
+                    setColor();
+                }else{
+                    return false
+                }
+            }
+        }
+    }
+    reduces();
+
+    function setColor (){
+        for (var i = 0; i < money.length; i++) {
+            if(money[i].innerHTML==0.0){
+                money[i].style.color='gray';
+                lis[i].removeAttribute('class')
+            }else{
+                money[i].style.color='black';
+                lis[i].setAttribute('class','libg')
+            }
+        }
+    }
+    setColor();
+</script>
+</html>

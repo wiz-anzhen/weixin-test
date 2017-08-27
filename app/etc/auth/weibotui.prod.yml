@@ -1,0 +1,21 @@
+weibotui:
+  class: \Bluefin\Auth\DbAuth
+  config:
+    authUrl: 'http://anzhen.xin/auth/index'
+    responseUrl: 'http://anzhen.xin/auth/index'
+    modelClass: \WBT\Model\Weibotui\User
+    captchaClass: \Bluefin\Captcha\Recaptcha
+    uidColumn: user_id
+    identityColumn: username
+    credentialColumn: password
+    numFailureNeedCaptcha: -1
+    dataColumns:
+      - '*'
+      - profile.nick_name
+      - profile.gender
+      - profile.avatar
+      - profile.description
+    persistence:
+      type: session
+      options: { namespace: auth.weibotui }
+

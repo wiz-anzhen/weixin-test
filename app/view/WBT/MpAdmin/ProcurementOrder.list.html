@@ -1,0 +1,195 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_order' %}
+
+{% block css_link %}
+<style type="text/css">
+    .inform{
+        float:right;
+        display:inline;
+    }
+
+    .table thead th
+    {
+        text-align: center;
+    }
+
+</style>
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/procurement_order/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">订单(采购)管理</a>
+    <span class="divider">/</span>
+</li>
+<li>
+    {% set status_name = { 'chef_verify': '等待厨师长确认',
+    'supply_verify': '等待供应商确认',
+    'examine': '等待验货',
+    'supply_examine': '等待供应商确认验货',
+    'finished': '已完成',
+    'refund': '退款退货中',
+    'refund_finished': '退款退货完成',
+    'all': '全部订单' } %}
+    {{ status_name[status] }}
+    <span class="divider">/</span>
+</li>
+<div class="inform">
+
+</div>
+{% endblock %}
+
+{% block content_login %}
+<form class="form-inline" role="form" id="form" method="post" style="margin-bottom: 20px;display:none;">
+    <div class="form-group" style="display:inline;">
+        <label for="order_id">订单号</label>
+        <input type="text" class="form-control" style="width:180px" id="order_id" name="order_id" placeholder="请输入订单号" value="{{orderId}}">
+    </div>
+
+        <input type="hidden" id="status" name="status" value="{{status}}">
+        <input type="hidden" id="page" name="page" value="{{page}}">
+
+
+    <div class="form-group" style="display:inline;">
+        <label for="status">订单状态</label>
+        <select name="status_so" style="width:180px;" id="select" >
+            <option value="" {% if  status_so == ''  %}selected='selected'{% endif %}>请选择</option>
+            <option value="chef_verify" {% if  status_so == 'chef_verify'  %}selected='selected'{% endif %}>等待厨师长确认</option>
+            <option value="supply_verify" {% if  status_so == 'supply_verify'  %}selected='selected'{% endif %}>等待供应商确认</option>
+            <option value="examine" {% if  status_so == 'examine'   %}selected='selected'{% endif %}>等待验货</option>
+            <option value="supply_examine"  {% if  status_so == 'supply_examine'  %}selected='selected'{% endif %}>等待供应商确认验货</option>
+            <option value="finished"  {% if  status_so == 'finished'  %}selected='selected'{% endif %}>已完成</option>
+            <option value="refund"  {% if  status_so == 'refund'  %}selected='selected'{% endif %}>退款退货中</option>
+            <option value="refund_finished"  {% if  status_so == 'refund_finished'  %}selected='selected'{% endif %}>退款退货完成</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label for="store_id">
+            {% if  community_type == 'procurement_supply'  %}
+               餐厅
+            {% else %}
+               供应商
+            {% endif %}
+        </label>
+        <select name="store_id" style="width:180px;" id="store_id" >
+            <option value="" {% if  store_id == ''  %}selected='selected'{% endif %}>请选择</option>
+            {% for store in store_data %}
+            <option value="{{store.store_id}}" {% if  store.store_id == store_id  %}selected='selected'{% endif %}>{{store.title}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if  community_type == 'procurement_supply'  %}
+    {% else %}
+    <div class="form-group" style="display:inline;">
+        <label for="part_id">
+            档口
+        </label>
+        <select name="part_id" style="width:180px;" id="part_id" >
+            <option value="" {% if  part_id == ''  %}selected='selected'{% endif %}>请选择</option>
+            {% for part in part_data %}
+            <option value="{{part.part_id}}" {% if  part.part_id == part_id  %}selected='selected'{% endif %}>{{part.title}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+
+
+
+
+    <div style="margin-top:20px;">
+        <b style="font-size:14px;">订单创建</b><br/>
+        起始时间：<input type="date" name="order_time_start" id="order_time_start" value="{{ o_time_start }}" />
+        截止时间：<input type="date" name="order_time_end" id="order_time_end"  {% if o_time_end_current %} value="{{ o_time_end_current }}"  {% else %} value="{{ o_time_end }}" {% endif %}/>
+
+        <button type="button" class="btn btn-success" onclick="searcha('all')" style="display:inline;">搜索</button>
+        <button type="button" class="btn btn-success" onclick="clearData()" style="display:inline;">清空</button>
+        <a class="btn btn-success"
+           href="/api/fcrm/procurement_order/order_download?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&c_order_id={{orderId}}&c_status={{ c_status  }}&c_customer_name={{ c_customer_name }}&o_time_start={{ o_time_start }}&o_time_end={{ o_time_end }}&store_id={{ store_id }}&part_id={{ part_id }}&data_total_price={{ data_total_price }}&community_type={{ community_type }}">导出Excel</a>
+    </div>
+
+    <br><br>
+    <div>
+        <span style="font-size: 18px;font-weight: bold">总金额：</span>
+        <span style="font-size: 18px;color:red;">{{data_total_price}}</span>
+    </div>
+</form>
+
+<!--
+<ul class="nav nav-tabs">
+    <li{% if status == 'submitted_to_pay' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('chef_verify')">等待厨师长确认</a>
+    </li>
+
+    <li{% if status == 'supply_verify' %} class="active"{% endif %}>
+    <a href="#"onclick="searcha('supply_verify')">等待供应商确认</a>
+    </li>
+    <li{% if status == 'examine' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('examine')">等待验货</a>
+    </li>
+
+    <li{% if status == 'supply_examine' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('supply_examine')">等待供应商确认验货</a>
+    </li>
+    <li{% if status == 'finished' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('finished')">已完成</a>
+    </li>
+
+    <li{% if status == 'refund' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('refund')">退款退货中</a>
+    </li>
+    <li{% if status == 'refund_finished' %} class="active"{% endif %}  >
+    <a href="#"onclick="searcha('refund_finished')">退款退货完成</a>
+    </li>
+    <li{% if status == 'all' %} class="active"{% endif %}>
+    <a href="#" onclick="searcha('all')">全部订单</a>
+    </li>
+
+</ul>-->
+{{ table|raw }}
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+
+
+
+<script type="text/javascript">
+
+
+    if($("#status").val() == 'all')
+    {
+        $("#form").attr("style","margin-bottom: 20px;display:block;");
+    }
+
+    function searcha($status)
+    {
+        $("#status").val($status);
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&order_id="+$("#order_id").val()+"&status="+$("#status").val()+"&status_so="+$("[name='status_so']").find("option:selected").val()+"&order_time_start="+$("#order_time_start").val()+"&order_time_end="+$("#order_time_end").val()+"&store_id="+$("[name='store_id']").find("option:selected").val()+"&part_id="+$("[name='part_id']").find("option:selected").val();
+        location.replace(wlh + getUrl);
+
+    }
+
+    function clearData(){
+        $("input").val("");
+        //$("#form").submit();
+        var arr = window.location.href.split("&");
+        location.replace(arr[0]+"&"+arr[1]+"&status="+"all");
+    }
+
+
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_wx_pay_record' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>支付记录</li>
+{% endblock %}
+
+{% block content_login %}
+<div style="border:1px solid #ced7dc;border-radius: 5px;padding:10px 0 20px 20px;margin-top:10px;background-color:#F8F8FF;margin-bottom: 10px;">
+    <form class="form-inline" role="form" id="form" method="get" style="margin-bottom: 20px;">
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="order_id">订单号</label>
+            <input type="text" class="form-control" style="width:120px" id="order_id" name="order_id" value="{{order_id}}">
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="pay_method">付款方式</label>
+            <select style="width:150px;" name="pay_method" id="pay_method">
+                <option  value="" >请选择</option>
+                <option  value="wx_pay" >微信支付</option>
+                <option  value="cash_pay" {% if pay_method == 'cash_pay' %}selected='selected'{% endif %}>货到付款</option>
+                <!--option  value="register_time_increase" {% if rank == 'register_time_increase' %}selected='selected'{% endif %}>注册时间正序</option>
+                <option  value="register_time_reduce" {% if rank == 'register_time_reduce' %}selected='selected'{% endif %}>注册时间逆序</option-->
+            </select>
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label for="name">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</label>
+            <input type="text" class="form-control" style="width:75px" id="name" name="name" value="{{name}}">
+            <input type="hidden" id="page" name="page" value="{{ page }}">
+        </div>
+
+        <br>
+        <br>
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>下订单时间范围</label>
+            <input type="text" class="form-control" style="width:120px" id="pay_start_date_start" name="pay_start_date_start"  value="{{pay_start_date_start}}" placeholder="例如：20140506" >
+            <label>至</label>
+            <input type="text" class="form-control" style="width:120px" id="pay_start_date_end" name="pay_start_date_end"  value="{{pay_start_date_end}}" placeholder="例如：20140506" >
+        </div>
+
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>订单完成时间范围</label>
+            <input type="text" class="form-control" style="width:120px" id="pay_end_date_start" name="pay_end_date_start"  value="{{pay_end_date_start}}" placeholder="例如：20140506" >
+            <label>至</label>
+            <input type="text" class="form-control" style="width:120px" id="pay_end_date_end" name="pay_end_date_end"  value="{{pay_end_date_end}}" placeholder="例如：20140506" >
+        </div>
+        <br>
+        <br>
+        <div class="form-group" style="display:inline;margin-right: 15px;">
+            <label>排序方式</label>
+            <select style="width:150px;" name="rank" id="rank">
+                <option  value="pay_time_increase" >订单完成时间正序</option>
+                <option  value="pay_time_reduce" {% if rank == 'pay_time_reduce' %}selected='selected'{% endif %}>订单完成时间逆序</option>
+                <!--option  value="register_time_increase" {% if rank == 'register_time_increase' %}selected='selected'{% endif %}>注册时间正序</option>
+                <option  value="register_time_reduce" {% if rank == 'register_time_reduce' %}selected='selected'{% endif %}>注册时间逆序</option-->
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-success" onclick="search();" style="display:inline;">搜索</button>
+        <button type="button" class="btn btn-default" onclick="clearData()" style="display:inline;">清空</button>
+        <a class="btn btn-success"
+           href="/api/fcrm/wx_user/download_pay?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}&pay_start_date_start={{pay_start_date_start}}&pay_start_date_end={{pay_start_date_end}}&pay_end_date_start={{pay_end_date_start}}&pay_end_date_end={{pay_end_date_end}}">导出Excel</a>
+    </form>
+</div>
+
+{{ table|raw }}
+{% endblock %}
+
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+{% block js_link %}
+<script type="text/javascript">
+    function search()
+    {
+        if(($("#pay_start_date_start").val() != '') && ($("#pay_start_date_end").val() == ''))
+        {
+            alert("请填写完整的用户开始支付时间范围");
+        }
+        if(($("#pay_start_date_start").val() == '') && ($("#pay_start_date_end").val() != ''))
+        {
+            alert("请填写完整的用户开始支付时间范围");
+        }
+
+        if($("#pay_start_date_start").val() != '')
+        {
+            if($("#pay_start_date_start").val().length != 8)
+            {
+                alert("开始支付时间格式不对应由8位数字组成：例如20140701");
+            }
+        }
+
+        if($("#pay_start_date_end").val() != '')
+        {
+            if($("#pay_start_date_end").val().length != 8)
+            {
+                alert("支付时间格式不对应由8位数字组成：例如20140701");
+            }
+        }
+
+        if(($("#pay_end_date_start").val() != '') && ($("#pay_end_date_end").val() == ''))
+        {
+            alert("请填写完整的用户结束支付时间范围");
+        }
+        if(($("#pay_end_date_start").val() == '') && ($("#pay_end_date_end").val() != ''))
+        {
+            alert("请填写完整的用户结束支付时间范围");
+        }
+
+        if($("#pay_end_date_start").val() != '')
+        {
+            if($("#pay_end_date_start").val().length != 8)
+            {
+                alert("用户结束支付时间格式不对应由8位数字组成：例如20140701");
+            }
+        }
+
+        if($("#pay_end_date_end").val() != '')
+        {
+            if($("#pay_end_date_end").val().length != 8)
+            {
+                alert("用户结束支付时间格式不对应由8位数字组成：例如20140701");
+            }
+        }
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&name="+$("#name").val()+"&order_id="+$("#order_id").val()+"&pay_method="+$("#pay_method").find("option:selected").val()+"&rank="+$("#rank").find("option:selected").val()+"&pay_start_date_start="+$("#pay_start_date_start").val()+"&pay_start_date_end="+$("#pay_start_date_end").val()+"&pay_ebd_date_start="+$("#pay_end_date_start").val()+"&pay_end_date_end="+$("#pay_end_date_end").val();
+        location.replace(wlh + getUrl);
+    }
+
+    function clearData()
+    {
+        $("input").val("");
+        var arr = window.location.href.split("&");
+        location.replace(arr[0]+"&"+arr[1]);
+    }
+
+</script>
+{% endblock %}

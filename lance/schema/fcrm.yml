@@ -1,0 +1,873 @@
+# 微信公众平台自动问答相关数据表
+
+#------------------------------------------------------------------------------
+#预编译指令
+!comment-locale: zh_CN
+
+#------------------------------------------------------------------------------
+#枚举类型
+
+
+@wx_navigation_type:
+  comment: '微信导航类型'
+  values:
+    general: 自定义导航
+    admin: 管理员功能
+    order_take_away: 点外卖
+    browse_menu: 浏览菜单
+    comment_order: 点评
+    profile: 会员信息
+    award_record: 中奖记录
+    feedback: 意见反馈
+
+@community_admin_power_type:
+  comment: '小区管理员权限类型'
+  values:
+    channel_r: 频道查看
+    channel_rw: 频道修改
+    channel_d: 频道删除
+    directory_r: 目录查看
+    directory_rw: 目录修改
+    directory_d: 目录删除
+    directory_small_flow: 目录小流量设置
+    img_carousel_r: 图片轮播查看
+    img_carousel_rw: 图片轮播修改
+    img_carousel_d: 图片轮播删除
+    questionnaire_r : 问卷调查查看
+    questionnaire_rw : 问卷调查修改
+    questionnaire_d : 问卷调查删除
+    article_r: 素材查看
+    article_rw: 素材修改
+    article_d: 素材删除
+    bill_r: 缴费通知单查看
+    bill_rw: 缴费通知单修改
+    bill_d: 缴费通知单删除
+    store_r: 商城查看
+    store_rw: 商城修改
+    store_d: 商城删除
+    order_r: 订单查看
+    order_rw: 订单修改
+    house_member_r:  社区用户信息查看
+    house_member_rw: 社区用户信息修改
+    house_member_d: 社区用户信息删除
+    member: 微信用户信息
+    app_user: APP用户信息
+    phone_book_r: 电话本查看
+    phone_book_rw: 电话本修改
+    phone_book_d: 电话本删除
+    customer_specialist_r: 客户服务专员查看
+    customer_specialist_rw: 客户服务专员修改
+    customer_specialist_d: 客户服务专员删除
+    receive_questionnaire_notify : 接受问卷调查通知
+    receive_order_notify: 接受订单通知
+    send_by_group: 发送群消息——社区级别
+    send_by_group_mp: 发送群消息——公众号级别
+    user_notify: 发送模板消息——社区级别
+    user_notify_mp: 发送模板消息——公众号级别
+    user_notify_app_mp: 发送模板消息——app级别公众号级别
+    user_notify_app_c: 发送模板消息——app级别社区级别
+    push_message_app_mp: 推送通知——app级别公众号级别
+    push_message_app_c: 推送通知——app级别社区级别
+    ble: beacon硬件设备管理
+
+
+@company_admin_power_type:
+  comment: '二级管理员权限类型'
+  values:
+    channel: 频道
+    directory: 目录
+    directory_small_flow: 目录小流量设置
+    img_carousel: 图片轮播
+    questionnaire: 问卷调查
+    article: 素材管理
+    bill: 缴费通知单
+    store: 商城
+    order: 订单
+    house_member: 社区用户信息
+    member: 微信用户信息
+    app_user: APP用户信息
+    phone_book: 电话本
+    customer_specialist: 客户服务专员
+    receive_questionnaire_notify : 接受问卷调查通知
+    receive_order_notify: 接受订单通知
+    send_by_group: 发送群消息——社区级别
+    send_by_group_mp: 发送群消息——公众号级别
+    user_notify: 发送模板消息——社区级别
+    user_notify_mp: 发送模板消息——公众号级别
+    user_notify_app_mp: 发送模板消息——app级别公众号级别
+    user_notify_app_c: 发送模板消息——app级别社区级别
+    push_message_app_mp: 推送通知——app级别公众号级别
+    push_message_app_c: 推送通知——app级别社区级别
+    ble: beacon硬件设备管理
+
+super_admin:
+  comment: '超级管理员'
+  has:
+    username: text|+128|comment='user.username'
+    comment|?: text|comment='备注'
+    has_delete_power: int|+1|comment=删除公众账号权限|=0
+  keys:
+    pk: username
+
+mp_admin:
+  comment: '公众帐号管理员，多对多关系'
+  with: [auto_increment_id]
+  has:
+    username: text|+128|comment='user.username'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    comment|?: text|comment='备注'
+  keys:
+    username: username
+    mp_user_id: mp_user_id
+
+company_admin:
+  comment: '公众帐号公司管理员，多对多关系'
+  with: [auto_increment_id]
+  has:
+    username: text|+128|comment='user.username'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    mp_name|?: text|+1024|comment='mp_user.mp_name'
+    power|?: text|+1024|comment='权限'
+    comment|?: text|comment='备注'
+  keys:
+    username: username
+    mp_user_id: mp_user_id
+
+community_admin:
+  comment: '公众帐号管理员，多对多关系'
+  with: [auto_increment_id]
+  has:
+    username: text|+128|comment='user.username'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment='community.community_id'
+    power|?: text|+1024|comment='权限'
+    admin_username|?: text|+128|comment='管理员帐号'
+    order_notify_time|?: datetime|comment=新订单提醒时间
+    answer_notify_id|?: int|+10|comment='新问卷id'
+    comment|?: text|comment='备注'
+  keys:
+    username: username
+    mp_user_id: mp_user_id
+    community_id: community_id
+
+@industry_type:
+   comment: '公众账号行业类型'
+   values:
+    internet: 'IT科技/互联网/电子商务'
+    restaurant: '餐饮/餐饮'
+    procurement: '餐饮/采购'
+    house: '房地产/物业'
+    fiance: '金融业/证券/基金/理财/信托'
+    culture: '文化娱乐/体育'
+    retail: '零售业/鞋类'
+
+
+mp_user:
+  comment: '微信公众帐号'
+  with: [ create_timestamp, update_timestamp]
+  has:
+    mp_user_id: int|+10|comment=mp_user_id
+    mp_name: text|+64|comment=公众账号名称
+    followed_content|?: text|comment='欢迎语'
+    comment|?: text|comment='备注'
+    valid: bool|comment=是否有效|=1
+    api_id: text|+16|comment=ApiID
+    token: text|+32|comment=apitoken
+    location_x|?: text|+16|comment='经度'
+    location_y|?: text|+16|comment='纬度'
+    max_vip_no: int|+10|comment='最大会员编号'|=100
+    phone_no|?: text|+64|comment=电话号码
+    app_id|?: text|+64|comment=微信AppId
+    app_secret|?: text|+64|comment=微信AppSecret
+    partner_id|?: text|+16|comment=微信支付partnerid
+    partner_key|?: text|+32|comment=微信支付partnerkey
+    pay_sign_key|?: text|+128|comment=微信支付paysignkey
+    mchid|?: text|+16|comment=受理商ID
+    pay_key|?: text|+64|comment=商户支付密钥Key
+    js_api_call_url|?: url|comment=jsapi跳转支付页面url
+    sslcert_path|?: text|+512|comment=apiclient_cert证书路径
+    sslkey_path|?: text|+512|comment=apiclient_key证书路径
+    notify_url|?: url|comment=异步通知url
+    curl_timeout|?: int|+10|comment=请求最短时间|=30
+    card_logo|?: url|comment=会员卡logo
+    share_pic|?: url|comment=分享文章时使用的图片
+    card_background|?: url|comment=会员卡背景
+    card_list_directory|?: int|+10|comment=会员卡页目录ID
+    open_date|?: text|+64|comment=服务开通日期
+    send_report: bool|comment=是否发送报表|=1
+    cs_visible: bool|comment=个人设置页面显示客服专员|=0
+    sale_list_name |?: text|+64|comment=出库销售单标题
+    access_token|?: text|+512|comment=公众号全局唯一票据
+    access_token_update_time|?: int|+10|comment=票据更新时间
+    mp_user_type: bool|comment=是否是服务号|=1
+    industry|?: industry_type|comment='公众账号行业类型'
+    order_notify_music|?: url|comment=订单通知音乐
+
+  keys:
+    pk: mp_user_id
+    api_id|u: api_id
+
+mp_user_nav:
+  comment: '微信主导航'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment=mp_user.mp_user_id|=0
+    title|?: text|comment=标题
+    description|?: text|comment=描述
+    pic_url|?: url|comment=图片url
+    url|?: url|comment=图文消息url
+    navigation_type: wx_navigation_type|=general
+    sort_no: float|comment=排序字段|0
+  keys:
+    mp_user_id: mp_user_id
+
+mp_user_config:
+  comment: '公众账号配置表'
+  with: [ auto_increment_id ]
+  has:
+     config_type: mp_user_config_type|comment='公众账号配置类型'
+     config_value|?: text|comment='公众账号配置值'
+     config_type_type : mp_user_config_type_type|comment='公众账号配置值选择类型'
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+
+  keys:
+      ukey|u: [ mp_user_id, config_type]
+
+
+@mp_user_config_type:
+   comment: '公众账号配置类型'
+   values:
+    birthday_title: '生日提醒标题'
+    birthday_description: '生日提醒描述'
+    birthday_pic_url: '生日提醒图片链接'
+    birthday_article_url: '生日提醒文章链接'
+    cs_answer: '开通客户服务专员回复功能'
+    cs_click_wx_menu_hint: '引导客服专员点击底部菜单提醒语'
+    verify_code_id: '短信验证码模板ID'
+    template_message_notify_id: '模板消息ID--任务处理通知'
+    template_order_notify_id: '模板消息ID--订单状态更新'
+    template_service_notify_id: '模板消息ID--信息推广状态提醒'
+    template_fiance_notify_id: '模板消息ID--信息披露公布提醒(金融)'
+    subscribe_bool_news: '是否启用关注后弹出图文消息'
+    subscribe_title: '关注后弹出图文消息——标题'
+    subscribe_description: '关注后弹出图文消息——摘要'
+    subscribe_pic: '关注后弹出图文消息——图片'
+    subscribe_url: '关注后弹出图文消息——链接'
+    wx_pay: '是否启用微信支付'
+    mp_user_name_link: '微信公共账号链接'
+
+@mp_user_config_type_type :
+   comment: '公众账号配置值选择类型'
+   values:
+    text: '文本'
+    bool: '开关'
+    img: '图片链接'
+    url: '网址链接'
+
+@wx_user_level:
+  comment: 用户等级
+  values:
+    level_0: '无等级'
+    level_1: '一级'
+    level_2: '二级'
+    level_3: '三级'
+    level_4: '四级'
+
+wx_user:
+  comment: '普通微信用户'
+  has:
+    create_time: datetime|comment='创建时间'
+    wx_user_id: text|+64|comment=微信用户OpenID
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    vip_no: int|+20|comment='会员号'|=0
+    phone|?: text|+32|comment=用户电话
+    is_fans: int|+1|comment='是否是粉丝'|=1
+    is_admin: int|+1|comment=是否是管理员|=0
+    nick|?: text|+64|comment=称呼
+    name|?: text|+64|comment=姓名
+    last_access_ymd: int|+10|comment=上次访问日期|=0
+    comment|?: text|+128|comment='备注'
+    user_level: wx_user_level
+    idiograph|?: text|+255|comment=个人签名
+    address|?: text|+255|comment=地址
+    birth|?: int|+10|comment=生日
+    gender|?: text|+6|comment=性别
+    head_pic|?: url|comment=头像
+    message_date|?: text|+16|comment=消息日期|=00000000
+    card_id|?: text|+255|comment=卡号
+    email|?: text|+255|comment=邮箱地址
+    current_community_id: int|+10|comment=community.community_id|=0
+    latitudeUser|?: text|+255|comment=纬度
+    longitudeUser|?: text|+255|comment=经度
+    w_province|?: text|+255|comment=关注所在省/市
+    w_city|?: text|+255|comment=关注所在市/区
+    register_time|?: datetime|comment='注册时间'
+    identify_time|?: datetime|comment='认证时间'
+    last_access|?: datetime|comment='上次访问时间'
+    is_quit|?: bool|comment=是否退出|=0
+
+  keys:
+    pk: wx_user_id
+    vip_no|u: [mp_user_id, vip_no]
+    create_time: create_time
+
+app_user:
+  comment: '普通App用户'
+  has:
+    create_time: datetime|comment='创建时间'
+    vip_no: int|+20|comment='会员号'|=0
+    phone|?: text|+32|comment=注册用户登录手机号
+    password: text|+32|comment=注册用户登录密码
+    is_admin: int|+1|comment=是否是管理员|=0
+    nick|?: text|+64|comment=昵称
+    name|?: text|+128|comment=姓名
+    last_access_ymd: int|+10|comment=上次访问日期|=0
+    comment|?: text|+128|comment='备注'
+    idiograph|?: text|+255|comment=个人签名
+    province|?: text|+128|comment=所在省份
+    city|?: text|+64|comment=所在城市
+    community_name|?: text|+255|comment=社区名字
+    address|?: text|+255|comment=地址
+    birth|?: int|+10|comment=生日
+    gender|?: text|+6|comment=性别
+    head_pic|?: url|comment=头像
+    message_date|?: text|+16|comment=消息日期|=00000000
+    card_id|?: text|+255|comment=卡号
+    email|?: text|+255|comment=邮箱地址
+    current_community_id: int|+10|comment=community.community_id|=0
+    latitudeUser|?: text|+255|comment=纬度
+    longitudeUser|?: text|+255|comment=经度
+    is_receive_message: int|+1|comment=是否接收消息|=0
+    baidu_user_id|?: text|+32|comment=百度userid
+    baidu_channel_id|?: text|+32|comment=百度channelid
+    last_access|?: datetime|comment='上次访问时间'
+    is_quit|?: bool|comment=是否退出|=0
+
+  keys:
+    phone: phone
+    vip_no|u: vip_no
+    create_time: create_time
+
+pc_user:
+  comment: '网页用户'
+  with: [ auto_increment_id, create_timestamp ,update_timestamp ]
+  has:
+    user_id: int|+10|comment=system.user.user_id
+    username: text|+255|comment=用户账号
+    is_paying_user: int|+1|comment=是否是付费用户|=0
+    logo_path|?: text|+2083
+    expired_time: datetime|comment=付费过期时间
+    last_access|?: datetime|comment='上次访问时间'
+
+  keys:
+    username: username
+
+
+wx_user_ext:
+  comment: '普通微信用户扩展表'
+  with: [ auto_increment_id, create_timestamp]
+  has:
+    wx_user_id: text|+64|comment=微信用户OpenID
+    phone|?: int|+20|comment=用户电话
+    phone_verify_code|?: text|+8|comment=手机验证码
+    phone_verify_code_generate_time|?: datetime|comment=手机验证码创建时间
+  keys:
+    wx_user_id|u: wx_user_id
+
+
+mp_fans_count:
+  comment: '公众帐号粉丝数'
+  with: [update_timestamp]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    fans_count: int|+10|comment='粉丝数'|=0
+  keys:
+    pk: mp_user_id
+
+
+wx_user_feedback:
+  comment: '用户留言'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    wx_user_id: text|+64|comment='wx_user.wx_user_id'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    content: text
+  keys:
+    mp_user_id: mp_user_id
+    wx_user_id: wx_user_id
+
+report:
+  comment: '每日报表'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    ymd: int|+10|comment='年月日，示例20120525'
+    fans_total_count: int|+10|comment='粉丝数'|=0
+    net_increase_fans_count: int|+10|comment='净增粉丝数'|=0
+    followed_count: int|+10|comment='被关注的次数'|=0
+    unfollowed_count: int|+10|comment='被取消关注的次数'|=0
+    uv: int|+10|comment='活跃用户数'|=0
+    pv: int|+10|comment='访问量'|=0
+    zhuhu_count: int|+10|comment='住户总数'|=0
+    yezhu_count: int|+10|comment='业主总数'|=0
+    zhuhu_verify: int|+10|comment='认证住户总数'|=0
+    yezhu_verify: int|+10|comment='认证业主总数'|=0
+  keys:
+    ukey|u: [ mp_user_id, ymd ]
+
+mp_article:
+  comment: '富文本内容'
+  has:
+    mp_article_id: text|+32|comment='ID'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    title: text|+255|comment='文章标题'
+    share_desc: text|+255|comment='分享时显示的文章摘要'
+    content: text|comment='文章内容'
+    show_like: int|+1|comment='是否显示喜欢和意见反馈'
+    like_count: int|+10|comment='已经点喜欢的人数'
+    user_level: text|+128|comment=逗号分隔的可阅读用户等级|=level_0
+    redirect: int|+1|comment=是否跳转|=0
+    redirect_url|?: text|+1024|comment=跳转链接
+    tag|?: text|+255|comment=标签
+    last_modify_time: datetime|comment=最后修改时间
+    last_modify_author|?: text|+128|comment='最后修改人'
+  keys:
+    pk: mp_article_id
+    mp_user_id: mp_user_id
+    community_id: community_id
+    last_modify_time: last_modify_time
+
+mp_article_daily_traffic:
+  comment: '素材管理访问量统计'
+  with: [ auto_increment_id]
+  has:
+   mp_user_id: int|+10|comment='mp_user.mp_user_id'
+   community_id: int|+10|comment=‘community.community_id’
+   mp_article_id: text|+32|comment=素材管理id
+   ymd: int|+10|comment=统计日期
+   pv: int|+10|comment=每日点击量|=0
+
+  keys:
+       ukey|u: [ mp_article_id, ymd]
+
+article_tag_log:
+  comment: '标签访问记录'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    tag: text|+64|comment=标签
+    wx_user_id|?: text|+64|comment='用户微信open_id'
+
+like_article:
+  comment: '喜欢文章记录表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    wx_user_id: text|+64|comment='wx_user.wx_user_id'
+    mp_article_id: text|+32|comment='mp_article.mp_article_id'
+
+article_comment:
+  comment: '文章意见反馈'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    wx_user_id: text|+64|comment='wx_user.wx_user_id'
+    mp_article_id: text|+32|comment='mp_article.mp_article_id'
+    comment: text
+    mail_recipients|?: text|comment=接收人邮件列表
+    mail_content: text|comment=邮件内容|=''
+
+test:
+  comment: '仅用来生成一些枚举类型的代码'
+  with: [ auto_increment_id ]
+  has:
+    power|?: community_admin_power_type|comment=power
+
+test_test:
+  comment: '仅用来生成一些枚举类型的代码'
+  with: [ auto_increment_id ]
+  has:
+    power|?: company_admin_power_type|comment=power
+
+#------------------------------------------------------------------------------
+# 问卷调查
+@wj_question_type:
+  comment: '问题类型'
+  values:
+    choice_single: 单选题
+    choice_multiple: 多选题
+    input_single: 单行输入框
+    input_multiple: 多行输入框
+
+@wj_customer_profile:
+  comment: '用户个人信息'
+  values:
+    none: 不需要
+    required: 必填
+    optional: 选填
+
+wj_questionnaire:
+  comment: '问卷表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    title: text|+255|comment=问卷名称
+    head_desc: text|+255|comment=卷首语
+    tail_desc: text|+255|comment=卷尾语
+    customer_profile: wj_customer_profile
+    comment|?: text|comment=问卷描述
+
+wj_question:
+  comment: '题目'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    wj_questionnaire_id: int|+10|comment='wj_questionnaire.wj_questionnaire_id'
+    content: text|comment=问题内容
+    question_type: wj_question_type
+    comment|?: text|comment=问题描述
+    sort_no: float|comment=排序|=0
+    placeholder|?: text|+128|comment=输入框提示语
+
+wj_choice:
+  comment: '选项，只有选择题才有选项'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    wj_questionnaire_id: int|+10|comment='wj_questionnaire.wj_questionnaire_id'
+    wj_question_id: int|+10|comment='wj_question.wj_question_id'
+    content: text|comment=选项内容
+    comment|?: text|comment=选项描述
+    sort_no: float|comment=排序|=0
+    select_times: int|+10|comment=被选次数|=0
+
+wj_user_answer:
+  comment: '用户答卷记录表'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id|?: int|+10|comment=mp_user.mp_user_id
+    community_id: int|+10|comment=community.community_id
+    wx_user_id|?: text|+64|comment=wx_user.wx_user_id
+    name|?: text|+64|comment=答题人姓名
+    gender|?: text|+64|comment=性别
+    tel|?: text|+64|comment=手机
+    birth|?: text|+64|comment=出生日期
+    email|?: text|+64|comment=电子邮件
+    wj_questionnaire_id|?: int|+10|comment=wj_questionnaire.wj_questionnaire_id
+    answer|?: text|comment=问答题直接保存，选择题逗号分隔
+  keys:
+    community_id: community_id
+
+@directory_power_type:
+  comment: ' 目录权限判断'
+  values:
+    all: 公开
+    register: 注册
+    identify: 认证
+    other: 注册+认证
+
+
+@top_url_type:
+ comment: '目录链接类型'
+ values:
+    none: '普通'
+    background: '带背景图片'
+    top: '带顶部图片'
+    top_carousel: '带顶部图片轮播'
+    center_carousel_one: '顶部图片+横排样式'
+    center_carousel: '顶部图片轮播+横排样式'
+    procurement: '采购样式'
+
+
+top_directory:
+  comment: '一级目录'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    title: text|+64|comment=名称
+    top_dir_no: int|+10|comment=一级目录编号
+    directory_background_img|?: url|comment=目录背景图片地址
+    directory_top_img|?: url|comment=目录顶部图片地址一
+    directory_top_img_second|?: url|comment=目录顶部图片地址二
+    directory_top_img_third|?: url|comment=目录顶部图片地址三
+    url_type|?: top_url_type|=none
+    power_type|?: directory_power_type
+  keys:
+    community_id: community_id
+    ukey|u: [community_id,top_dir_no]
+
+@directory_common_type:
+  comment: '目录类型'
+  values:
+    text: 自定义文本
+    link: 自定义链接
+    user_bill_list: 缴费通知单
+    user_setting: 个人设置
+    user_order: 我的订单
+    user_vip_card: 会员卡
+    user_cs_certify: 客服专员认证
+
+@directory_small_flow_type:
+  comment: '小流量目录类型'
+  values:
+    link: 自定义链接
+    user_bill_list: 缴费通知单
+    user_setting: 个人设置
+    user_order: 我的订单
+    user_vip_card: 会员卡
+    user_cs_certify: 客服专员认证
+
+directory:
+  comment: '二级目录'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    top_directory_id: int|+10|comment=一级目录
+    title|?: text|+128|comment=标题
+    icon|?: url|comment=图标
+    sort_no: float|comment=排序号|=0
+    group_end: bool|comment=分组标志|=0
+    show_small_flow: bool|comment=是否显示小流量|=0
+    common_type: directory_common_type
+    small_flow_type|?: directory_small_flow_type
+    common_url|?: url|comment=目录连接
+    common_content|?: text|comment=目录内容
+    small_flow_url|?: url|comment=小流量目录连接
+    small_flow_content|?: text|comment=小流量目录内容
+    small_flow_no|?: text|comment=小流量用户房间编号
+    head_desc|?: text|+128|comment=组头说明
+    tail_desc|?: text|comment=组尾说明
+    power_type|?: directory_power_type
+  keys:
+    community_id: [ mp_user_id, community_id ]
+
+directory_daily_traffic:
+  comment: '二级目录访问量统计'
+  with: [ auto_increment_id]
+  has:
+   mp_user_id: int|+10|comment='mp_user.mp_user_id'
+   community_id: int|+10|comment=‘community.community_id’
+   directory_id: int|+10|comment=二级目录id
+   ymd: int|+10|comment=统计日期
+   uv: int|+10|comment=每日独立访客量|=0
+   pv: int|+10|comment=每日点击量|=0
+
+  keys:
+    ukey|u: [ directory_id, ymd]
+
+
+directory_wx_user_visit:
+  comment: '二级目录用户访问表'
+  with: [ auto_increment_id]
+  has:
+   directory_id: int|+10|comment=二级目录id
+   wx_user_id: text|+64|comment='wx_user.wx_user_id'
+   last_access_ymd: int|: int|+10|comment=上次访问日期
+
+  keys:
+    ukey|u: [ directory_id, wx_user_id]
+
+wx_user_feedback:
+  comment: '用户意见反馈'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    wx_user_id: text|+64|comment='wx_user.wx_user_id'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    content: text
+  keys:
+    mp_user_id: mp_user_id
+    wx_user_id: wx_user_id
+
+#------------------------------------------------------------------------------
+# 图片轮播
+carousel:
+  comment: '轮播'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    title: text|+64|comment='轮播标题'
+    comment|?: text|comment=备注
+
+album:
+  comment: '相册'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    carousel_id: int|+10|comment="轮播ID carousel.carousel_id"
+    title: text|+64|comment=相册名称
+    cover_img: url|comment=封面图片地址
+    sort_no: float|comment=排序|=0
+    comment|?: text|comment=备注
+
+picture:
+  comment: '图片'
+  with: [ auto_increment_id, create_timestamp ]
+  has:
+    mp_user_id: int|+10|comment=公众账号ID
+    community_id: int|+10|comment=community.community_id
+    carousel_id: int|+10|comment="轮播ID carousel.carousel_id"
+    album_id: int|+10|comment="相册ID album.album_id"
+    img_url: url|comment=图片地址
+    sort_no: float|comment=排序|=0
+    comment|?: text|comment=备注
+
+#------------------------------------------------------------------------------
+# 频道文章模块
+channel:
+  comment: '频道'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    title: text|+128|comment='频道名称'
+
+@article_type:
+  comment: 文章类型：自己的文章，第三方文章
+  values:
+    article_ours: 在当前页面编辑
+    article_third_party: 使用外部链接
+
+channel_article:
+  comment: '频道文章'
+  with: [ auto_increment_id ]
+  has:
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    community_id: int|+10|comment=community.community_id
+    channel_id: int|+10|comment='channel.channel_id'
+    article_type: article_type|comment=来源
+    article_title|?: text|+255|comment=标题
+    share_url|?: url|comment=分享图片
+    article_desc|?: text|comment=摘要
+    article_url|?: url|comment=外部链接
+    release_date: date|comment=发布日期
+    keep_top: int|+1|comment=置顶|=0
+    article_detail|?: text|comment=正文
+
+urgent_notice_read_record:
+  comment: '紧急通知读取记录'
+  with : [ auto_increment_id ]
+  has:
+    channel_article_id:  int|+10|comment='channel_article.channel_article_id'
+    wx_user_id: text|+64|comment=微信用户OpenID
+  keys:
+    ukey|u: [ channel_article_id, wx_user_id ]
+
+app_notice_read_record:
+   comment: 'app消息读取记录'
+   with : [ auto_increment_id ]
+   has:
+      app_article_id: int|+10|comment=article_id
+      app_phone: text|+64|comment=app注册手机号
+      notice_read_time: int|+10|comment='年月日，示例20141229'
+   keys:
+      ukey|u: [ app_article_id, app_phone ]
+
+community_phone_book:
+  comment : '电话薄'
+  with: [ auto_increment_id ]
+  has:
+    community_id: int|+10|comment='community.community_id'
+    mp_user_id: int|+10|comment='mp_user.mp_user_id'
+    name: text|+128|comment=名称
+    phone: text|+32|comment=电话
+  keys:
+    community_id: [ community_id, mp_user_id ]
+
+
+customer_specialist_group:
+   comment: '客服专员分组'
+   with : [ auto_increment_id ]
+   has :
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+     community_id: int|+10|comment=community.community_id
+     group_name: text|+64|comment=分组名
+     comment|?: text|+128|comment=备注
+     work_time|?: text|+64|comment=工作时间段
+
+customer_specialist:
+   comment: '客户专员'
+   with: [ auto_increment_id ]
+   has:
+     staff_id: text|+32|comment=工号
+     mp_user_id: int|+10|comment='mp_user.mp_user_id'
+     community_id: int|+10|comment=community.community_id
+     vip_no|?: int|+20|comment='会员号'|=0
+     wx_user_id|?: text|+64|comment=微信用户OpenID
+     customer_specialist_group_id: int|+10|comment=customer_specialist_group.customer_specialist_group_id
+     name: text|+64|comment=姓名
+     phone: text|+64|comment=电话号码
+     comment|?: text|+128|comment=备注
+     holiday|?: text|comment=休假日期
+     valid: bool|comment=是否有效|=1
+   keys:
+     ukey|u: [ staff_id, mp_user_id ]
+
+owner_lessee:
+  comment: '业主帮助用户认证记录'
+  with : [ auto_increment_id ]
+  has:
+    lessee_wx_user_id:  text|+64|comment=lesseeOpenID
+    owner_wx_user_id: text|+64|comment=ownerOpenID
+
+
+total_user:
+   comment: '用户总数活跃用户数统计表每小时统计'
+   with: [ auto_increment_id ]
+   has:
+      total_user_num: int|+10|comment=有效公众号用户总数
+      active_user_num: int|+10|comment=活跃用户数
+      insert_time: datetime|comment='统计时间'
+      insert_hour: int|+10|comment='统计时间段'
+
+beacon_setting:
+    comment: 'ibeacon硬件设备管理表'
+    with: [ auto_increment_id ]
+    has:
+      mp_user_id: int|+10|comment='mp_user.mp_user_id'
+      community_id: int|+10|comment=community.community_id
+      uuid: text|+64|comment=硬件设备id
+      description|?: text|+255|comment=设备描述
+
+province:
+    comment: '省份表'
+    with: [ auto_increment_id ]
+    has:
+      name: text|+16|comment=省份名称
+      created|?: int|+11
+      updated|?: int|+11
+
+city:
+    comment: '城市表'
+    with: [ auto_increment_id ]
+    has:
+      name: text|+64|comment=城市名称
+      province_id|?: int|+11|comment=所属省份编号
+      zip|?: text|+6|comment=邮编(预留)
+      created|?: int|+11
+      updated|?: int|+11
+      sort|?: int|+11|comment=排序,从大到小,大于0表示是热门城市|=0
+    keys:
+      province_id: province_id
+      sort: sort
+
+area:
+    comment: '城区表'
+    with: [ auto_increment_id ]
+    has:
+      name: text|+128|comment=城区名称
+      city_id: int|+11|comment=所属城市编号
+      created|?: int|+11
+      updated|?: int|+11
+    keys:
+      city_id: city_id
+
+
+
+

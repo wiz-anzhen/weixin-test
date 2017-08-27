@@ -1,0 +1,222 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>个人设置</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241,240,245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd;}
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+    .format {width:150px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;}
+</style>
+{% endblock %}
+
+{% block content %}
+{%if 0 %}
+<div class="list-group">
+    <div class="input-group">
+        <span class="input-group-addon" style="font-size: larger">切换</span>
+        <select class="form-control input-lg" id="community" name="community" onchange="change()">
+            {% for community in community_list %}
+            <option value="{{community.community_id}}"{% if community.community_id == current_community_id %} selected="selected"{% endif %}>{{community.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+{% endif %}
+<div style="width: 100%;background-color: #ffffff;padding:10px 0;border:0px solid rgb(193, 192, 197);margin-bottom: 20px;font-size: 14px;">
+    <div style="float: left;">
+        <img src="{{head_pic}}"   height="60px;" style="margin-left: 18px;line-height:60px;"/>
+    </div>
+
+    <div style="height: 30px;margin-top: 5px;">
+        <span style="padding-left: 30px;">昵称：{{nick}}</span>
+    </div>
+    <div style="height: 30px;">
+        <span style="padding-left: 30px;">会员号：{{vip_no}}</span>
+    </div>
+</div>
+<div>
+    <div class="list-group">
+        <a class="list-group-item" href="/app/profile/change_name?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+            姓名
+            <span class="badge">{% if app_user.nick %}{{app_user.nick}}{% else %}未填写{% endif %}</span>
+        </a>
+        <a class="list-group-item" onclick="showCity()">
+            所在城市
+            <span class="badge format">{% if app_user.city %}{{app_user.city}}{% else %}未填写{% endif %}</span>
+        </a>
+        <a class="list-group-item" style="display:none" id="show_city">
+            <span>{% if app_user.city %}{{app_user.city}}{% else %}未填写{% endif %}</span>
+        </a>
+        <a class="list-group-item">
+            小区名称
+            <span class="badge">{% if app_user.community_name %}{{app_user.community_name}}{% else %}未填写{% endif %}</span>
+        </a>
+             {% if mp_user_type %}
+             <a class="list-group-item" href="/app/profile/change_birth?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+             {% else %}
+              <a class="list-group-item" href="/app/profile/change_birth?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+             {% endif %}
+
+            生日<span class="glyphicon glyphicon-chevron-right pull-right"></span>
+            <span class="badge format">{% if app_user_birthday %} {{app_user_birthday}} {% else %}未填写{% endif %}
+            </span>
+        </a>
+
+        {% if mp_user_type %}
+           <a class="list-group-item" href="/app/profile/change_email?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+        {% else %}
+          <a class="list-group-item" href="/app/profile/change_email?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+          {% endif %}
+            邮箱地址<span class="glyphicon glyphicon-chevron-right pull-right"></span>
+            <span class="badge format">{% if app_user.email %}{{app_user.email}}{% else %}未设置{% endif %}
+            </span>
+        </a>
+    </div>
+
+    <div class="list-group">
+        {% if is_owner %}
+            {% if mp_user_type %}
+            <a class="list-group-item" href="/app/zhongao/user?mp_user_id={{mp_user_id}}">
+            {% else %}
+            <a class="list-group-item" href="/app/zhongao/user?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}">
+            {% endif %}
+            <img src="/img/wx_nav/add.png" height="30px" width="30px"/>
+            添加住户
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        </a>
+        {% endif %}
+    </div>
+
+    {%if cs_visible %}
+    <div class="list-group">
+        {% if mp_user_type %}
+        <a class="list-group-item" href="/app/profile/change_customer_id?mp_user_id={{mp_user_id}}&current_cs_id={{house_member.current_cs_id}}&phone={{app_user.phone}}">
+        {% else %}
+          <a class="list-group-item" href="/app/profile/change_customer_id?mp_user_id={{mp_user_id}}&current_cs_id={{house_member.current_cs_id}}&phone={{app_user.phone}}">
+        {% endif %}
+            <img src="/img/wx_nav/client_service.png" height="30px" width="30px"/>客服专员
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+            <span class="badge format">{% if house_member.cs_name %} {{ house_member.cs_name }} {% else %}客服中心{% endif %}</span>
+        </a>
+    </div>
+    {% if 0 %}
+    <div class="list-group">
+        <a class="list-group-item" href="/app/cs_chat_record/answer_table?type=2&mp_user_id={{mp_user_id}}&wx_user_id={{wx_user_id}}&cs_id={{cs.customer_specialist_id}}&cs_wx_user_id={{cs.wx_user_id}}&cs_group_id={{cs.customer_specialist_group_id}}">
+            <img src="/img/wx_nav/client_service.png" height="30px" width="30px"/>
+            客服专员回复记录查询
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {%if 0 %}
+    <div class="list-group">
+        <a class="list-group-item" href="/wx_user/user_info/index?wx_user_id={{wx_user_id}}&mp_user_id={{mp_user_id}}">
+            <img src="/img/wx_nav/client_service.png" height="30px" width="30px"/>
+            认证其他小区业主
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        </a>
+    </div>
+    {% endif %}
+    <!--退出-->
+    <!--div class="list-group">
+        <a id="quit" class=" list-group-item" style="text-align: center">退出登录</a>
+    </div-->
+</div>
+<div id="submit_status"  style="display: none;position: fixed;text-align: center;background-color: #ffffff;color:#000000;padding: 20px;bottom:0;">
+    <div>
+        退出当前账号后不会删除任何历史数据，下次登录依然可以使用本账号
+    </div>
+    <br>
+    <a id="quit_verify" class="btn btn-danger btn-lg btn-block" style="width:100%;margin:0 auto;color:white;">退出登录</a>
+    <br>
+    <a id="quit_cancel" class="btn btn-lg btn-block" style="width:100%;margin:0 auto;color: white;background-color: #7d7d82">取消</a>
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+    <script type="text/javascript">
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+//        WeixinJSBridge.call('hideOptionMenu');
+            WeixinJSBridge.call('hideToolbar');
+        });
+        //切换到其他小区
+        function change()
+        {
+            var $communityID = $("#community").find("option:selected").val();
+            var $data = {'community_id':$communityID,'phone': '{{ app_user.phone }}'};
+            var $sendCodeUrl = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/change_current_community_id';
+            $.post($sendCodeUrl,$data,function($data) {
+                if ($data['errno'] == 0) {
+                    location.reload();
+                } else {
+                    alert($data['error']);
+                }
+            });
+        }
+        //显示隐藏地址
+        function showCity()
+        {
+            $("#show_city").toggle();
+        }
+        $(function () {
+            $("#quit").click(function ()
+            {
+                var post_data = {'phone': '{{ app_user.phone }}'};
+                var site = location.protocol + '//' + location.host + '/api/wx_user/appuser_info/quit';
+                $.ajax({
+                    type: 'post',
+                    url: site,
+                    data: post_data,
+                    datatype: 'json',
+                    async: true,
+                    success: afterSave
+                });
+            });
+        });
+
+        function afterSave(data) {
+            if (data.errno == 0)
+            {
+                // $("#submit_status").css("top",$("#spm-content").height());
+                $("#submit_status").show();
+            }
+            else {
+                alert(data.error);
+            }
+        }
+
+        $("#quit_cancel").click(function ()
+        {
+            $("#submit_status").hide();
+        });
+
+        $("#quit_verify").click(function ()
+        {
+            location.href = "/app/user_info/login?mp_user_id={{mp_user_id}}&phone={{app_user.phone}}";
+        });
+
+
+    </script>
+{% endblock %}
+

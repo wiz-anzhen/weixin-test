@@ -1,0 +1,74 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ channel.title }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    div.row { height: 70px; margin-top: 9px; margin-bottom: 9px; }
+    img { height: 70px; width: 70px; }
+    hr { margin-top: 1px; margin-bottom: 1px; }
+    h4 { display: none; font-weight: bolder; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    p { margin-bottom: 13px; overflow: hidden; }
+    div.col-xs-3 { padding-right: 0;}
+    div.col-xs-6 { font-size: small; height: 70px; overflow: hidden; text-overflow: ellipsis; padding-right: 4px;}
+    a { color: #000; }
+    div.top { color: rgb(128, 127, 132); }
+    div.top, div.today, div.yesterday, div.day { font-weight: bolder; font-size: 28px; }
+    div.day, div.month { float: left; height: 70px; }
+    div.month { padding-top: 16px; margin-right: -10px; font-weight: bold; }
+    div.body { padding: 30px 10px 0;}
+    div.separator { height: 8px; }
+    div.haha { margin-left: -6px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    {% set mmdd_previous = '0000' %}
+    {% for article in articles %}
+    {% if (not loop.first) and (article.mmdd != mmdd_previous) %}
+    <div class="separator"></div>
+    {% endif %}
+    <div class="row">
+        <a href="{{ article.article_url }}">
+            <div class="col-xs-3">
+                {% if article.mmdd == mmdd_previous %}
+                <div></div>
+                {% elseif article.mmdd == 'keep_top' %}
+                <div class="top">推荐</div>
+                {% elseif article.mmdd == mmdd_today %}
+                <div class="today">今天</div>
+                {% elseif article.mmdd == mmdd_yesterday %}
+                <div class="yesterday">昨天</div>
+                {% else %}
+                <div class="day_monty">
+                    <div class="day">{{ article.day }}</div>
+                    <div class="month">{{ article.month_cn }}月</div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-xs-3 haha">
+                <img src="{{ article.share_url }}">
+            </div>
+            <div class="col-xs-6">
+                <p>{{ article.article_desc }}</p>
+            </div>
+        </a>
+    </div>
+    {% set mmdd_previous = article.mmdd %}
+    {% else %}
+    啊哦，这个频道下还没有添加文章～～
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block js_link %}
+        <script>
+            $(function(){
+                wb = document.body.clientWidth;
+                $(".row").width(wb);
+            });
+        </script>
+{% endblock %}

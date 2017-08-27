@@ -1,0 +1,41 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_directory' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active">目录管理</li>
+{% endblock %}
+
+
+{% block action %}
+{% if directory_rw %}
+<button type="button" class="btn btn-success" title="新增" onclick="bluefinBH.ajaxDialog('/mp_admin/directory_dialog/add_top?mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">
+    添加
+</button>
+<button type="button" class="btn btn-success" title="复制目录" onclick="bluefinBH.ajaxDialog('/mp_admin/directory_dialog/copy_top?mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">
+    复制目录
+</button>
+{% endif %}
+{% if directory %}
+<a href="/mp_admin/directory/traffic?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&community_name={{community_name}}" class="btn btn-success" >
+    目录访问量统计报表
+</a>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}

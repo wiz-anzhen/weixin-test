@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>{{ article.title|raw }}</title>
+    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td
+        {
+            border:0 solid #EBE3E3;
+        }
+        .table thead>tr>th
+        {
+            display: none;
+        }
+    </style>
+</head>
+<body onload="resize_img();" onresize="resize_img();"{% if not is_iframe %} style="margin: 15px 15px 40px;"{% endif %}>
+<div id="main-div"{% if is_iframe %} style="margin-bottom:25px;"{% endif %}>
+    {% if not is_iframe %}<h2 style="color: #000;font-size: 22px; font-family: '微软雅黑'">{{ article.title|raw }}</h2><div>{{ article.last_modify_time|raw }}&nbsp;&nbsp;&nbsp;<a href="{{mp_url}}">{{mp_name}}</a></div>{% endif %}
+    {% if is_login %}
+    {% if check_read_power %}
+     <a type="button" class="btn btn-success" title="编辑文章" href="/mp_admin/mp_article/edit?mp_article_id={{mp_article_id}}&mp_user_id={{mp_user_id}}&community_id={{community_id}}">编辑文章</a><br/>
+    {% endif %}
+    {% endif %}
+    <div id="article-content" style="margin-top: 10px">
+        {{ article.content|raw }}
+        {% if name_send  %}
+            <div style="text-align:center;margin-top: 45px;color:red">
+                <p style="font-size:20px;margin-bottom:-2px;font-weight: bold;">{{group_name_send}}</p>
+                <div style="height:0;clear:both;display:block;border-top:1px solid red"></div>
+                <p style="font-size: 16px;font-weight: bold;margin-top: 10px;">{{name_send}}</p>
+                <p style="font-size: 16px;font-weight: bold;color:red;text-decoration: none"><a href="tel:{{phone_send}}" style="color: red;text-decoration: none">{{phone_send}}</a></p>
+            </div>
+        {% endif %}
+        阅读&nbsp;{{ pv }}
+    </div>
+    {% if article.show_like  %}
+    <div style="margin-top: 20px">
+        评价：
+        <div style="margin-top: 10px;">
+            <span id="append"></span>
+            {% if check_comment %}
+            {{table|raw}}
+            {% endif %}
+
+        </div>
+        <div style='height:1px;background-color:#EBE3E3;line-height:1px;clear:both;display:block;overflow:hidden;margin-top:-6px'></div>
+    </div>
+    {% endif %}
+    {% if article.show_like %}
+    <div style="width: 100%;border: 1px solid #eee;padding: 0;position: fixed;bottom: 0;left: 0;background-color: #f8f8f8;">
+        <button id="comment" style="border-radius: 0;height: 40px;width: 50%;float:left;border: 0;color: #949494;background: #f8f8f8 url(/images/comment/80-x-l.png) no-repeat left;background-position-x:27px;background-size: 100px 20px;font-size:15px;padding-left:50px;text-align: left;">评价</button>
+        <button id="like" style="border-radius: 0; height: 40px;width: 50%;float:right;border: 0;color: #949494;background: #f8f8f8 url(/images/like/80-x-l-l.png) no-repeat right;background-size: 87px 20px;font-size: 15px;padding-right:50px;text-align:right;"{% if had_liked > 0 %} disabled{% endif %}>{{like_count}}</button>
+    </div>
+    {% endif %}
+</div>
+
+<div id="content-div" class="panel panel-info" style="display: none;width:100%;padding:0;left:0;">
+    <div class="panel-heading">
+        <h3 class="panel-title">发表评价</h3>
+    </div>
+    <div class="panel-body">
+        <textarea id="content" rows="4" style="margin: 3px;border: 1px solid #ddd;border-radius:3px; padding:0;width: 97%;font-size: 15px;" placeholder="请在此输入您的评价"></textarea>
+        <div style="margin: 3px;width:97%;">
+            <a id="cancel" class="btn btn-success btn-lg btn-block" style="width:49%;float: left;margin-top:0;">取消</a>
+            <a id="submit" class="btn btn-success btn-lg btn-block" style="width:49%;float: right;margin-top:0;">发送</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function resize_img() {
+        $("#article-content").find('img').each(function () {
+            var $clientWidth = document.body.clientWidth;
+            var $img = new Image();
+            $img.src = $(this).attr("src");
+            if ($img.width > 0) {
+                $(this).css("width", Math.min($clientWidth, $img.width));
+            }
+        });
+    }
+
+    $("#comment").click(function(){
+        $("body").css("margin", "0");
+        $("#main-div")[0].style.display = "none";
+        $("#content-div")[0].style.display = "block";
+    });
+
+    function contentBlur()
+    {
+        $("body").css("margin", "15px 15px 40px");
+        $("#main-div")[0].style.display = "block";
+        $("#content-div")[0].style.display = "none";
+    }
+
+    $("#cancel").click(function(){
+        contentBlur();
+    });
+
+    $("#submit").click(function(){
+        contentBlur();
+        var $comment = $("#content")[0].value;
+
+        var $commentUrl = location.protocol + '//' + location.host + '/api/wx_user/user/comment_article?wx_user_id={{wx_user_id}}&mp_article_id={{article.mp_article_id}}&mp_user_id={{article.mp_user_id}}&community_id={{community_id}}';
+        $.post($commentUrl, {'comment': $comment}, function(data){
+            if (data.errno != 0)
+            {
+                alert(data.error);
+            }
+            $("#content")[0].value = '';
+            var name = "<div style=\"margin-bottom: 2px\">"+data.name+"</div>";
+            var head = "<div style=\"float: left\"><img src = "+data.head+" width=\"30px\" height=\"30px\"/></div>";
+            var comment = "<div style=\"margin-bottom: 2px\">"+data.comment+"</div>";
+            var time = "<div style=\"margin-bottom: 2px\">"+data.time+"</div>";
+            var content = "<div style=\"margin-left: 40px\">"+name+comment+time+"</div>";
+            var line = "<div style='height:1px;background-color:#EBE3E3;line-height:1px;clear:both;display:block;overflow:hidden;margin-bottom: 6px'></div>";
+            var  ret = "<table class=\"table\" style=\"word-break:break-all;margin-bottom: 0\"><tbody><tr><td>"+line+head+content+"</td></tr></tbody></table>";
+            $(ret).insertAfter("#append");
+
+        });
+
+    });
+
+    $("#like").click(function(){
+        var $likeUrl = location.protocol + '//' + location.host + '/api/wx_user/user/like_article?wx_user_id={{wx_user_id}}&mp_article_id={{article.mp_article_id}}&mp_user_id={{article.mp_user_id}}&community_id={{community_id}}';
+        $.get($likeUrl, function($data) {
+            if ($data.errno == 0)
+            {
+                var $likeNum = {{ like_count }};
+                $likeNum = $likeNum + 1;
+                $likeBtn = $("#like");
+                $likeBtn.text($likeNum);
+                $likeBtn.attr('disabled', 'disabled');
+            }
+            else
+            {
+                alert($data.error);
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        if (!bluefinBH.isRegistered('_pagination')) {
+            bluefinBH.register('_pagination', true);
+            $('.pagination').each(function () {
+                var divp = $(this),
+                        req = divp.data('request');
+                divp.on('click', 'a[data-page]', function (e) {
+                    location.href = bluefinBH.buildUrl(req, {'*PAGING*': {'page': $(this).data('page')}});
+                });
+            });
+        }
+    });
+
+</script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+<script type="text/javascript">
+    wx.config({
+        appId: '{{ signPackage.appId }}',
+        timestamp: {{ signPackage.timestamp }},
+        nonceStr: '{{ signPackage.nonceStr }}',
+        signature: '{{ signPackage.signature }}',
+        jsApiList: [
+        // 所有要调用的 API 都要加到这个列表中
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage'
+    ]
+    });
+    wx.ready(function () {
+        wx.onMenuShareAppMessage({
+            title: '{{ article.title|raw }}',
+            desc: '{{ article.share_desc }}',
+            link:  location.href,
+            imgUrl: '{{ share_pic }}',
+            trigger: function (res) {
+                //alert('用户点击发送给朋友');
+            },
+            success: function (res) {
+                //alert('已分享');
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                alert(JSON.stringify(res));
+            }
+        });
+        wx.onMenuShareTimeline({
+            title: '{{ article.title|raw }}',
+            desc: '{{ article.share_desc }}',
+            link:  location.href,
+            imgUrl: '{{ share_pic }}',
+            trigger: function (res) {
+                // alert('用户点击分享到朋友圈');
+            },
+            success: function (res) {
+                //alert('已分享');
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                alert(JSON.stringify(res));
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>
+
+<script type="text/javascript" src="/wx-share/wxm-core176ed4.js"></script>
+<script type="text/javascript" src="/wx-share/wx_api.js?"></script>
+<script type="text/javascript"  src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script type="text/javascript"  src="/libs/bootstrap3/js/bootstrap.min.js"></script>
+<script  type="text/javascript" src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>

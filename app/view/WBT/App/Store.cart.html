@@ -1,0 +1,25 @@
+<div id="cart" class="container" style="display: none;">
+    <div id="cart_body">
+        <div id="cart_title">
+            <span id="close_cart"><img src="/scripts/store/close.png" width="13" height="13" alt=""></span>
+        </div>
+        <ul id="cart_food_list">
+
+        </ul>
+        <div>
+            <p id="empty" style="display: block;">还没有选择商品哦</p>
+        </div>
+        <div id="total_price" style="display: none;">
+            共 <span id="food_num2"> 0 </span> 件
+            <span class="money">
+                ¥ <span id="money_num1">0</span>
+            </span>
+        </div>
+
+        <div>
+            <div id="buttons">
+                <a href="/app/store/settle?store_id={{store.store_id}}&mp_user_id={{app_user.mp_user_id}}&phone={{app_user.phone}}" id="submit">去结算</a>
+            </div>
+        </div>
+    </div>
+</div>

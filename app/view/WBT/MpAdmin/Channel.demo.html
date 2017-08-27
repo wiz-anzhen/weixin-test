@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="http://files.cnblogs.com/rubylouvre/bootstrap.css"/>
+    <script src="http://files.cnblogs.com/rubylouvre/jquery1.83.js" > </script>
+    <script src="http://files.cnblogs.com/rubylouvre/bootstrap-transition.js"></script>
+    <script src="http://files.cnblogs.com/rubylouvre/bootstrap-modal.js"></script>
+
+<style type="text/css">
+    .nav_tab
+    {
+      border-bottom: 1px solid #ddd;
+    margin-left: 0;
+    list-style: none;
+        padding-bottom:7px;
+
+    margin-top: 16px;
+        }
+    .nav_tab > li
+    {
+        margin-bottom:-1px;
+        padding-right: 12px;
+        padding-left: 12px;
+        margin-right: 2px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        line-height: 20px;
+        border: 1px solid transparent;
+        -webkit-border-radius: 4px 4px 0 0;
+        -moz-border-radius: 4px 4px 0 0;
+        border-radius: 4px 4px 0 0;
+        display: inline;
+        color:#555;
+        cursor:pointer;
+    }
+    .nav_tab>.actives, .nav_tab>.actives:hover, .nav_tab>.actives:focus {
+        color: #029ADA;
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+    }
+    .tab_content{margin-bottom:200px;}
+</style>
+</head>
+
+<body>
+<a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
+<!-- Modal -->
+<div style="float:left"><img src="" id="mainImg"></div>
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="float:right;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Modal header</h3>
+    </div>
+
+
+    <div class="modal-body">
+        <ul class="nav_tab" id="myTab">
+            <li class="test1 actives">test1</li>
+            <li class="test2">test2</li>
+        </ul>
+        <div class="clear"></div>
+
+        <div class="tab_content">
+            <div id="test1">
+
+                <div>
+                    <img thumbnail="form" orginalid="form1PicUrl" id="form1PicUrl_IMG" src="" name="pic_url" label="图标" style="width:150px;height: 150px">
+                </div>
+
+                <input id="form1PicUrl_INPUT" name="pic_url" label="图标" value="" type="hidden">
+
+            </div>
+
+            <div id="test2" style="display:none;">
+                地址：<input type="text" name="img_url" value="" />
+            </div>
+        </div>
+
+        </div>
+
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-success" data-dismiss="modal"  id="success" onclick="suc();">Save changes</button>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+ function suc(){
+     var m = $("#form1PicUrl_INPUT").val();
+     $("#mainImg").attr("src",m);
+ }
+
+
+</script>
+<script type="text/javascript">
+    $("#myTab li").click(function (e) {
+        $(this).siblings(".actives").removeClass("actives");
+        var classes = $(this).attr("class");
+        $(this).addClass("actives");
+        $("#"+classes).siblings("div").fadeOut("fast");
+        $("#"+classes).fadeIn("fast");
+    });
+</script>
+<script src="/libs/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript">
+    $("#form1PicUrl_INPUT").uploadify({
+        'swf'           : '/libs/uploadify/uploadify.swf',
+        //       'uploader'      : '/api/image/file/upload_by_flash',
+        'uploader'      : '/api/image/file/upload_by_flash',
+        'fileSizeLimit' : '50MB',
+        'width'         : 80,
+// 'height'        : 28,
+        'debug'         : false,
+// 'buttonText'   : '选择图片',
+// 'buttonClass'   : '/images/button/select_img.png',
+        'buttonImage'   : '/libs/uploadify/select_file.png',
+          'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+//        'fileTypeExts'  : '*.xlsx',
+        'method'        : 'post',
+        'multi'         : false,
+        'onSelectError' : function(file, errorCode, errorMsg)
+        {
+            if(errorCode == -110)
+            {
+                alert('图片大小超过限制,最大可以上传5M的图片。');
+            }
+        },
+        'onUploadSuccess' : function(file, data)
+        {
+            data = eval("(" + data + ")");
+            if(data.errno == 0)
+            {
+                var imgIDSelector =  "#form1PicUrl_IMG";
+                $(imgIDSelector).attr('src', data.url);
+                $("#form1PicUrl_INPUT").attr('value', data.url);
+                //adjustImage(imgIDSelector);
+                //adjustFormImageSize();
+            }
+            else
+            {
+                alert(data.error);
+            }
+        }
+    });
+</script>
+</html> 

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+<header style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;">
+    {% if template %}
+    <span style="height:50px;line-height:50px;text-align:center;font-size:1.5em;">{{store_title}}</span>
+
+    {% else %}
+    <div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+        <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/procurement/chef_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&store_id={{ order_data.store_id}}');">返回</div>
+        <div onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color:#000;float: right;width: 20%; ">首页</div>
+        <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 60%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">{{store_title}}</div >
+    </div>
+    {% endif %}
+
+
+</header>
+
+<div style="color: white;background-color: #80c269;padding:5px 5px;">
+    {% if order_data.order_self == 'order_supply' %}
+    订货方式：给供应商下单
+    {% endif %}
+    {% if order_data.order_self == 'order_self' %}
+    订货方式：自订货，不通过供应商
+    {% endif %}
+</div>
+
+<div id="main" style="width: 100%;height: auto;">
+    <ul>
+        <li>
+            <dl style="display: inline-block;font-size: 13px;padding: 3% 0;margin-left: 12%;">
+                <dt style="font:normal normal 15px arial;margin-bottom: 4px;">{{ order_data.create_time}}</dt>
+                <dd style="font:normal normal 13px arial;">订单号：{{ order_id }}</dd>
+            </dl>
+        </li>
+        {% for data_content in order_detail_data %}
+        <li style="padding:8px 5px;background:#e4e4e4;">
+            <p style="float: left;margin-left: 5px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 50%;">
+                档口:{{data_content.part}}
+            </p>
+            <p style="float: right;color: red;font-weight: bolder;margin-right: 20px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 30%;text-align: right;">
+                &yen;{{data_content.price}}
+            </p>
+        </li>
+        {% for order_detail in data_content.content %}
+        <li style="display: block;border-top: 1px solid #ebebeb;border-bottom: 1px solid #ebebeb;margin-top: -1px;background: #fff;">
+            <dl style="display: inline-block;font-size: 13px;padding: 10px 0;margin-left: 4%;width: 30%;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;">
+                <dt style="font:normal normal 15px arial;">{{order_detail.title}}</dt>
+                <dd style="font:normal normal 13px arial;">{{order_detail.price}}{{order_detail.product_unit_new}}</dd>
+            </dl>
+
+            <div style="width: 25%;margin-left: 1%;display:inline-block;float: right;vertical-align: middle;text-align: center;">
+                {% if order_data.status == "chef_verify" %}
+                <div style="margin-left:10px;font:normal normal 14px Microsoft Yahei;display:inline-block;padding: 19px 15px;border-left:1px solid #ebebeb;" id="detail_{{order_detail.product_id}}part{{data_content.part_id}}" class="{{order_detail.product_unit_new}}" onclick="alter(this)">修改</div>
+                {% endif %}
+            </div>
+            <input type="text" value="{{order_detail.count}}" style="float:right;font:normal normal 20px Microsoft Yahei;padding: 12px 0;vertical-align: middle;text-align: center;width: 18%;margin-right: 30px;margin-top: 3px;border: 0 solid white;color:black;"  id="count_{{order_detail.product_id}}part{{data_content.part_id}}" disabled="disabled" class="detail_order_alter" />
+            <span style="float: right;padding: 14px 0;margin-right: -2px;font-size: 22px">&times;</span>
+
+        </li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+
+<div style="margin-top: 20px;text-align: center;margin-bottom: 120px;clear:both;" id="price">
+    <p style="float: right;margin-right: 30px;font-size: 1em;">总金额：
+        <span id="total_price">{{order_data.total_price}}</span>元
+    </p>
+</div>
+<div style="color: #ffffff;margin-top:20px;clear:both;">000</div>
+<div style="color: #ffffff;margin-top:100px;clear:both;display: none;" id="progress">&nbsp;</div>
+<!-- 确认订货单-->
+
+{% if order_data.status == "chef_verify" %}
+<div id="determine_start" style="width:100%;text-align:center;color:#fff;background:green;position: fixed;bottom: 0;margin: 0 auto;padding-right: 10%;padding-left: 1%;padding-bottom: 6%;padding-top: 6%;">确认订货单</div>
+<div id="determine_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">订货单确认           </div>
+        {% if order_data.order_self == 'order_supply' %}
+        <div style="padding: 10%;text-align: center;">确认订货单,并发送消息给供应商</div>
+        {% endif %}
+        {% if order_data.order_self == 'order_self' %}
+        <div style="padding: 10%;text-align: center;">确认订货单,并发送消息给验货员</div>
+        {% endif %}
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_ok" style="float: right;padding-right: 15%;padding-left: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 修改并确认订货单-->
+<div id="determine_alter" style="width:100%;text-align:center;color:#fff;background:red;position: fixed;bottom: 0;margin: 0 auto;padding-right: 10%;padding-left: 1%;padding-bottom: 6%;padding-top: 6%;display: none;">修改并确认订货单</div>
+<div id="determine_alter_content" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display: none;height:100%">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">订单修改确认           </div>
+        {% if order_data.order_self == 'order_supply' %}
+        <div style="padding: 10%;text-align: center;">确认订货单,并发送消息给供应商</div>
+        {% endif %}
+        {% if order_data.order_self == 'order_self' %}
+        <div style="padding: 10%;text-align: center;">确认订货单,并发送消息给验货员</div>
+        {% endif %}
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="determine_alter_cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="determine_alter_ok" style="float: right;padding-right: 15%;padding-left: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- 修改订单详情-->
+<div id="alter" style="width: 100%;margin:0 auto;background: rgba(0,0,0,0.5);position: fixed;top: 0;left:0;display:none ;height:100%">
+    <div id="alter_content" style="width: 95%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">修改</div>
+
+        <div style="padding: 10%;text-align: center;margin: 4%;">
+            <img src="/images/small_reduce.png" width="15%" id="reduce_count" style="margin-bottom: -8px;"/>
+
+            <input type="number" value="0.0" style="display: inline;font-size: 2.2em;text-align: center;background-color: white;margin-right: 6px;margin-left: 6px;width: 55%"  id="alter_count" />
+
+            <img src="/images/small_increase.png" width="15%" id="add_count" style="margin-bottom: -8px;"/>
+        </div>
+
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p id="alter_cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p>
+            <p id="alter_sure" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="" id="alter_product_id"/>
+<input type="hidden" value="" id="alter_product_unit"/>
+</body>
+
+<script type="text/javascript">
+
+$("#determine_start").click(function (){
+
+    $("#determine_content").css("display","block");
+});
+
+$("#cancel").click(function (){
+
+    $("#determine_content").css("display","none");
+});
+
+$("#determine_ok").click(function ()
+{
+    $("#determine_ok").css("display","none");
+    var site = location.protocol + '//' + location.host + '/api/wx_user/procurement/send_supply';
+    var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id':'{{ order_id }}','type':'supply_verify','top_directory_id':'{{top_directory_id}}'};
+    $.ajax({
+        url:site,
+        data:post_data,
+        type:'POST',
+        dataType:'json',
+        async: true,
+        success:function(r)
+        {
+            location.href = "/wx_user/procurement/shop_success?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&type=chef&template={{template}}&order_self={{order_data.order_self}}";
+        }
+    });
+
+});
+
+$("#determine_alter").click(function (){
+
+    $("#determine_alter_content").css("display","block");
+});
+
+$("#determine_alter_cancel").click(function (){
+
+    $("#determine_alter_content").css("display","none");
+});
+
+$("#determine_alter_ok").click(function ()
+{
+    $("#determine_alter_ok").css("display","none");
+    var product_data = [];
+    $(".detail_order_alter").each(function()
+    {
+        product_data[$(this).attr('id')] = $(this).val();
+
+    });
+    var data = [];
+    var product = [];
+    for(var key in product_data)
+    {
+        product.push(key+':'+product_data[key]);
+    }
+
+    data.push(product.join(","));
+
+    var site = location.protocol + '//' + location.host + '/api/wx_user/procurement/send_supply_alter';
+    var post_data = {'wx_user_id':'{{wx_user_id}}','mp_user_id':'{{mp_user_id}}','order_id':'{{ order_id }}','product_data':data,'type':'supply_verify','top_directory_id':'{{top_directory_id}}'};
+    $.ajax({
+        url:site,
+        data:post_data,
+        type:'POST',
+        dataType:'json',
+        async: true,
+        success:function(r)
+        {
+            $("#determine_alter_content").css("display","none");
+            $("#progress").css("display","none");
+            location.href = '/wx_user/procurement/shop_success?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&type=chef&template={{template}}&order_self={{order_data.order_self}}';
+        }
+    });
+
+
+});
+
+
+$("#alter_cancel").click(function (){
+
+    $("#alter").css("display","none");
+    $("#alter_count").val(0.0);
+    $("#alter_content").css("margin","50% auto");
+});
+
+$("#alter_sure").click(function ()
+{
+    var alter_count = $("#alter_count").val();//产品现在选择斤数
+
+    //判断产品单位
+    var product_unit  = $("#alter_product_unit").val();
+    if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+    {
+        alter_count = parseFloat(alter_count);
+        alter_count = alter_count.toFixed(1);
+    }
+    else
+    {
+        alter_count = parseFloat(alter_count);
+        alter_count = alter_count.toFixed(0);
+    }
+
+    if(alter_count <= 0 || alter_count == "")
+    {
+        alter_count = 0.0.toFixed(1);
+    }
+    var alter_product_id = $("#alter_product_id").val();
+    $("#"+alter_product_id).val(alter_count);
+
+    $("#alter").css("display","none");
+    $("#alter_content").css("margin","50% auto");
+});
+
+//修改订单
+function alter(obj)
+{
+    $("#alter").css("display","block");
+    var id = $(obj).attr('id');
+    var product_unit = $(obj).attr("class");
+    //查找产品id
+    var idArray= new Array(); //定义一数组
+    idArray=id.split("_"); //字符分割
+    var count_id = "count_"+idArray[1];
+    $("#alter_product_id").val(count_id);
+
+    var  count_value = $("#"+count_id).val();//产品现在选择斤数
+
+    $("#alter_product_unit").val(product_unit);
+    //判断产品单位
+    if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+    {
+        count_value = parseFloat(count_value);
+        count_value = count_value.toFixed(1);
+    }
+    else
+    {
+        count_value = parseFloat(count_value);
+        count_value = count_value.toFixed(0);
+    }
+
+    $("#alter_count").val(count_value);//产品现在选择斤数
+    $("#determine_start").css("display","none");
+    $("#determine_alter").css("display","block");
+    $("#price").css("display","none");
+    $("#progress").css("display","block");
+}
+//修改框里的内容变化
+$("#add_count").click(function ()
+{
+    var alter_count =  $("#alter_count").val();
+
+    var product_unit  = $("#alter_product_unit").val();
+    //判断产品单位
+    if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+    {
+        alter_count = parseFloat(alter_count)+0.1;
+        alter_count = alter_count.toFixed(1);
+    }
+    else
+    {
+        alter_count = parseFloat(alter_count)+1;
+        alter_count = alter_count.toFixed(0);
+    }
+
+    $("#alter_count").val(alter_count);
+});
+
+//修改框里的内容变化
+$("#reduce_count").click(function ()
+{
+    var alter_count =  $("#alter_count").val();
+    var product_unit  = $("#alter_product_unit").val();
+    //判断产品单位
+    if(product_unit == "元/斤" || product_unit == "元/公斤" || product_unit == "元/两"  )
+    {
+        alter_count = parseFloat(alter_count)-0.1;
+        alter_count = alter_count.toFixed(1);
+    }
+    else
+    {
+        alter_count = parseFloat(alter_count)-1;
+        alter_count = alter_count.toFixed(0);
+    }
+
+    if(alter_count <= 0 )
+    {
+        alter_count = 0.0.toFixed(1);
+    }
+
+    $("#alter_count").val(alter_count);
+});
+
+
+
+$("#alter_count").click(function ()
+{
+    $("#alter_content").css("margin","10% auto");
+});
+
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

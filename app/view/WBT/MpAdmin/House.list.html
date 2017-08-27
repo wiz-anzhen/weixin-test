@@ -1,0 +1,308 @@
+
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_house_member' %}
+
+{% block header_js_link %}
+
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>用户信息管理</li>
+{% endblock %}
+
+{% block content_login %}
+<div style="border:1px solid #ced7dc;border-radius: 5px;padding:10px 0 20px 20px;margin-top:10px;background-color:#F8F8FF;">
+<form class="form-inline" role="form" id="form" method="get" style="margin-bottom: 20px;">
+
+    <div class="form-group" style="display:inline;">
+        <label for="tel">手&nbsp;&nbsp;机&nbsp;&nbsp;号</label>
+        <input type="text" class="form-control" style="width:80px" id="tel" name="tel"  value="{{tel}}">
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label for="name">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</label>
+        <input type="text" class="form-control" style="width:75px" id="name" name="name" value="{{name}}">
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label for="house_no">房间号</label>
+        <input type="text" class="form-control" style="width:80px" id="house_no" name="house_no"  value="{{house_no}}">
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label for="house_address">住址</label>
+        <input type="text" class="form-control" style="width:220px" id="house_address" name="house_address"value="{{house_address}}">
+        <input type="hidden" id="page" name="page" value="{{ page }}">
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <span>客服组</span>
+        <select class="form-control input-lg" style="width:100px;" id="group_name" name="group_name" onChange="select('change')">
+            <option  value="">请选择</option>
+            {% for cs_group in group %}
+            <option  value="{{cs_group.customer_specialist_group_id}}"{% if group_name == cs_group.group_name %} selected="selected"{% endif %}>{{cs_group.group_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <span>客服专员</span>
+        <select class="current_name" id="current_name" name="current_name" style="width:100px;">
+            {% if customer_id %}
+            <option  value="{{customer_id}}" selected="selected">{{customer_name}}</option>
+            {% else %}
+            <option  value="" >请选择</option>
+            {% endif %}
+
+
+        </select>
+        <input type="hidden" id="notice_customer" name="page" value="{{ notice_customer }}">
+    </div>
+    <br/><br/>
+    <div class="form-group" style="display:inline;">
+            <label>用户类型</label>
+            <select style="width:120px;" name="employee">
+                <option  value="all" {% if employee == all %}selected='selected'{% endif %}>全部</option>
+                {% for key,type in user_type %}
+                <option  value="{{key}}" {% if employee == key %}selected='selected'{% endif %}>{{type}}</option>
+                {% endfor %}
+            </select>
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label>认证情况</label>
+        <select style="width:100px;"name="verify">
+            <option id="all" value="" {% if verify == '' %}selected='selected'{% endif %}>全  部</option>
+            <option id="verify" value="verify" {% if verify == 'verify' %}selected='selected'{% endif %}>已认证</option>
+            <option id="noVerify" value="null" {% if verify == 'null' %}selected='selected'{% endif %}>未认证</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label>用户认证时间范围</label>
+        <input type="text" class="form-control" style="width:120px" id="time_verify_start" name="time_verify_start"  value="{{time_verify_start}}" placeholder="例如：20140506" >
+        <label>至</label>
+        <input type="text" class="form-control" style="width:120px" id="time_verify_end" name="time_verify_end"  value="{{time_verify_end}}" placeholder="例如：20140506" >
+    </div>
+
+    <div class="form-group" style="display:inline;">
+        <label>排序方式</label>
+        <select style="width:120px;" name="rank">
+            <option  value="house_no_increase" >房间号正序</option>
+            <option  value="house_no_reduce" {% if rank == 'house_no_reduce' %}selected='selected'{% endif %}>房间号逆序</option>
+            <option  value="modify_time" {% if rank == 'modify_time' %}selected='selected'{% endif %}>用户信息更新时间</option>
+            <option  value="reply_time" {% if rank == 'reply_time' %}selected='selected'{% endif %}>用户留言时间</option>
+            <option  value="house_address" {% if rank == 'house_address' %}selected='selected'{% endif %}>用户地址</option>
+        </select>
+    </div>
+
+    <button type="button" class="btn btn-success" onclick="search();" style="display:inline;">搜索</button>
+    <button type="button" class="btn btn-default" onclick="clearData()" style="display:inline;">清空</button>
+
+</form>
+</div>
+<span class="help-block ">已认证业主:{{ verify_yezhu_count }} &nbsp;&nbsp;&nbsp;&nbsp;已认证用户:{{ verify_zhuhu_count }} &nbsp;&nbsp;&nbsp;&nbsp; 业主总数:{{ yezhu_count }}&nbsp;&nbsp;&nbsp;&nbsp; 用户总数:{{ zhuhu_count }} </span>
+
+{% if house_member_rw %}
+
+<div style="float:left;margin-bottom: 10px">
+    <button type="button" class="btn btn-success" title="录入业主" tag="add"> 添加用户</button>
+</div>
+<div style="float:left;margin-bottom: 10px;margin-left:10px;">
+    <button type="button" class="btn btn-success" title="录入业主并认证" onclick="bluefinBH.ajaxDialog('/mp_admin/house_dialog/add_check?mp_user_id={{ mp_user_id }}&community_id={{community_id}}');">添加用户并认证</button>
+</div>
+
+<div id="form1Icon_UPLOAD" style="float:left;"></div>
+        <div  style="float:left;margin-left:30px;"><a href="/download/ye_zhu_lu_ru_shi_li.xlsx">点击下载批量录入Excel示例文件</a>
+ </div>
+{% endif %}
+{{ table|raw }}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="/libs/uploadify/uploadify.css?v={{ third_lib_version }}">
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $(function(){
+        select("refresh");
+        //selectCheck();
+        //selectTwo();
+    });
+    function select(operate)
+    {
+        var $csGroupId = $("#group_name").find("option:selected").val();
+        var post_data = {'cs_group_id': $csGroupId};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/return_cs';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'text',
+            async: true,
+            success: function(e){
+                if(operate == 'refresh')
+                {
+                    document.getElementById("current_name").options.length = 1;
+                }
+                else
+                {
+                    document.getElementById("current_name").options.length = 0;
+                    $("#current_name").append("<option  value=''>"+"请选择"+"</option>");
+                }
+
+                for(var i=0; i< e.length;i++)
+                {
+                    $("#current_name").append("<option  value='"+e[i]['customer_specialist_id']+"'>"+e[i]['name']+"</option>");
+                }
+            }
+        });
+    }
+
+    //客服组认证联动,应用在添加住户认证上，在dialogController上应用
+    function selectCheck()
+    {
+        var $csGroupId = $("#form1CsGroup").find("option:selected").val();
+        var post_data = {'cs_group_id': $csGroupId};
+        var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/return_cs';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'text',
+            async: true,
+            success: function(e){
+                document.getElementById("form1Cs").options.length = 1;
+                for(var i=0; i< e.length;i++)
+                {
+                    $("#form1Cs").append("<option  value='"+e[i]['customer_specialist_id']+"'>"+e[i]['name']+"</option>");
+                }
+            }
+        });
+    }
+
+    function search() {
+        if(($("#time_verify_start").val() != '') && ($("#time_verify_end").val() == ''))
+        {
+            alert("请填写完整的时间范围");return;
+        }
+        if(($("#time_verify_start").val() == '') && ($("#time_verify_end").val() != ''))
+        {
+            alert("请填写完整的时间范围");return;
+        }
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&name="+$("#name").val()+"&tel="+$("#tel").val()+"&house_no="+$("#house_no").val()+"&house_address="+$("#house_address").val()+"&group_id="+$("[name='group_name']").find("option:selected").val()+"&customer_id="+$("[name='current_name']").find("option:selected").val()+"&employee="+$("[name='employee']").find("option:selected").val()+"&verify="+$("[name='verify']").find("option:selected").val()+"&rank="+$("[name='rank']").find("option:selected").val()+"&time_verify_start="+$("#time_verify_start").val()+"&time_verify_end="+$("#time_verify_end").val();
+        location.replace(wlh + getUrl);
+   }
+    function clearData(){
+        $("input").val("");
+       var arr = window.location.href.split("&");
+       location.replace(arr[0]+"&"+arr[1]);
+    }
+    //录入业主按钮
+    $("[tag='add']").click(function(){
+        bluefinBH.ajaxDialog('/mp_admin/house_dialog/add?mp_user_id={{ mp_user_id }}&community_id={{community_id}}');
+    });
+
+    function selectTwo()
+    {
+        var $csGroupId = $("#cs_group").find("option:selected").val();
+        var post_data = {'cs_group_id': $csGroupId};
+
+        var site = location.protocol + '//' + location.host + '/api/wx_user/user_info/return_cs';
+        $.ajax({
+            type: 'post',
+            url: site,
+            data: post_data,
+            datatype: 'text',
+            async: true,
+            success: function(e){
+                document.getElementById("cs").options.length = 1;
+                for(var i=0; i< e.length;i++)
+                {
+                    $("#cs").append("<option  value='"+e[i]['customer_specialist_id']+"'>"+e[i]['name']+"</option>");
+                }
+            }
+        });
+    }
+    function searchTwo() {
+        var wlh = window.location.href;
+        var arr = wlh.split("&");
+        wlh = arr[0]+"&"+arr[1];
+        var getUrl = "&cs_group_id="+$("[name='cs_group']").find("option:selected").val()+"&cs_id="+$("[name='cs']").find("option:selected").val()+"&start_time="+$("#start_time").val()+"&end_time="+$("#end_time").val();
+        location.replace(wlh + getUrl);
+        }
+    function check()
+    {
+        var csValue = $("#cs").val();
+        if(csValue == '')
+        {
+            alert("请选择客服专员列表...");
+        }
+    }
+
+</script>
+<script src="/libs/uploadify/jquery.uploadify.min.js"></script>
+
+<script type="text/javascript">
+    $("#form1Icon_UPLOAD").uploadify({
+        'swf'           : '/libs/uploadify/uploadify.swf',
+        //       'uploader'      : '/api/image/file/upload_by_flash',
+        'uploader'      : '/api/fcrm/house/file_upload?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}',
+        'fileSizeLimit' : '50MB',
+        'width'         : 68,
+// 'height'        : 28,
+        'debug'         : false,
+// 'buttonText'   : '选择图片',
+// 'buttonClass'   : '/images/button/select_img.png',
+        'buttonImage'   : '/libs/uploadify/select_file.png',
+//                'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+        'fileTypeExts'  : '*.xlsx',
+        'method'        : 'post',
+        'multi'         : false,
+        /*                'onSelectError' : function(file, errorCode, errorMsg)
+         {
+         if(errorCode == -110)
+         {
+         alert('图片大小超过限制,最大可以上传5M的图片。');
+         }
+         },
+         */
+        'onUploadSuccess' : function(file, data)
+        {
+            data = eval("(" + data + ")");
+            if(data.errno == 0)
+            {
+                location.reload();
+                alert("录入成功");
+            }
+            else
+            {
+                location.reload();
+                alert(data.error);
+
+            }
+        }
+
+    });
+</script>
+{% endblock %}
+

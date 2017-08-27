@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="SCRM" />
+    <meta name="description" content="SCRM" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRM管理后台</title>
+    {% block bootstrap_css %}
+    <link href="/libs/bootstrap/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    {% endblock %}
+    <link type="text/css" href="/libs/bluefin/bootstrap-addons.css?v={{third_lib_version}}" rel="stylesheet">
+    <link href="/styles/main.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <!--[if IE 6]><link href="/styles/ie6.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen"><![endif]-->
+    <style>
+        html{overflow-y:scroll}
+    </style>
+    <style type="text/css">
+        .big_area {
+            width: 300px;
+            height: 120px;
+        }
+
+        .container{
+            width: 1170px;
+        }
+
+    </style>
+    {% block css_link %}{% endblock %}
+    {% block header_js_link %}{% endblock %}
+</head>
+
+<body>
+<div class="header">
+    <div class="container">
+        <a class="pull-left logo" href="/" title="微餐厅SCRM"></a>
+        {% block header %}{% endblock %}
+    </div>
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<div class="footer">
+    <div class="container">
+    </div>
+</div>
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+{% block bootstrap_js %}
+<script src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+{% if pagination_js %}
+<script type="text/javascript">
+    $(function () {
+        if (!bluefinBH.isRegistered('_pagination')) {
+            bluefinBH.register('_pagination', true);
+            $('.pagination').each(function () {
+                var divp = $(this),
+                        req = divp.data('request');
+                divp.on('click', 'a[data-page]', function (e) {
+                    location.href = bluefinBH.buildUrl(req, {'*PAGING*': {'page': $(this).data('page')}});
+                });
+            });
+        }
+    });
+
+</script>
+{% endif %}
+
+{% block inform_link %}{% endblock %}
+{% block js_link %}{% endblock %}
+
+</body>
+</html>

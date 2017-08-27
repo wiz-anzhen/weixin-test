@@ -1,0 +1,24 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>禁止访问</title>
+{% endblock %}
+
+{% block css_link %}
+<link href="/libs/photo-swipe/photoswipe.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">禁止访问</h3>
+    </div>
+    <div class="panel-body">
+        <p>对不起，该页面是专属页面。</p>
+        <p>如果您是业主，可以通过手机进行验证，验证后可随时进入所有的业主尊享栏目。</p>
+        <p>请点击<a href="/wx_user/user_info/index?wx_user_id={{wx_user_id}}">进入安全验证</a></p>
+        <p>如果您有任何问题，请联系物业管理中心</p>
+    </div>
+</div>
+{% endblock %}
+

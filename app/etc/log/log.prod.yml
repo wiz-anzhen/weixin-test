@@ -1,0 +1,9 @@
+default:
+  -
+    type: file
+    path: <?php echo ROOT; ?>/log
+    filename: "spm.log"
+    level: 7
+    channels: { default: true, diag: true }
+
+

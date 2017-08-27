@@ -1,0 +1,88 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ article.article_title|raw }}</title>
+{% endblock %}
+
+{% block body %}
+<body onload="resize_img();" onresize="resize_img();" style="margin: 15px 15px 40px;">
+<div id="main-div">
+    <h1 style="color: #000;font-size: 20px;font-weight: bold;">{{ article.article_title|raw }}</h1>
+    {{ article.article_detail|raw }}
+</div>
+</body>
+<script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bootstrap/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script type="text/javascript">
+    function resize_img() {
+        $("#main-div").find('img').each(function () {
+            var $clientWidth = document.body.clientWidth;
+            var $img = new Image();
+            $img.src = $(this).attr("src");
+            if ($img.width > 0) {
+                $(this).css("width", Math.min($clientWidth, $img.width));
+            }
+        });
+    }
+
+</script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    wx.config({
+        appId: '{{ signPackage.appId }}',
+        timestamp: {{ signPackage.timestamp }},
+    nonceStr: '{{ signPackage.nonceStr }}',
+            signature: '{{ signPackage.signature }}',
+            jsApiList: [
+        // 所有要调用的 API 都要加到这个列表中
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage'
+    ]
+    });
+    wx.ready(function () {
+        wx.onMenuShareAppMessage({
+            title: '{{ article.article_title }}',
+            desc:  '{% if article.article_desc|length > 0 %}{{ article.article_desc|raw }}{% else %}{{ article.article_title }}{% endif %}',
+            link:  location.href,
+            imgUrl: '{{ article.share_url }}',
+            trigger: function (res) {
+                //alert('用户点击发送给朋友');
+            },
+            success: function (res) {
+                //alert('已分享');
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                //alert(JSON.stringify(res));
+            }
+        });
+        wx.onMenuShareTimeline({
+            title: '{{ article.article_title }}',
+            link:  location.href,
+            imgUrl: '{{ article.share_url }}',
+            trigger: function (res) {
+                // alert('用户点击分享到朋友圈');
+            },
+            success: function (res) {
+                //alert('已分享');
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                //alert(JSON.stringify(res));
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript" src="/wx-share/wxm-core176ed4.js"></script>
+<script type="text/javascript" src="/wx-share/wx_api.js?"></script>
+{% endblock %}
+
+

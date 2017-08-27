@@ -1,0 +1,14 @@
+<div{{ component.renderAttributes|raw }}>
+  <div class="navbar-inner">
+{% if component.label %}
+    <span class="brand" >{{ component.label }}</span>
+{% endif %}
+{% for child in component.components %}
+{% if child.label %}
+    <span class="navbar-label pull-left">{{ child.label }}&nbsp;</span>
+{% endif %}
+    {{ child|raw }}
+    <div class="divider-vertical pull-left"></div>
+{% endfor %}
+  </div>
+</div>

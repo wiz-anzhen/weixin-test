@@ -1,0 +1,30 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_push_message_app_mp' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>推送通知（app公众账号）</li>
+{% endblock %}
+
+{% block action %}
+<button type="button" class="btn btn-success" onclick="bluefinBH.ajaxDialog('/mp_admin/push_message_dialog/add?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&from=app_mp');">
+    添加通知
+</button>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = TRUE %}

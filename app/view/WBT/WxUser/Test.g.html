@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>退货列表</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+</head>
+<header style="height:75px;text-align:center;background:#fff;">
+    <a href="/wx_user/test/a"style="height:75px;line-height:75px;font-size:1em;padding-left:3%;color: #000;float: left; ">返回</a>
+    <span style="height:75px;line-height:75px;font-size:1em;">退货单</span>
+    <a href="/wx_user/test/index"style="height:75px;line-height:75px;color:#000;font-size:1em;padding-right:3%;outline:none;float: right; ">首页</a>
+</header>
+<div style="height:20px;background:#e4e4e4;"></div>
+<div style="width:100%;padding-top:5%; padding-bottom:18%; margin:0 auto;border-bottom:1px solid #ccc;">
+    <div style="padding:2% 3%;font-weight:bolder;float:left;">
+        <p style="font-size:1em;">订单号:853404137</p>
+        <p style="padding-top: 5%;font-size:12px;">退货时间:2015-02-22&nbsp;15:55</p>
+    </div>
+    <div style="padding-top: 3%;padding-left:4%;font-size:24px;float:left;">
+        &gt;
+    </div>
+    <div style="color:orange;padding-right:3%;padding-top:5%;font-size:14px;float:right;">
+        等待供应商确认
+    </div>
+</div>
+<div style="width: 100%;height: 60px;border-bottom: 1px solid #ccc;">
+    <dl style="float:left;padding:3%;">
+        <dt>白菜</dt>
+        <dd style="padding-top:8%;font-size: 12px;color:#aaa;">单价1.5元/斤</dd>
+    </dl>
+    <div style="padding: 5% 3%;color:#f00;float: right">&times;1</div>
+</div>
+<div style="width: 100%;height: 35px;border-bottom: 1px solid #ccc;">
+    <div style="height: 35px;line-height: 35px;padding-right:3%;float: right">退款&nbsp;&yen;1.5</div>
+</div>
+<div id="message"style="width: 100%;height:60px;">
+    <input class="btn4"type="button"value="确认"style="padding:2% 6%;margin: 4% 5%;color:#fff;float: right;background: red;outline: none;border-radius: 5px"class="btn1"/>
+    <input type="button"value="查看详情"style="padding:2%;margin: 4% 5%;float: right;background: #fff;outline: none;border-radius: 5px"class="btn2"/>
+</div>
+
+<div style="height: 20px;background: #eee;"></div>
+
+<div id="dialog"style="width: 70%;margin:0 auto;background: rgba(0,0,0,0.5);position: absolute;top: 0;left:0;display: none;">
+    <div class="content" style="width: 85%;margin:50% auto;background:#fff;">
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">退货确认 </div>
+        <div style="padding: 10%;text-align: center;">确认退货,并发送通知给餐厅</div>
+        <div style="height:35px;line-height: 35px;margin:0 auto;padding-left:3%;background: #eee;">
+            <p class="Cancel" style="width:30%;padding-left:15%;border-right:1px solid #ccc;float: left;">取消</p><p class="Determine" style="float: right;padding-right: 25%;">确定</p>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    function getByClass (oParent,sClass){
+        var aEle=oParent.getElementsByTagName('*');
+        var aResult=[];
+        for (var i = 0; i < aEle.length; i++) {
+            if(aEle[i].className==sClass){
+                aResult.push(aEle[i]);
+            }
+        }
+        return aResult;
+    }
+    var dialog=document.getElementById('dialog');
+    //var information=document.getElementById('information');
+    var message=document.getElementById('message');
+    var Cancel=getByClass(dialog,'Cancel')[0];
+    var btn4=getByClass(message,'btn4')[0];
+    var btn2=getByClass(message,'btn2')[0];
+    var Determine=getByClass(dialog,'Determine')[0];
+    var abody=document.getElementsByTagName('body')[0];
+    var windowW=abody.offsetWidth;
+    var windowH=document.body.scrollHeight;
+    Cancel.onclick=function(){
+        dialog.style.display='none';
+    }
+    btn4.onclick=function(){
+        dialog.style.display='block';
+        dialog.style.width=windowW+'px';
+        dialog.style.height=windowH+'px';
+    }
+    btn2.onclick=function(){
+        location.href="/wx_user/test/c";
+    }
+    Determine.onclick=function(){
+        location.href="/wx_user/test/d";
+    }
+</script>
+</html>

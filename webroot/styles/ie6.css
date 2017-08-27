@@ -1,0 +1,19 @@
+.nav-pills li {
+    display: block;
+    float:left;
+    margin-left: 10px;
+}
+.btn-info {
+    width:20px;;
+}
+.active{
+    background-color: #bae9f8;
+}
+.imagebox{
+    position: absolute;
+    top: -100px;
+    left: -510px;
+}
+.basic-block-intro img{
+    width:410px;
+}

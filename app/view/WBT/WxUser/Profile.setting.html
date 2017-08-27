@@ -1,0 +1,79 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>设置</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241, 240, 245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div class="list-group">
+        <a class="list-group-item"  style="height: 69px;">
+            头像
+            <span class="badge">
+                {% if head_pic %}
+                <img src="{{head_pic}}" width="59px" height="59px" style="overflow: hidden; border-radius: 30px;"/>
+                {% else %}
+                未设置
+                {% endif %}
+            </span>
+        </a>
+        <a class="list-group-item" target="_blank" href="javascript:">
+            名字
+            <span class="badge">{{name}}</span>
+        </a>
+    </div>
+    <div class="list-group">
+        <a class="list-group-item" href="/wx_user/profile/account?wx_user_id={{wx_user_id}}">
+            我的帐号
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        </a>
+    </div>
+    <div class="list-group">
+        <a class="list-group-item" href="javascript:">
+            性别
+            <span class="badge">{{gender}}</span>
+        </a>
+        <a class="list-group-item" target="_blank" href="javascript:">
+            地址
+            <span class="badge">{{address}}</span>
+        </a>
+        <a class="list-group-item" target="_blank" href="/wx_user/setting/wx_user?wx_user_id={{wx_user_id}}&field=idiograph">
+            个人签名
+            <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+            <span class="badge">{{idiograph}}</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+{% block js_link %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+//        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+{% endblock %}

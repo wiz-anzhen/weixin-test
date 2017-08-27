@@ -1,0 +1,641 @@
+{% set _datePicker = component.getView.get('_datePicker') %}
+{% set _timePicker = component.getView.get('_timePicker') %}
+{% set _dateTimePicker = component.getView.get('_dateTimePicker') %}
+{% set _inputSpinner = component.getView.get('_inputSpinner') %}
+{% set _fileUpload = component.getView.get('_fileUpload') %}
+{% set _richText = component.getView.get('_richText') %}
+{% set third_lib_version = component.getView.get('third_lib_version') %}
+
+
+
+<script type="text/javascript" src="/scripts/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript">
+///////////////////////////////////时间范围
+
+function timeRangePub(timeRangeID)
+{
+    var v1 = $("#select1"+timeRangeID).val();
+    var v2 = $("#select2"+timeRangeID).val();
+    var v3 = $("#select3"+timeRangeID).val();
+    var v4 = $("#select4"+timeRangeID).val();
+    var v = v1+':'+v2+':'+v3+':'+v4;
+    $("#"+timeRangeID).val(v);
+}
+
+$("[tag='select1']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select1','');
+    timeRangePub(ID);
+})
+$("[tag='select2']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select2','');
+    timeRangePub(ID);
+})
+$("[tag='select3']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select3','');
+    timeRangePub(ID);
+})
+$("[tag='select4']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select4','');
+    timeRangePub(ID);
+})
+///////////////////////////////////////时分秒
+
+function timePub(timeID)
+{
+    var v1 = $("#select_time1"+timeID).val();
+    var v2 = $("#select_time2"+timeID).val();
+    var v4 = $("#select_time4"+timeID).val();
+    var v = v1+':'+v2+':'+v4;
+    $("#"+timeID).val(v);
+}
+$("[tag='select_time1']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select_time1','');
+    timePub(ID);
+})
+$("[tag='select_time2']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select_time2','');
+    timePub(ID);
+})
+$("[tag='select_time4']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('select_time4','');
+    timePub(ID);
+})
+
+
+///////////////////////////////////////年月日
+
+function ymd(timeID)
+{
+    var v1 = $("#year"+timeID).val();
+    var v2 = $("#month"+timeID).val();
+    var v4 = $("#date"+timeID).val();
+    var v = v1+':'+v2+':'+v4;
+    $("#"+timeID).val(v);
+}
+$("[tag='year']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('year','');
+    ymd(ID);
+})
+$("[tag='month']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('month','');
+    ymd(ID);
+})
+$("[tag='date']").change(function(){
+    var id = ($(this).attr('id'));
+    var ID = id.replace('date','');
+    ymd(ID);
+})
+
+$("[tag='check_group']").click(function()
+{
+    var id = ($(this).attr('id'));
+    var hidden_id_selector = "#" + ($(this).attr('hidden_id'));
+    var checked = document.getElementById(id).checked;
+    var value = ($(this).attr('value'));
+    var string_value = $(hidden_id_selector).val();
+    var array_value = string_value.split(',');
+    if(checked)
+    {
+        array_value.push(value);
+    }
+    else
+    {
+        var new_array_value  = new Array();
+        for(var i=0; i<array_value.length; i++)
+        {
+            var v = array_value[i];
+            if( v != value && v.length > 0)
+            {
+                new_array_value.push(array_value[i]);
+            }
+        }
+        array_value = new_array_value;
+    }
+    string_value = array_value.join(',');
+    $(hidden_id_selector).val(string_value);
+});
+
+$("[tag='bool_check_box']").click(function()
+{
+    var id = ($(this).attr('id'));
+    var hidden_id_selector = "#" + ($(this).attr('hidden_id'));
+    var checked = document.getElementById(id).checked;
+    var value = ($(this).attr('value'));
+    var string_value = $(hidden_id_selector).val();
+    if(checked)
+    {
+        $(hidden_id_selector).val('1');
+    }
+    else
+    {
+        $(hidden_id_selector).val('0');
+    }
+});
+
+
+$("[tag='img_upload_first']").click(function()
+{
+    var id = $(this).attr("uploadID");
+    $("#"+id+"_myModal").on('show', function() {
+        $(this).css({
+            'top': function () {
+                return ($(window).height() - $(this).height()) / 2;
+            }
+        });
+    });
+    $("#"+id+"_myModal").modal('show');
+})
+$("[tag='img_button_clear']").click(function()
+{
+    var id = $(this).attr("uploadID");
+    clearDialogImgUrl(id);
+})
+$("[tag='nav_tab_son']").click(function(e)
+{
+    var id = $(this).attr("uploadID");
+    $(this).siblings("."+id+"_actives").removeClass(""+id+"_actives");
+    var classes = $(this).attr("class");
+    $("li[class!='"+id+"_actives']").attr("style","background-color:#ECECEC");
+    $(this).addClass(""+id+"_actives");
+    $("#"+classes).siblings("div").hide();
+    $("#"+classes).show();
+    $("."+id+"_actives").attr("style","background-color:#7388C1;color:#ffffff; ");
+
+})
+$("[tag='img_button']").click(function()
+{
+    var ids = ($(this).parent().parent().attr('id'));//id = form1Icon_myModal
+    var id = ids.split("_")[0];//id = form1Icon
+    //图片网络地址：http://y1.ifengimg.com/cmpp/2014/04/24/02/c469b595-5b7b-4ecf-9da1-8f20bd36bcaf.jpg
+    var mainImageUrl;
+    var value = $("#"+id+"_imgUrl").val();
+
+    var text = $("."+id+"_actives").attr("class");
+    if(text.indexOf(id+"_test1") == -1)
+    {
+        mainImageUrl = value;
+        $("#"+id+"_INPUT").val(mainImageUrl);
+        $("#"+id+"_IMG").attr("src","");
+    }
+    else
+    {
+        mainImageUrl = $("#"+id+"_INPUT").val();
+    }
+
+
+
+    $("#"+id+"_mainImg").attr("src",mainImageUrl);
+
+
+    clearDialogImgUrl(id);
+
+})
+function clearDialogImgUrl(id)
+{
+    $("#" + id + "_myModal").modal('hide');
+    $("#" + id + "_IMG").attr("src","");
+    $("#" + id + "_imgUrl").val("");
+}
+/////////////////////////////////////////////////////////////////////
+   jQuery.fn.LoadImage = function (width, height)
+   {
+       // 参考 图片预加载插件 作者：没剑(2008-06-23) http://regedit.cnblogs.com
+       // 加载中的图片路径
+       return this.each(function () {
+           var t = $(this);
+           var src = $(this).attr("src");
+           var img = new Image();
+           img.src = src;
+           var autoScaling = function ()
+           {
+               if (img.width > 0 && img.height > 0)
+               {
+                   var newHeight = img.height, newWidth = img.width;
+                   if (img.width / img.height >= width / height)
+                   {
+                       if (img.width > width)
+                       {
+                           newWidth = width;
+                           newHeight = img.height * width / img.width;
+                       }
+                   }
+                   else
+                   {
+                       if (img.height > height)
+                       {
+                           newHeight = height;
+                           newWidth = img.width * height / img.height;
+                       }
+                   }
+                   t.width(newWidth);
+                   t.height(newHeight);
+               }
+               else
+               {
+                   // 设置为最大宽度
+                   t.width(width);
+               }
+           }
+
+           //处理ff下会自动读取缓存图片
+           //if (img.complete) {
+               autoScaling();
+               return;
+           //}
+       });
+   }
+
+   function adjustFormImageSize() {
+       //$("[thumbnail='form']").LoadImage(190, 200);
+   }
+
+
+    var dragTarget;
+    var img;
+    $("document").ready(function()
+    {
+        //adjustFormImageSize();
+
+        if (window.FileReader) {
+            function isImage(type) {
+                switch (type) {
+                    case 'image/jpg':
+                    case 'image/jpeg':
+                    case 'image/png':
+                    case 'image/gif':
+                    case 'image/bmp':
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            function handleFileSelect(event)
+            {
+                event.stopPropagation();
+                event.preventDefault();
+                dragTarget = event;
+                img = dragTarget.target;
+
+                event.target.style.backgroundColor = null;
+
+                var file   = event.dataTransfer.files[0];
+                var type   = file.type ? file.type : 'n/a';
+                var reader = new FileReader();
+
+                if (isImage(type))
+                {
+                    reader.onload = (function (file)
+                    {
+                        return function (readerEvent)
+                        {
+                            var imgData = readerEvent.target.result.substr(22);
+                            $.post('/api/image/file/upload_by_drag',
+                                    { 'file_type': file.type, 'img_data': imgData},
+                                    function(data)
+                                    {
+                                        if (data.errno == 0)
+                                        {
+                                            img.src = data.url;
+                                            var imgID =  img.id;
+                                            var suffix = '_IMG';
+                                            var id =  imgID.substr(0, imgID.length - suffix.length);
+                                            var inputSelector = "#"+id +'_INPUT';
+                                            $(inputSelector).attr('value', data.url);
+
+                                           // adjustFormImageSize();
+                                        } else
+                                        {
+                                            alert(data.error);
+                                        }
+
+                                    }, "json" );
+                        }
+                    })(file);
+                    reader.readAsDataURL(file);
+                } else
+                {
+                    alert("必须是 jpg/jpeg/png/bmp/gif 格式图片！");
+                }
+            }
+
+            function handleDragEnter(event)
+            {
+                event.target.style.backgroundColor = "gray";
+            }
+
+            function handleDragLeave(event)
+            {
+                event.target.style.backgroundColor = null;
+            }
+
+            function handleDragOver(event)
+            {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            $("[thumbnail='form']").each(function()
+            {
+                $(this)[0].addEventListener('dragenter', handleDragEnter, false);
+                $(this)[0].addEventListener('drop', handleFileSelect, false);
+                $(this)[0].addEventListener('dragleave', handleDragLeave, false);
+                $(this)[0].addEventListener('dragover', handleDragOver, false);
+            });
+
+
+
+        }
+    });
+{{ component.bodyScript|raw }}
+    var {{ component.attributes.id }}Meta = {};
+{% for child in component.components %}
+  {% set name = child.attributes.name %}
+  {% if name %}
+    {{ component.attributes.id }}Meta['{{ name }}'] = {{ child.clientSide|json|raw }};
+  {% endif %}
+{% endfor %}
+  $(function ()
+  {
+     var scripts = [];
+{% if _datePicker %}
+
+      $(function() {
+          $('.input-append').datetimepicker({
+
+          });
+      });
+      $('.input-append').datetimepicker()
+              .on('changeDate', function(ev){
+                  var id = $(this).attr("id");
+                  //alert(id);
+                  var value = $(".input_"+id).val();
+                  var arr = value.split("-");
+                  var newValue = arr[0] + arr[1] +arr[2];
+                  $(".inputHidden_"+id).val(newValue);
+                  var v = $(".inputHidden_"+id).val();
+                  //alert(v);
+              });
+        scripts.push('/scripts/jquery-datepicker.locale.zh_CN.js?v={{ third_lib_version }}');
+{% endif %}
+
+{% if _dateTimePicker %}
+$(function() {
+  $('.input-append').datetimepicker({
+
+  });
+});
+$('.input-append').datetimepicker()
+      .on('changeDate', function(ev){
+          var id = $(this).attr("id");
+          var value = $(".input_"+id).val();
+          $(".hidden_"+id).val(value);
+          var v = $(".hidden_"+id).val();
+          //alert(v);
+      });
+{% endif %}
+
+{% if _timePicker %}
+
+          $(function() {
+              $('.input-append').datetimepicker({
+
+              });
+          });
+      $('.input-append').datetimepicker()
+              .on('changeDate', function(ev){
+                  var id = $(this).attr("id");
+                  //alert(id);
+                  var value = $(".input_"+id).val();
+                  var arr = value.split("-");
+                  var newValue = arr[0] + arr[1] +arr[2];
+                  $(".inputHidden_"+id).val(newValue);
+                  var v = $(".inputHidden_"+id).val();
+                  //alert(v);
+              });
+
+        scripts.push('/libs/bootstrap-timepicker/js/bootstrap-timepicker.js?v={{ third_lib_version }}');
+{% endif %}
+
+{% if _richText %}
+      scripts.push('/ueditor/ueditor.config.js?v={{ third_lib_version }}');
+      scripts.push('/ueditor/ueditor.all.js?v={{ third_lib_version }}');
+{% endif %}
+
+{% if _fileUpload %}
+        scripts.push('/libs/uploadify/jquery.uploadify.min.js?v={{ third_lib_version }}');
+{% endif %}
+
+        bluefinBH.loadScript(scripts, function() {
+            var form = $('#{{ component.attributes.id }}');
+{% if _datePicker %}
+            form.find('.date-picker').datepicker();
+{% endif %}
+
+{% if _timePicker %}
+            form.find('.time-picker').timepicker();
+{% endif %}
+
+{% if _richText %}
+    {% for id, action in _richText %}
+            var {{id}}Editor = new UE.ui.Editor();
+            {{id}}Editor.render('{{id}}');
+    {% endfor %}
+{% endif %}
+
+{% if _fileUpload %}
+     {% for id, action in _fileUpload %}
+          $("#{{ id }}_UPLOAD").uploadify({
+                'swf'           : '/libs/uploadify/uploadify.swf',
+                'uploader'      : '/api/image/file/upload_by_flash',
+                'fileSizeLimit' : '5MB',
+                'width'         : 65,
+               // 'height'        : 28,
+                'debug'         : false,
+               // 'buttonText'   : '选择图片',
+                // 'buttonClass'   : '/images/button/select_img.png',
+                'buttonImage'   : '/libs/uploadify/select_img.png',
+                'fileTypeExts'  : '*.png;*.jpg;*.jpeg;*.gif;*.bmp',
+                'method'        : 'post',
+                'multi'         : false,
+                'onUploadStart' : function(file) {
+                   // alert('Starting to upload ' + file.name);
+                    $("#success").attr("class","btn");
+                    $("#success").attr("tag","");
+                    $("#success").attr("disabled","disabled");
+                },
+                'onSelectError' : function(file, errorCode, errorMsg)
+                {
+                    if(errorCode == -110)
+                    {
+                        alert('图片大小超过限制,最大可以上传5M的图片。');
+                    }
+                },
+                'onUploadSuccess' : function(file, data)
+                {
+                    $("#success").attr("class","btn btn-primary");
+                    $("#success").attr("tag","img_button");
+                    $("#success").attr("disabled",false);
+                    data = eval("(" + data + ")");
+                    if(data.errno == 0)
+                    {
+
+                        var imgIDSelector =  "#{{ id }}_IMG";
+                        $(imgIDSelector).attr('src', data.url);
+                        $("#{{ id }}_INPUT").attr('value', data.url);
+                        //adjustImage(imgIDSelector);
+                        //adjustFormImageSize();
+                    }
+                    else
+                    {
+                        alert(data.error);
+                    }
+                },
+            });
+
+
+
+
+    {% endfor %}
+{% endif %}
+    });
+
+
+
+{% if component.ajaxForm %}
+
+        var FORM = $('#{{ component.attributes.id }}');
+
+        FORM.submit(function(e) {
+            var fields = FORM.find(":input").serializeArray(),
+                fieldName, fieldValue, PARAMS = {}, flag;
+            e.preventDefault();
+            var hasEmptyFiledHint = false;
+            var emptyFieldHint = '';
+            $.each(fields, function(i, field)
+            {
+
+               //  对必填字段判断。
+                var metaName = {{ component.attributes.id }}Meta[field.name];
+                if(!metaName)
+                {
+                    return;
+                }
+
+                if ((!hasEmptyFiledHint) && metaName.required == true && field.value == '')
+                {
+                    var nameSelector = "[name='" + field.name + "']";
+                    var label = $(nameSelector).attr('label');
+                    hasEmptyFiledHint = true;
+                    emptyFieldHint = label + "不能为空";
+                    return;
+                }
+
+                if (field.value == '')
+                {
+                    return;
+                }
+
+                flag = field.name.substr(-2);
+                if (flag == '_D') {
+                    fieldName = field.name.substr(0, field.name.length-2);
+                    if (typeof PARAMS[fieldName] == 'undefined') {
+                        PARAMS[fieldName] = field.value;
+                    } else {
+                        PARAMS[fieldName] = field.value + ' ' + PARAMS[fieldName];
+                    }
+                } else if (flag == '_T') {
+                    fieldName = field.name.substr(0, field.name.length-2);
+                    if (typeof PARAMS[fieldName] == 'undefined') {
+                        PARAMS[fieldName] = field.value;
+                    } else {
+                        PARAMS[fieldName] += ' ' + field.value;
+                    }
+                } else {
+                    PARAMS[field.name] = field.value;
+                }
+            });
+
+            // 有必填字段没填写，提示用户填写
+            if(hasEmptyFiledHint)
+            {
+                alert(emptyFieldHint);
+                return;
+            }
+{{ component.submitAction|raw }}
+            return false;
+        });
+{% else %}
+        var FORM = $('#{{ component.attributes.id }}');
+        FORM.submit(function(e) {
+
+{{ component.submitAction|raw }}
+        return true;
+        });
+{% endif %}
+{{ component.initScript|raw }}
+});
+
+function selectP()
+{
+    var parentId = $("#province").val();
+    //alert("province==="+parentId);
+    getData(parentId, 'city');
+}
+function getData(parent, name)
+{
+    var url = location.protocol + '//' + location.host + '/api/fcrm/city/get_city';
+    var id ;
+    $.getJSON(url,{parentId:parent},function(data){
+        //每次进来都清空
+        //$("[name='"+name+"'] option[value != '']").remove();
+        $("[name='"+name+"'] option[value != '']").remove();
+        $.each(data, function(k, v) {
+            //alert(v.name);
+            /*if(id == v.code)
+                $("[name='"+name+"']").append("<option value='"+v.code+"' selected='selected'>"+v.name+"</option>");
+            else
+                $("#city").append("<option value='"+v.code+"'>"+v.name+"</option>");*/
+            $("#"+name+"").append("<option value='"+ v.city_id+"'>"+ v.name+ "</option>");
+        });
+    })
+
+}
+function selectA()
+{
+    var parentId = $("#city").val();
+    //alert("province==="+parentId);
+    getAreaData(parentId, 'area');
+}
+function getAreaData(parent, name)
+{
+    var url = location.protocol + '//' + location.host + '/api/fcrm/city/get_area';
+    var id ;
+    $.getJSON(url,{parentId:parent},function(data){
+        //每次进来都清空
+        //$("[name='"+name+"'] option[value != '']").remove();
+        $("[name='"+name+"'] option[value != '']").remove();
+        $.each(data, function(k, v) {
+            //alert(v.name);
+            /*if(id == v.code)
+             $("[name='"+name+"']").append("<option value='"+v.code+"' selected='selected'>"+v.name+"</option>");
+             else
+             $("#city").append("<option value='"+v.code+"'>"+v.name+"</option>");*/
+            $("#"+name+"").append("<option value='"+ v.area_id+"'>"+ v.name+ "</option>");
+        });
+    })
+
+}
+
+</script>
+
+

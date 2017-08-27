@@ -1,0 +1,162 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>安全注册与认证</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241, 240, 245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<body>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">安全注册与认证</h3>
+    </div>
+    <div class="panel-body">
+        {% if show_form %}
+        {{ message }}
+        {% else %}
+        <div>
+            <input type="tel" id="phone" class="form-control input-lg" placeholder="请输入11位手机号" />
+            <br/>
+            <input type="button" id="submit_next"  class="btn btn-success btn-lg btn-block" value="获取验证码">
+            <input type="hidden" id="sendType" value="sms">
+        </div>
+        <br/>
+
+        <div id="submit_status" class="alert alert-danger" style="display: none;font-size: 16px;"></div>
+        <div id="code_div" style="display: none;">
+            <br/>
+            <input type="tel" id="code" class="form-control input-lg" placeholder="请填入4位验证码" />
+            <br/>
+            <a id="submit_code" class="btn btn-success btn-lg btn-block">安全验证</a>
+        </div>
+        <br/>
+        <div id="submit_code_status" class="alert alert-danger" style="display: none;"></div>
+
+        <input type="hidden" id="hide_phone" value="">
+        <input type="hidden" id="hide_community_id" value="">
+        <input type="hidden" id="verified" value="0">
+        <div style="display: none;height: 500px;color:white;background-color: #ffffff" id="scroll_add"></div>
+        <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+        <script>
+            $(function()
+            {
+                var pauseTime,pauseTimer;
+                //60秒限时发送
+                function authCodeRecoveryTimer(button)
+                {
+                    if (--pauseTime == 0)
+                    {
+                        clearInterval(pauseTimer);
+                        $("#submit_next").removeAttr('disabled').val("未收到验证码?点击获取语音验证码");
+                        $("#sendType").val("call");
+                    }
+                    else
+                    {
+                        $("#submit_next").val("发送成功，"+ pauseTime +"秒后可重新发送");
+                    }
+                }
+                //获取验证码
+                $("#submit_next").click(function()
+                {
+                    if ($("#verified").val() == 1) {
+                        $("#submit_status").html("您已注册过!").show();
+                        return;
+                    }
+                    var phone = $("#phone").val();
+                    if (phone.length != 11)
+                    {
+                        $("#submit_status").html("请输入11位手机号码").show();
+                        return;
+                    }
+
+                    $("#submit_next").attr('disabled', 'disabled').val("正在发送...");
+
+                    var type = $("#sendType").val();
+                    var $data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'phone': phone,'type':type};
+                    var $sendCodeUrl = location.protocol + '//' + location.host + '/api/wx_user/user_info/send_code_register';
+                    $.get($sendCodeUrl, $data, function(data) {
+                        if(data.errno == 0)
+                        {
+                            $("#hide_phone").val(phone);
+                            var $message = "系统已向您的手机号发送4位验证码，请注意查收，或点击上面按钮重新获取验证码。";
+                            $("#submit_status").html($message).show();
+                            $("#code_div").show();
+
+                            pauseTime = 30;
+                            $("#submit_next").attr('disabled', 'disabled').val("发送成功，"+ pauseTime +"秒后可重新发送");
+                            pauseTimer = setInterval(authCodeRecoveryTimer, 1000);
+                        }
+                        else
+                        {
+                            $("#notify_house_owner").show();
+                            $("#submit_status").html(data.error).show();
+                            $("#submit_next").removeAttr('disabled').val("获取验证码");
+
+                        }
+                    })
+                });
+
+                //输入验证码进行安全验证
+                $("#submit_code").click(function(){
+                    if ($("#verified").val() == 1) {
+                        $("#submit_code_status").html("您已通过验证!").show();
+                        return;
+                    }
+                    var $phone = $("#hide_phone").val();
+                    var $code  = $("#code").val();
+                    if ($code.length != 4) {
+                        $("#submit_code_status").html("请输入4位验证码").show();
+                        return;
+                    }
+
+                    var $data = {'mp_user_id': '{{ mp_user_id }}', 'wx_user_id': '{{ wx_user_id }}', 'phone': $phone, 'code': $code};
+                    var $verifyCodeUrl = location.protocol + '//' + location.host + '/api/wx_user/user_info/verify_code_other';
+                    $.get($verifyCodeUrl, $data, function($returnData) {
+                        if ($returnData.errno == 0)
+                        {
+                            var $message = "恭喜，您已注册并且认证成功。";
+                            $("#verified").val(1);
+                            location.href = "/wx_user/user_info/login_success?mp_user_id={{mp_user_id}}&text="+$message+"&wx_user_id={{ wx_user_id }}";
+                        } else
+                        {
+                            $("#submit_code_status").html($returnData.error).show();
+                        }
+                    });
+                });
+            });
+            $("#phone").click(function(){
+                $("#scroll_add").show();
+                $(window).scrollTop($("#submit_next").offset().top-100);
+            });
+            $("#code").click(function(){
+                $("#scroll_add").show();
+                $(window).scrollTop($("#code").offset().top-80);
+            });
+        </script>
+        {% endif %}
+    </div>
+</div>
+</body>
+{% endblock %}
+

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>月度账单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+        ul{list-style: none;}
+    </style>
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+</head>
+<body>
+
+<div style="height:50px;text-align:center;background:#fff;border-bottom:1px solid #ccc;width: 100%">
+    <div  style="height:50px;line-height:50px;color:#000;float: left;width: 20%; " onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</div>
+    <div onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');" style="height:50px;line-height:50px;font-size:1.0em;text-decoration: none;color:#000;float: right;width: 20%; ">首页</div>
+    <div style="height:50px;line-height:50px;font-size:1.5em;color:#000;width: 60%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;display: block;">月度账单</div >
+</div>
+<div style="background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div style="padding: 6% 3%">
+    <p style="float: left;padding:5px 2px;text-align: center;">月份</p>
+    <div style="border:1px solid red;border-radius: 4px;float: right;padding:4px 4px;margin-left: 20px;text-align: center;background-color: red;color:white;" onclick="refreshOrder(this)">确认</div>
+
+    <input type="month" id="order_month" style="width:50%;height: 30px;border: 1px solid #ccc;background: #eee;float: right;"     value="{{month}}" />
+
+</div>
+<div style="width: 100%;height: 45px;line-height: 45px;margin-top: 5%;background: #8fc31f">
+    <p style="padding-left:3%;color: #fff;float: left;">总支出</p>
+    <p style="color: #ffffff;padding-right: 3%;float: right;">{{boss_total_price}}</p>
+</div>
+{% if count != "none" %}
+<div id="kinds">
+    {% for key,restaurant in restaurant_data %}
+
+    <div id="{{restaurant.restaurant_id}}_restaurant" style="width: 100%;height: 45px;background:#eee;line-height:45px;border-bottom: 1px solid #ccc;clear: both;" onclick="showSupply(this)">
+        <p style="padding-left: 3%;float: left">{{restaurant.title}}</p>
+        <p style="padding:-2% 3%;font-size:16px;float: right;color: #000000">
+            {{restaurant.total_price}}
+            <img src="/images/xia.png"style="width:16px;height: 16px;padding-right: 5px;"/>
+        </p>
+    </div>
+
+    <div  style="width: 100%;background:#fff;display: none" id="{{restaurant.restaurant_id}}_supply">
+        {% for supply in restaurant.supply_data %}
+        <div style="width: 100%;height: 45px;background:#fff;line-height:45px;border-bottom: 1px solid #ccc;" class="{{supply.store_id}}" onclick="check(this)">
+            <p style="padding-left: 3%;float: left">{{supply.title}}</p>
+            <p style="padding:-2% 3%;font-size:16px;float: right;color: #ff9a49">
+                {{supply.supply_total_price}}
+                <img src="/images/zuo.jpg" style="width:16px;height: 16px;padding-right: 5px;"/>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if count == "none" %}
+<div style="text-align: center;background:#eee;width: 100%;padding:60px 0 ;">
+    <p>所选择的月份，还未结算；</p>
+    <p>请点击月份重新选择。</p>
+</div>
+{% endif %}
+</body>
+<script type="text/javascript">
+
+
+    function check(obj)
+    {
+        var store_id = $(obj).attr("class");
+        var month = $("#order_month").val();
+        location.href = '/wx_user/procurement/manager_month_order?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&store_id='+store_id+"&month="+month;
+    }
+
+    function refreshOrder(obj)
+    {
+        var month =  $("#order_month").val();
+        location.href = '/wx_user/procurement/manager_month?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}&month='+month;
+    }
+
+    function showSupply(obj)
+    {
+        var supply_progress = $(obj).attr("id");
+        var idArray=supply_progress.split("_");
+
+        var supply_id = idArray[0]+"_supply";
+
+        $("#"+supply_id).toggle();
+    }
+</script>
+</html>

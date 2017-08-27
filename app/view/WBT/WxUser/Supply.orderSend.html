@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>餐厅列表</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+        *{padding: 0;margin: 0;}
+        a{text-decoration: none;}
+    </style>
+</head>
+<body>
+
+<div class="box" style="width: 100%;height:50px;position: relative;border-bottom:1px solid #ccc;">
+    <span style="position: absolute;left: 10px;top: 15px;padding:0 15px;" onclick="location.replace('/wx_user/directory/list?mp_user_id={{mp_user_id}}&top_directory_id={{top_directory_id}}');">返回</span>
+    <div class="sp2" style="margin:0 auto;text-align: center;font-size: 1.5em;line-height: 50px;padding:0 15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 60%">选择餐厅</div>
+</div>
+<div style="height:45px;line-height:45px;margin-bottom:5px;text-align: center;background:#e4e4e4;position: relative;display: none;">
+    <input type="text" style="width: 80%;padding: 2%;border:none;"/>
+    <img src="/images/magnifying.png"style="width:16px;height:16px;position: absolute;top:40%;left:43%;"/>
+    <div style="position: absolute;top:5%;left: 50%;">搜索</div>
+</div>
+
+{% for store in store_data %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+<div class="box" style="padding:10px 0;overflow: hidden;border-bottom:1px solid #ccc;">
+    <a href="/wx_user/supply/order_send_list?store_id={{store.store_id}}&mp_user_id={{store.mp_user_id}}&community_id={{store.community_id}}&bound_community_id={{store.bound_community_id}}&top_directory_id={{top_directory_id}}" style="color: black;">
+        <div class="left" style="margin-left: 10px;font-size:1.2em;">
+            {{store.title}}
+        {% if store.new %}
+            <span style="float: right;margin-right: 10px;color: #ff0000;">新！&nbsp;</span>
+        {% endif %}
+        </div>
+    </a>
+</div>
+{% if loop.last %}
+<div style="height:18px;background:#e4e4e4;border-bottom:1px solid #ccc;"></div>
+{% endif %}
+{% endfor %}
+</body>
+<script type="text/javascript">
+    function getByClass (oParent,sClass){
+        var aEle=oParent.getElementsByTagName('*');
+        var aResult=[];
+        for (var i = 0; i < aEle.length; i++) {
+            if(aEle[i].className==sClass){
+                aResult.push(aEle[i]);
+            }
+        }
+        return aResult;
+    }
+    var box=document.getElementById('box2');
+    box.onclick=function(){
+        location.href="/wx_user/test/b";
+    }
+</script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+</html>

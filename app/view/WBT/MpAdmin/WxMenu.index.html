@@ -1,0 +1,39 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'wx_bottom_menu' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{ mp_user_id }}">{{mp_name}}</a><span class="divider">/</span></li>
+<li>微信底部菜单</li>
+{% endblock %}
+
+{% block action %}
+{% if item_count < 10 %}
+<button type="button" class="btn btn-success" title="添加菜单" onclick="bluefinBH.ajaxDialog('/mp_admin/wx_menu_dialog/add?mp_user_id={{ mp_user_id }}');">
+    添加菜单
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+
+{% block note %}
+<button type="button" class="btn btn-success" title="更新微信菜单" onclick="javascript:bluefinBH.confirm('确定要更新微信菜单吗？', function() { javascript:wbtAPI.call('../fcrm/wx_menu/update_wx_menu?mp_user_id={{mp_user_id}}', null, function(){bluefinBH.showInfo('更新微信菜单成功'); }); })">
+    更新微信菜单
+</button>
+<button type="button" class="btn btn-success" title="更新微信菜单" onclick="javascript:bluefinBH.confirm('确定要删除微信菜单吗？', function() { javascript:wbtAPI.call('../fcrm/wx_menu/delete_wx_menu?mp_user_id={{mp_user_id}}', null, function(){bluefinBH.showInfo('删除微信菜单成功'); }); })">
+    删除微信菜单
+</button><br/><br/>
+<span class="label label-important">备注</span><br/>
+<span>菜单的数量必须为1-3个</span><br/>
+<span>点击“更新微信菜单”按钮微信菜单才能生效</span>
+{% endblock %}

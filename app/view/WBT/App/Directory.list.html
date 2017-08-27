@@ -1,0 +1,109 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ top_name }}</title>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    body { background-color: rgb(241,240,245); padding-top: 20px; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    {% set in_group = false %}
+    <!-- 遍历目录-->
+    {% for directory in directories %}
+    <!-- 目录循环到新组中，首先设置此目录在该组中-->
+    {% if not in_group %}
+    {% if directory.head_desc %}
+    <p class="text-left">{{ directory.head_desc }}</p>
+    {% endif %}
+    <div class="list-group">
+        {% set in_group = true %}
+        {% endif %}
+
+        <!-- 目录为缴费通知单时特殊样式-->
+        {% if directory.common_type == "user_bill_list" %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}"  {% if directory.common_type != 'text'  %}    {% endif %}>
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% if bill_count %}
+                    <span class="badge" style="background-color: red;color:white;border-radius: 5px;font-size: 12px;width:20px;float:right;text-align:center;margin-top:3px">
+                        {{bill_count}}
+                     </span>
+        {% endif %}
+        {% else %}
+        <span class="badge" style="width:150px;overflow:hidden;white-space:nowrap; text-overflow:ellipsis;">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+
+        <!-- 目录为客服专员认证时特殊样式-->
+        {% elseif directory.common_type == "user_cs_certify" %}
+        {% if cs %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}  {% endif %} >
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+        <!-- 正常目录样式-->
+        {% else %}
+        <a class="list-group-item" href="{% if directory.common_type != 'text'  %} {{ directory.common_content }} {% else %} javascript:{% endif %}" {% if directory.common_type != 'text'  %}   {% endif %} >
+        {% if directory.icon %}
+        <img src="{{ directory.icon }}" height="30px" width="30px"/>
+        {% endif %}
+        {{ directory.title }}
+        {% if directory.common_type != 'text' %}
+        <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+        {% else %}
+        <span class="badge">{{ directory.common_content }}</span>
+        {% endif %}
+        </a>
+        {% endif %}
+
+        <!-- 如果包含分组标志或是循环至最后一行显示组尾内容-->
+        {% if (directory.group_end == 1) or (loop.last) %}
+    </div>
+    <!-- 如果包含组尾内容则显示-->
+    {% if directory.tail_desc %}
+    <p class="text-center">{{ directory.tail_desc|raw }}</p>
+    {% endif %}
+    <!-- 如果包含分组标志或是循环至最后一行，默认不再该组中-->
+    {% set in_group = false %}
+    {% endif %}
+
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block bootstrap_js %}
+<script src="/libs/bootstrap3/js/bootstrap.min.js?v={{third_lib_version}}"></script>
+{% endblock %}
+
+

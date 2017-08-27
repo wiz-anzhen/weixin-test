@@ -1,0 +1,164 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_order' %}
+
+{% block css_link %}
+<style type="text/css">
+    li{list-style-type: none}
+    .title{font:normal bold 20px arial,sans-serif;margin-left:-30px}
+    .table-width{width:1100px;margin:auto}
+    .div{margin-bottom: 20px}
+    .table thead th
+    {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+{% if type_procurement == 'total'  %}
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/procurement_order/total?mp_user_id={{mp_user_id}}&community_id={{community_id}}">订单(采购)管理</a>
+    <span class="divider">/</span>
+</li>
+{% else %}
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/procurement_order/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">订单(采购)管理</a>
+    <span class="divider">/</span>
+</li>
+{% endif %}
+
+<li>{{order_id}}</li>
+
+{% endblock %}
+
+{% block content_login %}
+<div class="div">
+    <ul>
+        <li class="title" style="font-size: 20px">供应商</li>
+        <li>供应商：{{store_name}}</li>
+        <li class="title" style="font-size: 20px">餐厅</li>
+        <li>餐厅：{{store_bound_name}}</li>
+        <li class="title" style="font-size: 20px;margin-top: 20px;">下单者</li>
+        <li>姓名：{{name}}</li>
+    </ul>
+</div>
+
+{% if status == 'refund' or status == 'refund_finished' %}
+<div class="div" style="margin-bottom: 30px;margin-top: 30px;">
+    <li class="title" style="margin-bottom: 10px;margin-left:-5px;font-size: 20px"> 退货详情</li>
+    <div style="margin-bottom: 30px;">
+        <table class="table table-width  table-bordered  " style="text-align: center;">
+            <tr style="border-bottom: 1px solid gray;text-align: center;">
+                <th style="text-align: center;">退货原因描述</th>
+                <th style="text-align: center;">退货图片1</th>
+                <th style="text-align: center;">退货图片2</th>
+                <th style="text-align: center;">退货图片3</th>
+            </tr>
+            <tr style="border-top: 1px solid gray;text-align: center;">
+                <td style="text-align: center;">{{refund_describe}}</td>
+                <td style="text-align: center;"><img src="{{refund_img_first}}" style="width: 80px;"/></td>
+                <td style="text-align: center;"><img src="{{refund_img_second}}" style="width: 80px;"/></td>
+                <td style="text-align: center;"><img src="{{refund_img_third}}" style="width: 80px;"/></td>
+            </tr>
+        </table>
+    </div>
+
+{% endif %}
+<div style="border:1px solid grey;padding-top: 10px;">
+    <li class="title" style="margin-bottom: 10px;margin-left:5px;font-size: 20px">订单详情</li>
+    {% for detail in table_detail_content %}
+    <div class="div">
+        <li  style="margin-top: 4px;margin-bottom: 4px;margin-left:5px;font-size: 14px">
+            档口：{{ detail.part }}
+        </li>
+        <div class="table-width">
+            {{ detail.content|raw }}
+        </div>
+    </div>
+    {% endfor %}
+    <div style="margin-bottom: 30px;">
+        <span style="color:red;float: right;" class="title">商品总价：{{total_price}}元</span>
+    </div>
+    <div style="color:white;">
+        00000
+    </div>
+</div>
+
+<div style="clear:both;border:1px solid grey;padding-top: 10px;margin-top: 20px;">
+    <li class="title" style="margin-bottom: 10px;margin-left:5px;font-size: 20px">订单操作记录</li>
+    <div class="table-width">
+        {{ table_change_log|raw }}
+    </div>
+</div>
+    {% if status != 'refund' and status != 'refund_finished' %}
+    <div style="border:1px solid grey;padding-top: 10px;margin-top: 20px;">
+        <li class="title" style="margin-bottom: 10px;margin-left:5px;font-size: 20px">订货员初次记录</li>
+        {% for detail in table_chef_verify_content %}
+        <div class="div">
+            <li  style="margin-top: 4px;margin-bottom: 4px;margin-left:5px;font-size: 14px">
+                档口：{{ detail.part }}
+            </li>
+            <div class="table-width">
+                {{ detail.content|raw }}
+            </div>
+        </div>
+        {% endfor %}
+        <div style="color:white;">
+            00000
+        </div>
+    </div>
+
+    <div style="border:1px solid grey;padding-top: 10px;margin-top: 20px;">
+        <li class="title" style="margin-bottom: 10px;margin-left:5px;font-size: 20px">厨师长记录</li>
+        {% for detail in table_supply_verify_content %}
+        <div class="div">
+            <li  style="margin-top: 4px;margin-bottom: 4px;margin-left:5px;font-size: 14px">
+                档口：{{ detail.part }}
+            </li>
+            <div class="table-width">
+                {{ detail.content|raw }}
+            </div>
+        </div>
+        {% endfor %}
+        <div style="color:white;">
+            00000
+        </div>
+    </div>
+
+
+    {% for detail in chef_count %}
+    <div style="border:1px solid grey;padding-top: 10px;margin-top: 20px;">
+        <li class="title" style="margin-bottom: 10px;margin-left:-5px;font-size: 20px">订货员修改记录{{ detail.times }}</li>
+        {% for d in detail.content %}
+        <div class="div">
+            <li  style="margin-top: 4px;margin-bottom: 4px;margin-left:5px;font-size: 14px">
+                档口：{{ d.part }}
+            </li>
+            <div class="table-width">
+                {{ d.content|raw }}
+            </div>
+        </div>
+        {% endfor %}
+        <div style="color:white;">
+            00000
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+{% endblock %}
+
+{% set pagination_js = TRUE %}
+
+{% block js_link %}
+<script type="text/javascript">
+</script>
+{% endblock %}

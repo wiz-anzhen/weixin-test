@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>订单结算</title>
+    <style type="text/css">
+        .line{height:0;clear:both;display:block;margin-left: 24px; margin-right: 24px;border-top:1px solid #9FA0A0}
+        .pay_method{font-size: 14px;margin: 20px 10px 20px 10px;font-weight: bold}
+        .wx_pay{line-height: 40px;background-color: #fff9f7;margin-left: 24px;margin-right: 24px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+        .cash_pay{line-height: 40px;margin-left: 24px;margin-right: 24px;-webkit-tap-highlight-color:rgba(255,255,255,0)}
+    </style>
+    <link href="/libs/bootstrap3/css/bootstrap.min.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" media="screen">
+    <script src="/libs/jquery/jquery.min.js?v={{third_lib_version}}"></script>
+    <script>
+        $(function ()
+        {
+            var winWide = document.body.clientWidth;
+            var process_width = $("#submit_success_after").width();
+            var leftWidth = winWide-process_width;
+            $("#submit_success_after").css("left",leftWidth/2);
+
+        });
+
+    </script>
+</head>
+<body>
+<div>
+    <table class="table table-bordered">
+        <thead>
+        <tr><th>我的购物车</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div class="panel panel-default">
+                    <div class="panel-heading">购物车详情</div>
+                    <div class="panel-body">
+                        <input type="hidden" id="store_id" name="store_id" value="{{ store.store_id }}">
+                        <input type="hidden" id="wx_user_id" name="wx_user_id" value="{{ wx_user.wx_user_id }}">
+                        <span><label>姓名：<input type="text" id="name" name="name" value="{{ wx_user.nick }}"/></label></span>
+                        <br/>
+                        <span><label>电话：<input type="tel" id="tel" name="tel" value="{{ wx_user.phone }}"/></label></span>
+                        <br/>
+                        <span><label>地址：<input type="text" id="address" name="address" value="{{ wx_user.address }}"/></label></span>
+                    </div>
+                    <table class="table" style="border-top: 1px solid #ddd; ">
+                        <tbody>
+                        {% set count = 0 %}
+                        {% set total_price = 0 %}
+                        {% for product in cart_data %}
+                        {% set count = count + product.num %}
+                        <tr>
+                            <td style="border-right: 1px solid #ddd">{{ product.name }}</td>
+                            <td width="15%" style="border-right: 1px solid #ddd">{{ product.num }}</td>
+                            <td width="30%">
+                                {% set total = product.price * product.num %}
+                                {% set total_price = total_price + total %}
+                                {{ total }} 元
+                            </td>
+                        </tr>
+                        {% if loop.last %}
+                        <tr><td colspan="3" style="text-align: right">共 {{ count }} 件商品，{{total_price}} 元</td></tr>
+                        {% endif %}
+                        {% else %}
+                        <tr>
+                            <td colspan="3">没有可显示的内容</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- 支付方式选择 -->
+                    <table class="table table-bordered">
+                        <div class="panel-heading" style="margin-bottom: 10px;margin-top: 15px;border-top: 1px solid #ddd;border-bottom: 1px solid #ddd;border-radius:0">支付方式</div>
+
+                        {% if pay_type %}
+                        <div class="line"></div>
+                        <div class="wx_pay" onclick="changePay('wx_pay')">
+                            <label for="wx_pay">
+                                <div>
+                                    <img id="wx_pay_img" src="/images/shop/store_checked.png"
+                                         style="padding-left: 28px;padding-right: 28px;vertical-align: middle"/>
+                                    <span style="line-height: 30px;vertical-align: middle;">微信支付</span>
+                                </div>
+                            </label>
+                            <input type="radio" name="pay_method" value="wx_pay" id="wx_pay"
+                                   style="display:none;" />
+                        </div>
+
+                        <div class="line"></div>
+
+                        <div class="cash_pay" onclick="changePay('cash_pay')">
+                            <label for="cash_pay">
+                                <div>
+                                    <img id="cash_pay_img"  src="/images/shop/store_no-checked.png" style="padding-left: 28px;padding-right: 28px;vertical-align: middle"/>
+                                    <span style="line-height: 30px;vertical-align: middle;">货到付款</span>
+                                </div>
+                            </label>
+                            <input type="radio" name="pay_method" value="cash_pay" id="cash_pay" style="display: none;"/>
+                        </div>
+
+                        <div class="line" style="margin-bottom: 10px;"></div>
+
+                        {% else %}
+                        <div style="line-height: 40px;margin-bottom: 10px;">
+                            <img src="/images/shop/store_checked.png"  style="margin-left: 28px;margin-right: 28px;vertical-align: middle"/>
+                            <span style="line-height: 30px;vertical-align: middle">货到付款</span>
+                        </div>
+                        {% endif %}
+                        <!-- 支付方式选择 -->
+                    </table>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div id="message" class="alert" style="display: none;margin-top: 20px;"></div>
+
+<button id="submit" class="btn btn-info btn-block" style="margin-top: 20px;margin-bottom: 10px;margin-left: auto;margin-right: auto;width: 90%">提交订单</button>
+
+<input type="hidden" name="pay_method_value" value="wx_pay">
+
+<div style="z-index: 9999;position:fixed;top:180px;background-color:#D8D5D5;display: none;text-align: center;left: 60px;border-radius:4px;" id="submit_success_after">
+    <div style="padding:40px 20px">您的订单已提交，请等待确认通知</div>
+    <div style="padding-left: 65px;padding-right: 65px;margin-bottom:5px;">
+        <button id="submit_success_after_button" class="btn btn-info btn-block" onclick="hide_page()">好</button>
+    </div>
+</div>
+<script src="/libs/bluefin/bootstrap-helpers.js?v={{third_lib_version}}"></script>
+<script type="text/javascript">
+    $("#submit").click(function() {
+        var $storeId  = $("#store_id").val();
+        var $wxUserId = $("#wx_user_id").val();
+        var $name     = $("#name").val();
+        var $tel      = $("#tel").val();
+        var $address  = $("#address").val();
+        var payMethod = $("[name = 'pay_method_value']").val();
+        var payType = '{{pay_type}}';
+        if( payType == "")
+        {
+            payMethod = "cash_pay"
+        }
+
+        if ($name.length == 0) {
+            show_error('请填写姓名');
+            return;
+        }
+
+        if ($tel.length == 0) {
+            show_error('请填写电话');
+            return;
+        }
+
+        if ($address.length == 0) {
+            show_error('请填写地址');
+            return;
+        }
+
+        var $url  = '/api/wx_user/order/checkout';
+        var $data = {
+            'store_id': $storeId,
+            'wx_user_id': $wxUserId,
+            'name': $name,
+            'tel': $tel,
+            'address': $address,
+            'pay_method': payMethod
+        };
+        $.post($url, $data, function($data) {
+            if ($data['errno'] == 0) {
+                show_success($data);
+            } else {
+                show_error($data['error']);
+            }
+        })
+    });
+    function show_error($message) {
+        $("#message").text($message).attr('class', 'alert alert-warning').show();
+    }
+    function show_success($message) {
+        $("#message").text($message['error']).attr('class', 'alert alert-success').hide();
+        $("#submit").css("display","none");
+        var orderID = $message["order_id"];
+        var payMethod = $message["pay_method"];
+        var mpUserID = $message["mp_user_id"];
+        var $storeId  = $("#store_id").val();
+        var $wxUserId = $("#wx_user_id").val();
+        $("#submit_success_after").show();
+
+        /*location.replace("/wx_user/pay/store?order_id="+orderID+"&total_fee={{total_price}}&mp_user_id="+mpUserID+"&community_id={{store.community_id}}&store_id="+$storeId+"&wx_user_id="+$wxUserId+"&pay_method="+payMethod);*/
+    }
+
+    function changePay(payMethod)
+    {
+        if(payMethod == "wx_pay")
+        {
+            $("#wx_pay_img").attr("src","/images/shop/store_checked.png");
+            $("#cash_pay_img").attr("src","/images/shop/store_no-checked.png");
+            $(".wx_pay").css("background-color","#fff9f7");
+            $(".cash_pay").css("background-color","white");
+            $("[name = 'pay_method_value']").val("wx_pay");
+        }
+        else
+        {
+            $("#wx_pay_img").attr("src","/images/shop/store_no-checked.png");
+            $("#cash_pay_img").attr("src","/images/shop/store_checked.png");
+            $(".cash_pay").css("background-color","#fff9f7");
+            $(".wx_pay").css("background-color","white");
+            $("[name = 'pay_method_value']").val("cash_pay");
+        }
+    }
+
+    function hide_page()
+    {
+        WeixinJSBridge.invoke('closeWindow',{},function(res){
+
+            //alert(res.err_msg);
+
+        });
+    }
+</script>
+</body>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+       WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');}
+    );
+</script>
+</html>

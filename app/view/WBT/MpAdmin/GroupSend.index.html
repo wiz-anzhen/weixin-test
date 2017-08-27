@@ -1,0 +1,44 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_send_by_group' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li>
+    群发消息（社区）
+</li>
+{% endblock %}
+
+{% block action %}
+<button type="button" class="btn btn-success" title="添加子菜单" onclick="bluefinBH.ajaxDialog('/mp_admin/group_send_dialog/add?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&from=community');">
+    添加群发消息
+</button>
+<div style="padding:8px 8px;">
+    {% if mp_type %}
+    本月还可以向所有用户群发&nbsp;<span style="color: red;font-size: 18px">{{remain_count}}</span>&nbsp;条消息
+    {% else %}
+    {% if remain_count %}
+    今天&nbsp;<span style="color: red;font-size: 18px">可以</span>&nbsp;向所有用户群发1条消息
+    {% else %}
+    今天已经向所有用户群发消息
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+

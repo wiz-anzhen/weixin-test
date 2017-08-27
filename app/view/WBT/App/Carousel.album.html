@@ -1,0 +1,68 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>{{ album.title }}</title>
+{% endblock %}
+
+{% block css_link %}
+<link href="/libs/photo-swipe/photoswipe.css?v={{third_lib_version}}" type="text/css" rel="stylesheet" />
+<style>
+    .row { margin: 0; padding: 0; }
+    .col-xs-4 { padding: 2px; text-align: center; }
+    div.col-xs-4 a { display: table-cell; vertical-align: middle; }
+    span { display: block; text-align: center; }
+
+    .container { padding: 2px; max-width: 10000px; margin: 0; }
+    .thumbnail { border: none; padding: 0; }
+</style>
+{% endblock %}
+
+{% block header_js_link %}
+<script type="text/javascript" src="/libs/photo-swipe/lib/klass.min.js?v={{third_lib_version}}"></script>
+<script type="text/javascript" src="/libs/photo-swipe/code.photoswipe-3.0.5.js?v={{third_lib_version}}"></script>
+
+<script type="text/javascript">
+    (function(window, PhotoSwipe){
+        document.addEventListener('DOMContentLoaded', function(){
+            var options = { captionAndToolbarAutoHideDelay: 0 },
+                    instance = PhotoSwipe.attach( window.document.querySelectorAll('#Gallery a'), options );
+        }, false);
+    }(window, window.Code.PhotoSwipe));
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="Gallery">
+        {% for picture in pictures %}
+        {% if (loop.index + 2) is divisibleby(3) %}
+        <div class="row">
+            {% endif %}
+            <div class="col-xs-4">
+                <a class="thumbnail" href="{{ picture.img_url }}">
+                    <img src="{{ picture.img_url }}" alt="{{ picture.comment }}"/>
+                </a>
+            </div>
+            {% if (loop.index is divisibleby(3)) or (loop.last) %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="alert alert-warning">
+            警告！该相册是空的。
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var $style = document.createElement("style");
+        var $height = $(".col-xs-4")[0].clientWidth;
+        $style.appendChild(document.createTextNode(".col-xs-4 { height: " + $height + "px; }"));
+        $style.appendChild(document.createTextNode("div.col-xs-4 a { width:"  + ($height-4) + "px;height: " + ($height-4) + "px; }"));
+        $style.appendChild(document.createTextNode(".thumbnail img { max-width: "  + ($height-4) + "px; max-height: " + ($height-4) + "px; }"));
+        document.head.appendChild($style);
+    });
+</script>
+{% endblock %}
+

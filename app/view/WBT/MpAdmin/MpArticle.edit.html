@@ -1,0 +1,103 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_article' %}
+
+{% block css_link %}
+<link href="/ueditor/themes/default/css/ueditor.css?v={{third_lib_version}}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block header_js_link %}
+<script src="/ueditor/ueditor.config.js?v={{third_lib_version}}" type="text/javascript"></script>
+<script src="/ueditor/ueditor.all.js?v={{third_lib_version}}" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="basic-block">
+        <ul class="breadcrumb">
+            <li><a href="/mp_admin/super_admin_list/list">公众帐号</a><span class="divider">/</span></li>
+
+            <li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}">{{mp_name}}</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active"><a href="/mp_admin/directory/list_top?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active"><a href="/mp_admin/mp_article/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}">素材管理</a>
+                <span class="divider">/</span>
+            </li>
+            <li>文章编辑</li>
+        </ul>
+        <div class="input-prepend">
+            <span class="add-on">素材标题</span>
+            <input type="text" id="title" name="title" value="{{ title }}" placeholder="请输入标题" class="span11">
+        </div>
+        <div class="input-prepend">
+            <span class="add-on">分享摘要</span>
+            <input type="text" id="share_desc" name="share_desc" value="{{ share_desc }}" placeholder="请输入分享文章时显示的摘要信息" class="span11">
+        </div>
+        <div class="input-prepend">
+            <span class="add-on" >文章标签</span>
+            <input type="text" id="tag" name="tag" value="{{ tag }}" placeholder="请输入标签，多个标签之间通过逗号分割" class="span11">
+        </div>
+        <div id="article_url" class="alert alert-success" style="width: 875px" ><a target="_blank" href="/article/{{mp_article_id}}">右击这里可复制文章地址</a></div>
+        <textarea name="content" id="content" style="width: 925px;height: 400px" >{{ content }}</textarea>
+        <script type="text/javascript">
+            var editor = new UE.ui.Editor();
+            editor.render('content');
+            UE.getEditor('content');
+        </script>
+
+        <br>
+        <div class="input-prepend">
+            <span class="add-on">
+                <input type="checkbox" id="redirect" name="redirect" {% if redirect %}checked{% endif %}>
+                跳转到
+            </span>
+            <input type="text" id="redirect_url" name="redirect_url" value="{{ redirect_url }}" placeholder="该空格必须填写url，否则会导致保存失败" class="span10">
+        </div>
+
+        <br/>
+        <input type="checkbox" name="show_like" id="show_like"{% if show_like %} checked="checked"{% endif %} style="float: left">
+        <label for="show_like">是否提供评论和赞</label>
+
+        <button type="submit" id="submit" class="btn btn-success" title="保存" style="margin-top: 10px;">保存</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_link %}
+<script type="text/javascript">
+    $(function(){
+        $("#submit").click(function(){
+            var $title = $("#title").val();
+            var $shareDesc = $("#share_desc").val();
+            var $tag = $("#tag").val();
+            editor.sync('content');
+            var $content = $("#content").val();
+            var $showLike = $("#show_like:checked").val();
+            var $redirectUrl = $("#redirect_url").val();
+            var $redirect = $("#redirect").is(":checked");
+            $showLike = $showLike == undefined ? 0 : 1;
+            var $postData = { 'title': $title, 'share_desc': $shareDesc, 'content': $content, 'show_like': $showLike, 'tag': $tag, 'redirect_url': $redirectUrl, 'redirect':$redirect };
+            $.ajax({
+                type: 'post',
+                url:   '/api/fcrm/mp_article/update?mp_article_id={{ mp_article_id }}&mp_user_id={{ mp_user_id }}&community_id={{community_id}}',
+                data: $postData,
+                datatype: 'json',
+                async: true,
+                success: postSubmit
+            });
+        });
+    });
+
+    function postSubmit($data) {
+        if ($data.errno == 0)
+            alert('保存成功');
+        else if ($data.error.length > 0)
+            alert($data.error);
+        else
+            alert('未知原因导致保存失败，请稍后再试或联系开发人员');
+    }
+</script>
+{% endblock %}

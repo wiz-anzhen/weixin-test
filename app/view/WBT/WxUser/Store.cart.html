@@ -1,0 +1,30 @@
+<div id="cart" class="container" style="display: none;">
+    <div id="cart_body">
+        <div id="cart_title">
+            <span id="close_cart"><img src="/scripts/store/close.png" width="13" height="13" alt=""></span>
+        </div>
+        <ul id="cart_food_list">
+
+        </ul>
+        <div>
+            <p id="empty" style="display: block;">还没有选择商品哦</p>
+        </div>
+        <div id="total_price" style="display: none;">
+            共 <span id="food_num2"> 0 </span> 件
+            <span class="money">
+                ¥ <span id="money_num1">0</span>
+            </span>
+        </div>
+
+        <div>
+            <div id="buttons">
+                <a href="/wx_user/store/settle?store_id={{store.store_id}}&mp_user_id={{wx_user.mp_user_id}}&wx_user_id={{wx_user.wx_user_id}}" id="submit">去结算</a>
+            </div>
+
+            <div id="return_new">
+                <div style="color:#7d7d82;margin-top: 50px;text-align: center;font-size: 18px;margin-left: 5%;width: 90%;" >餐厅起送价为50元，请返回继续选购！</div>
+                <div id="return_cart"  style="margin-top: 20px;text-align: center;background-color: #ff5534;padding-top: 10px;padding-bottom: 10px;color:#ffffff;border-radius: 4px;margin-left: 5%;width: 90%;">点击返回购物</div>
+            </div>
+        </div>
+    </div>
+</div>

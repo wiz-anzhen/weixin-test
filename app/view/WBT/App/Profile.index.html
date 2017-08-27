@@ -1,0 +1,95 @@
+{% extends "WBT/home_wx.twig" %}
+
+{% block title %}
+<title>会员卡</title>
+{% endblock %}
+
+{% block css_link %}
+<style>
+    li a { display: block; color: #000000; }
+    a:hover { text-decoration: none; color: #000000; }
+    li.list-group-item:hover, li.list-group-item:focus { text-decoration: none; background-color: #f5f5f5; }
+    body {
+        background: url(''),
+        url(''),
+        url('/images/bg_model/bk_top1_1.jpg') repeat-x 0 0,
+        url('/images/bg_model/bk_repeat1_1.jpg') repeat 0 0,#864c2c;
+        background-size: 3.5px 23.5px,3.5px 23.5px,304.5px 93px,313px 23.5px;
+        padding-top: 17px;
+    }
+    .card{
+        background: url('{% if mp_user.card_background %}{{ mp_user.card_background }}{% else %}/images/bg_model/card_bk_4.png{% endif %}') no-repeat 0 0;
+        -webkit-background-size: 267px 159px;
+        background-size: 267px 159px;
+        margin: 0 auto 20px auto;
+        position: relative;
+        width: 267px;
+        height: 159px;
+        border-radius: 8px;
+        -webkit-border-radius: 8px;
+        box-shadow: 0 0 4px rgba(0,0,0,.6);
+    }
+
+    #card_logo, #card_mp_name, #card_name, #card_number_label, #card_number { position: absolute; }
+    #card_logo, #card_mp_name { left: 10px; }
+    #card_mp_name, #card_number_label, #card_number { color: #92724C; text-shadow: 0 1px rgba(223, 233, 243, .62); }
+    #card_logo { top: 10px; max-width: 90px; max-height: 90px; }
+    #card_mp_name { top: 110px; font-size: 16px; }
+    #card_name, #card_number_label, #card_number { left: 160px; }
+    #card_name { top: 23px; font-size: 14px; color: #a6a08b; text-shadow: 0 1px #e2ded2; }
+    #card_number_label { top: 109px; font-size: 10px; }
+    #card_number { top: 121px; font-size: 20px; font-weight: bold; }
+
+    div a.list-group-item img { margin: -8px 4px -8px 0; }
+    div a.list-group-item { font-weight: bolder; border-left-width: 0; border-right-width: 0; border-color: rgb(193, 192, 197); }
+    div a.list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+    div a.list-group-item:last-child { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+    div a.list-group-item { color: #000; font-size: 17px; }
+    span.glyphicon-chevron-right { color: #ddd; }
+    div a.list-group-item span.badge { background-color: inherit; color: rgb(134, 134, 134); font-size: 15px; line-height: normal; }
+
+    p.text-left, p.text-center { padding-left: 15px; padding-right: 15px; color: rgb(128, 127, 132); }
+    p.text-left { margin-bottom: 5px; }
+    p.text-center { margin-top: -10px; margin-bottom: 20px; }
+    div a.list-group-item img.remind { width: 18px; margin-top: -23px; margin-left: -6px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <span id="card_name">会员卡</span>
+    <span id="card_number_label" style="color:darkgray;">会员卡号</span>
+    <span id="card_number" style="color:darkgray;">{{ wx_user.vip_no }}</span>
+</div>
+<div>
+
+    <div class="list-group">
+        <a class="list-group-item" href="javascript:">
+            姓名
+            <span class="badge">{{wx_user.nick}}</span>
+        </a>
+    </div>
+    <div class="list-group">
+        <a class="list-group-item" href="javascript:">
+            积分
+            <span class="badge">0</span>
+        </a>
+        <a class="list-group-item" href="javascript:">
+            账户余额
+            <span class="badge">0</span>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block js_link %}
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+//        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('hideToolbar');
+    });
+</script>
+{% endblock %}

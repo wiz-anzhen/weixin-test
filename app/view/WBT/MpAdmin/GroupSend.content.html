@@ -1,0 +1,43 @@
+{% extends "WBT/home_login.twig" %}
+
+{% set module = 'module_send_by_group' %}
+
+{% block sub_breadcrumbs %}
+<li class="active"><a href="/mp_admin/community/list?mp_user_id={{mp_user_id}}{% if is_community_admin %}&community_id={{community_id}}&community_name={{community_name}}{% else %}{% endif %}">{{mp_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active"><a href="/mp_admin/function/list?mp_user_id={{mp_user_id}}&community_id={{community_id}}&community_name={{community_name}}">{{community_name}}</a>
+    <span class="divider">/</span>
+</li>
+<li class="active">
+    {% if from == 'community' %}
+    <a href="/mp_admin/group_send/index?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（社区）</a>
+    {% else %}
+    <a href="/mp_admin/group_send_mp/send_mp?mp_user_id={{ mp_user_id }}&community_id={{ community_id }}">群发消息（公众账号）</a>
+    {% endif %}
+    <span class="divider">/</span>
+</li>
+<li>
+    {{group_title}}
+</li>
+{% endblock %}
+
+{% block action %}
+{% if group_send_item_number < 10 %}
+<button type="button" class="btn btn-success" title="添加子菜单" onclick="bluefinBH.ajaxDialog('/mp_admin/group_send_dialog/add_content?mp_user_id={{ mp_user_id }}&community_id={{community_id}}&group_send_id={{group_send_id}}');">
+    添加群发消息内容
+</button>
+{% endif %}
+{% endblock %}
+
+{% block css_link %}
+<style type="text/css">
+    .big_area {
+        width: 300px;
+        height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% set pagination_js = FALSE %}
+
